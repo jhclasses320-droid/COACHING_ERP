@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Batch</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 30px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .batch-card {
+            display: block;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #17a2b8;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            width: 300px;
+        }
+
+        .batch-card:hover {
+            background: #138496;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Select Batch for Attendance</h2>
+
+{% for batch in batches %}
+    <a href="/attendance/{{ batch.id }}/" class="batch-card">
+        {{ batch.batch_name }}
+    </a>
+{% empty %}
+    <p>No batches found</p>
+{% endfor %}
+
+</body>
+</html>

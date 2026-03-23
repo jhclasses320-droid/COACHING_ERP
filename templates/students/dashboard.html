@@ -1,0 +1,89 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+
+<h1>Dashboard</h1>
+
+<div style="display:flex; gap:20px; margin-top:20px; flex-wrap:wrap;">
+
+    <!-- TOTAL STUDENTS -->
+    <div style="
+        flex:1;
+        min-width:220px;
+        padding:20px;
+        background:#28a745;
+        color:white;
+        border-radius:10px;
+    ">
+        <h3>Total Students</h3>
+        <h1>{{ total_students }}</h1>
+    </div>
+
+    <!-- TOTAL FEES -->
+    <div style="
+        flex:1;
+        min-width:220px;
+        padding:20px;
+        background:#007bff;
+        color:white;
+        border-radius:10px;
+    ">
+        <h3>Total Fees</h3>
+        <h1>₹ {{ total_fees }}</h1>
+    </div>
+
+    <!-- PENDING FEES -->
+    <div style="
+        flex:1;
+        min-width:220px;
+        padding:20px;
+        background:#dc3545;
+        color:white;
+        border-radius:10px;
+    ">
+        <h3>Pending Fees</h3>
+        <h1>₹ {{ pending_fees }}</h1>
+
+        <br>
+        <a href="#" style="
+            background:#28a745;
+            padding:8px 12px;
+            color:white;
+            border-radius:5px;
+            text-decoration:none;
+        ">
+            Send Reminder
+        </a>
+    </div>
+
+    <!-- REPORTS -->
+    <a href="/admin/reports/" style="
+        flex:1;
+        min-width:220px;
+        padding:20px;
+        background:#6f42c1;
+        color:white;
+        border-radius:10px;
+        text-decoration:none;
+    ">
+        <h3>📊 Reports</h3>
+        <h1>Open</h1>
+    </a>
+
+    <!-- ATTENDANCE (FIXED) -->
+    <a href="/attendance/" style="
+        flex:1;
+        min-width:220px;
+        padding:20px;
+        background:#17a2b8;
+        color:white;
+        border-radius:10px;
+        text-decoration:none;
+    ">
+        <h3>🗓 Attendance</h3>
+        <h1>Open</h1>
+    </a>
+
+</div>
+
+{% endblock %}

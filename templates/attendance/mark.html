@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mark Attendance</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        table { width: 60%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
+        button { padding: 10px 20px; background: green; color: white; border: none; }
+    </style>
+</head>
+<body>
+
+<h2>Attendance - {{ batch }}</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <table>
+        <tr>
+            <th>Student</th>
+            <th>Present</th>
+            <th>Absent</th>
+            <th>Late</th>
+        </tr>
+
+        {% for student in students %}
+        <tr>
+            <td>{{ student.student_name }}</td>
+            <td><input type="radio" name="student_{{ student.id }}" value="P"></td>
+            <td><input type="radio" name="student_{{ student.id }}" value="A"></td>
+            <td><input type="radio" name="student_{{ student.id }}" value="L"></td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <br>
+    <button type="submit">Save Attendance</button>
+
+</form>
+
+</body>
+</html>
