@@ -1,16 +1,20 @@
 
+from django.contrib import admin
 from django.urls import path, include
-from students.admin import admin_site
+from django.shortcuts import redirect
+
+
+# Redirect homepage to student login
+def home_redirect(request):
+    return redirect('student_login')
+
 
 urlpatterns = [
-    # ✅ ALL APP URLS
-    path('', include('students.urls')),
+    path('', home_redirect, name='home'),
 
-    # ✅ CUSTOM ADMIN PANEL
-    path('admin/', admin_site.urls),
+    path('admin/', admin.site.urls),
+
+    # Students app URLs
+    path('student/', include('students.urls')),
 ]
-
-
-
-
 
