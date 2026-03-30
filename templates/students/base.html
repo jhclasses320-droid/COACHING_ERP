@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Student Portal</title>
+
+```
+<style>
+
+    body{
+        margin:0;
+        font-family: Arial;
+        background:#f4f6f9;
+    }
+
+    .sidebar{
+        width:220px;
+        height:100vh;
+        background:#343a40;
+        position:fixed;
+        left:0;
+        top:0;
+        padding-top:20px;
+    }
+
+    .sidebar h2{
+        color:white;
+        text-align:center;
+    }
+
+    .sidebar a{
+        display:block;
+        padding:12px 20px;
+        color:white;
+        text-decoration:none;
+    }
+
+    .sidebar a:hover{
+        background:#495057;
+    }
+
+    .content{
+        margin-left:220px;
+        padding:30px;
+    }
+
+    table{
+        border-collapse: collapse;
+        width:100%;
+    }
+
+    table, th, td{
+        border:1px solid #ccc;
+    }
+
+    th, td{
+        padding:8px;
+        text-align:left;
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Student Panel</h2>
+
+<a href="/student/dashboard/">Dashboard</a> <a href="/student/exams/">My Exams</a> <a href="/student/dashboard/#attendance">My Attendance</a> <a href="/student/logout/">Logout</a>
+
+</div>
+
+<div class="content">
+
+{% block content %}
+
+{% endblock %}
+
+</div>
+
+</body>
+
+</html>

@@ -268,3 +268,8 @@ class ExamQuestionAdmin(admin.ModelAdmin):
     list_display = ('exam', 'question')
 
 admin_site.register(ExamQuestion, ExamQuestionAdmin)
+
+from .models import StudentExamAttempt, StudentAnswer
+
+admin.site.register(StudentExamAttempt)
+admin.site.register(StudentAnswer)

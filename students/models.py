@@ -142,7 +142,9 @@ class Question(models.Model):
 
 class Exam(models.Model):
     name = models.CharField(max_length=100)
+
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    batch = models.ForeignKey(Batch, on_delete=models.CASCADE)   # ADD THIS LINE
 
     duration = models.IntegerField(help_text="Duration in minutes")
     total_marks = models.IntegerField()
@@ -200,3 +202,51 @@ class AttendanceRecord(models.Model):
 
     def __str__(self):
         return f"{self.student.student_name} - {self.status}"
+
+        # ================= STUDENT EXAM ATTEMPT ================= #
+
+class StudentExamAttempt(models.Model):
+
+   class StudentExamAttempt(models.Model):
+
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
+
+    start_time = models.DateTimeField(auto_now_add=True)
+    end_time = models.DateTimeField(blank=True, null=True)
+
+    score = models.FloatField(default=0)
+
+    completed = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('student', 'exam')
+        ordering = ['-score']
+
+    def __str__(self):
+        return f"{self.student.student_name} - {self.exam.name}"
+        
+
+        # ================= STUDENT ANSWERS ================= #
+
+class StudentAnswer(models.Model):
+
+    attempt = models.ForeignKey(StudentExamAttempt, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+
+    selected_option = models.CharField(
+        max_length=1,
+        choices=[
+            ('A','A'),
+            ('B','B'),
+            ('C','C'),
+            ('D','D')
+        ]
+    )
+
+    is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.attempt.student.student_name} - Q{self.question.id}"
+
+    

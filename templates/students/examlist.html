@@ -1,0 +1,17 @@
+
+
+<h2>Available Exams</h2>
+
+{% for exam in exams %}
+
+<div>
+    <h3>{{ exam.name }}</h3>
+    <p>Topic: {{ exam.topic }}</p>
+    <p>Duration: {{ exam.duration }} minutes</p>
+
+    <a href="{% url 'start_exam' exam.id %}">
+        Start Exam
+    </a>
+</div>
+
+{% endfor %}

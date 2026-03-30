@@ -7,7 +7,8 @@ from datetime import date
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
-
+from django.shortcuts import render, get_object_or_404
+from .models import Exam, ExamQuestion
 from .models import (
     Student,
     Exam,
@@ -45,8 +46,23 @@ def student_login(request):
 
 # ================= DASHBOARD ================= #
 def student_dashboard(request):
-    exams = Exam.objects.all()
-    return render(request, 'students/dashboard.html', {'exams': exams})
+
+    student_id = request.session.get('student_id')
+
+    if not student_id:
+        return redirect('student_login')
+
+    student = Student.objects.get(id=student_id)
+
+    exams = Exam.objects.filter(batch=student.batch)
+
+    attendance = AttendanceRecord.objects.filter(student=student)
+
+    return render(request, 'students/dashboard.html', {
+        'student': student,
+        'exams': exams,
+        'attendance': attendance
+    })
 
 
 # ================= REPORT PAGE ================= #
@@ -228,7 +244,40 @@ def attendance_report(request):
         'report_data': report_data
     })
 
+
 def attendance_batches(request):
-    from .models import Batch
     batches = Batch.objects.all()
     return render(request, 'attendance/batches.html', {'batches': batches})
+
+
+# ================= STUDENT EXAMS ================= #
+
+def student_exam_list(request):
+
+    student_id = request.session.get('student_id')
+
+    if not student_id:
+        return redirect('student_login')
+
+    student = Student.objects.get(id=student_id)
+
+    exams = Exam.objects.filter(batch=student.batch)
+
+    return render(request, 'students/exam_list.html', {
+        'exams': exams
+    })
+
+
+# ================= START EXAM ================= #
+
+def start_exam(request, exam_id):
+
+    exam = get_object_or_404(Exam, id=exam_id)
+
+    questions = ExamQuestion.objects.filter(exam=exam)
+
+    return render(request, 'students/start_exam.html', {
+        'exam': exam,
+        'questions': questions
+    })
+    
