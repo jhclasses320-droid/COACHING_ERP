@@ -205,9 +205,10 @@ class AttendanceRecord(models.Model):
 
         # ================= STUDENT EXAM ATTEMPT ================= #
 
-class StudentExamAttempt(models.Model):
 
-   class StudentExamAttempt(models.Model):
+# ================= STUDENT EXAM ATTEMPT ================= #
+
+class StudentExamAttempt(models.Model):
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
@@ -216,7 +217,6 @@ class StudentExamAttempt(models.Model):
     end_time = models.DateTimeField(blank=True, null=True)
 
     score = models.FloatField(default=0)
-
     completed = models.BooleanField(default=False)
 
     class Meta:
@@ -225,7 +225,30 @@ class StudentExamAttempt(models.Model):
 
     def __str__(self):
         return f"{self.student.student_name} - {self.exam.name}"
-        
+
+
+# ================= STUDENT ANSWERS ================= #
+
+class StudentAnswer(models.Model):
+
+    attempt = models.ForeignKey(StudentExamAttempt, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+
+    selected_option = models.CharField(
+        max_length=1,
+        choices=[
+            ('A', 'A'),
+            ('B', 'B'),
+            ('C', 'C'),
+            ('D', 'D')
+        ]
+    )
+
+    is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.attempt.student.student_name} - Q{self.question.id}"
+
 
         # ================= STUDENT ANSWERS ================= #
 

@@ -271,5 +271,5 @@ admin_site.register(ExamQuestion, ExamQuestionAdmin)
 
 from .models import StudentExamAttempt, StudentAnswer
 
-admin.site.register(StudentExamAttempt)
-admin.site.register(StudentAnswer)
+admin_site.register(StudentExamAttempt)
+admin_site.register(StudentAnswer)
