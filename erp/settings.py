@@ -1,5 +1,6 @@
 
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -124,3 +125,12 @@ JAZZMIN_SETTINGS = {
     "site_header": "JH CLASSES",
     "site_brand": "JH CLASSES",
 }
+
+
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
