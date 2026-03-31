@@ -1,3 +1,4 @@
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db import models
@@ -80,7 +81,7 @@ def download_students_pdf(request):
 
     data = [['Name', 'Class', 'School', 'Mobile', 'Fee']]
 
-    students = Student.objects.all()
+    students = Student.objects.filter(is_active=True)
 
     for s in students:
         data.append([
@@ -114,7 +115,7 @@ def download_fee_report(request):
 
     data = [['Name', 'Total Fee', 'Paid', 'Pending']]
 
-    students = Student.objects.all()
+    students = Student.objects.filter(is_active=True)
 
     for s in students:
         total_fee = s.fee_amount or 0
@@ -155,7 +156,7 @@ def download_defaulter_report(request):
 
     data = [['Name', 'Class', 'Mobile', 'Total Fee', 'Paid', 'Pending']]
 
-    students = Student.objects.all()
+    students = Student.objects.filter(is_active=True)
 
     for s in students:
         total_fee = s.fee_amount or 0
@@ -200,7 +201,7 @@ def mark_attendance(request, batch_id):
         date=today
     )
 
-    students = Student.objects.filter(batch=batch)
+    students = Student.objects.filter(batch=batch, is_active=True)
 
     if request.method == "POST":
         for student in students:
@@ -224,7 +225,7 @@ def mark_attendance(request, batch_id):
 
 # ================= ATTENDANCE REPORT ================= #
 def attendance_report(request):
-    students = Student.objects.all()
+    students = Student.objects.filter(is_active=True)
     report_data = []
 
     for s in students:
@@ -280,4 +281,5 @@ def start_exam(request, exam_id):
         'exam': exam,
         'questions': questions
     })
+
     
