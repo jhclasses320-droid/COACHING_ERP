@@ -139,3 +139,7 @@ JAZZMIN_SETTINGS = {
     "site_header": "JH CLASSES",
     "site_brand": "JH CLASSES",
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.onrender.com",
+]
