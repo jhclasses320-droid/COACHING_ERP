@@ -13,7 +13,10 @@ urlpatterns = [
     path('student/exam/<int:exam_id>/', views.start_exam, name='start_exam'),
 
     # ================= ADMIN REPORTS ================= #
-    path('admin/reports/', views.reports_dashboard, name='reports'),
+    
+    # ================= ADMIN REPORTS ================= #
+    
+    path('reports/', views.reports_dashboard, name='reports'),
 
     # ================= PDF DOWNLOADS ================= #
     path('download-students-pdf/', views.download_students_pdf, name='students_pdf'),
@@ -26,5 +29,6 @@ urlpatterns = [
     path('attendance-report/', views.attendance_report, name='attendance_report'),
 
 ]
+
 
 

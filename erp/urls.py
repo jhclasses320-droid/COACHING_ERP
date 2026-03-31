@@ -1,7 +1,7 @@
 
 from django.urls import path, include
 from django.shortcuts import redirect
-from students.admin import admin_site   # ⭐ IMPORTANT
+from students.admin import admin_site
 
 
 # Redirect homepage to student login
@@ -12,10 +12,10 @@ def home_redirect(request):
 urlpatterns = [
     path('', home_redirect, name='home'),
 
-    # ⭐ USE CUSTOM ADMIN
+    # custom admin
     path('admin/', admin_site.urls),
 
-    # Students app URLs
-    path('student/', include('students.urls')),
+    # include app urls
+    path('', include('students.urls')),
 ]
 

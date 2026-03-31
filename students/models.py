@@ -250,26 +250,5 @@ class StudentAnswer(models.Model):
         return f"{self.attempt.student.student_name} - Q{self.question.id}"
 
 
-        # ================= STUDENT ANSWERS ================= #
+        
 
-class StudentAnswer(models.Model):
-
-    attempt = models.ForeignKey(StudentExamAttempt, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-
-    selected_option = models.CharField(
-        max_length=1,
-        choices=[
-            ('A','A'),
-            ('B','B'),
-            ('C','C'),
-            ('D','D')
-        ]
-    )
-
-    is_correct = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"{self.attempt.student.student_name} - Q{self.question.id}"
-
-    
