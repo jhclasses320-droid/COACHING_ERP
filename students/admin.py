@@ -1,9 +1,10 @@
+
 from django.contrib import admin
 from django.db.models import Sum
 import random
 from django.utils.html import format_html
 from datetime import date
-from urllib.parse import quote  # ✅ ADDED
+from urllib.parse import quote
 
 from .models import (
     School, Batch, Student, FeePayment, Query,
@@ -19,14 +20,22 @@ class MyAdminSite(admin.AdminSite):
 
     def index(self, request, extra_context=None):
 
-        total_students = Student.objects.count()
-        total_fees = Student.objects.aggregate(total=Sum('fee_amount'))['total'] or 0
-        total_paid = FeePayment.objects.aggregate(total=Sum('amount'))['total'] or 0
+        total_students = Student.objects.filter(is_active=True).count()
+
+        total_fees = Student.objects.filter(
+            is_active=True
+        ).aggregate(total=Sum('fee_amount'))['total'] or 0
+
+        total_paid = FeePayment.objects.filter(
+            student__is_active=True
+        ).aggregate(total=Sum('amount'))['total'] or 0
+
         pending_fees = total_fees - total_paid
 
         # ✅ BIRTHDAY LOGIC
         today = date.today()
         birthday_students = Student.objects.filter(
+            is_active=True,
             date_of_birth__day=today.day,
             date_of_birth__month=today.month
         )
@@ -66,8 +75,8 @@ class StudentAdmin(admin.ModelAdmin):
         'student_name',
         'student_mobile',
         'student_photo_preview',
-        'whatsapp_fee',      # ✅ NEW
-        'whatsapp_birthday'  # ✅ NEW
+        'whatsapp_fee',
+        'whatsapp_birthday'
     )
 
     def student_photo_preview(self, obj):
