@@ -143,3 +143,12 @@ JAZZMIN_SETTINGS = {
 CSRF_TRUSTED_ORIGINS = [
     "https://*.onrender.com",
 ]
+
+import logging
+
+logging.getLogger('django.server').setLevel(logging.ERROR)
+
+
+import logging
+
+logging.getLogger('django.server').setLevel(logging.ERROR)

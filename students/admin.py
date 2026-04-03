@@ -1,4 +1,3 @@
-
 from django.contrib import admin
 from django.db.models import Sum
 import random
@@ -13,6 +12,7 @@ from .models import (
 )
 
 # ================= CUSTOM ADMIN SITE ================= #
+
 class MyAdminSite(admin.AdminSite):
     site_header = "JH CLASSES"
     site_title = "JH CLASSES"
@@ -32,8 +32,8 @@ class MyAdminSite(admin.AdminSite):
 
         pending_fees = total_fees - total_paid
 
-        # ✅ BIRTHDAY LOGIC
         today = date.today()
+
         birthday_students = Student.objects.filter(
             is_active=True,
             date_of_birth__day=today.day,
@@ -51,11 +51,11 @@ class MyAdminSite(admin.AdminSite):
         return super().index(request, extra_context=extra_context)
 
 
-# ✅ CREATE INSTANCE
 admin_site = MyAdminSite(name='myadmin')
 
 
 # ================= AUTH MODELS ================= #
+
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 
@@ -64,11 +64,13 @@ admin_site.register(Group, GroupAdmin)
 
 
 # ================= BASIC MODELS ================= #
+
 admin_site.register(School)
 admin_site.register(Batch)
 
 
 # ================= STUDENT ADMIN ================= #
+
 class StudentAdmin(admin.ModelAdmin):
 
     list_display = (
@@ -78,6 +80,11 @@ class StudentAdmin(admin.ModelAdmin):
         'whatsapp_fee',
         'whatsapp_birthday'
     )
+
+    # FILTER ONLY ACTIVE STUDENTS
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.filter(is_active=True)
 
     def student_photo_preview(self, obj):
         if obj.student_photo:
@@ -89,8 +96,9 @@ class StudentAdmin(admin.ModelAdmin):
 
     student_photo_preview.short_description = 'Photo'
 
-    # ✅ WHATSAPP FEE REMINDER
+    # WHATSAPP FEE REMINDER
     def whatsapp_fee(self, obj):
+
         if not obj.student_mobile:
             return "No Number"
 
@@ -114,14 +122,16 @@ Thank you.
 
     whatsapp_fee.short_description = "Fee Reminder"
 
-    # ✅ WHATSAPP BIRTHDAY WISH
+    # WHATSAPP BIRTHDAY
     def whatsapp_birthday(self, obj):
+
         if not obj.student_mobile or not obj.date_of_birth:
             return "-"
 
         today = date.today()
 
         if obj.date_of_birth.day == today.day and obj.date_of_birth.month == today.month:
+
             message = f"""
 Happy Birthday {obj.student_name}! 🎉
 
@@ -129,6 +139,7 @@ Wishing you success and happiness.
 
 - JH Classes
 """
+
             url = f"https://wa.me/91{obj.student_mobile}?text={quote(message)}"
 
             return format_html(
@@ -144,11 +155,14 @@ Wishing you success and happiness.
 admin_site.register(Student, StudentAdmin)
 
 
+# ================= OTHER MODELS ================= #
+
 admin_site.register(FeePayment)
 admin_site.register(Query)
 
 
 # ================= SUBJECT ================= #
+
 class SubjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'code')
     search_fields = ('name',)
@@ -157,6 +171,7 @@ admin_site.register(Subject, SubjectAdmin)
 
 
 # ================= TOPIC ================= #
+
 class TopicAdmin(admin.ModelAdmin):
     list_display = ('name', 'subject')
     list_filter = ('subject',)
@@ -166,6 +181,7 @@ admin_site.register(Topic, TopicAdmin)
 
 
 # ================= QUESTION ================= #
+
 class QuestionAdmin(admin.ModelAdmin):
 
     fieldsets = (
@@ -251,15 +267,25 @@ admin_site.register(Question, QuestionAdmin)
 
 
 # ================= EXAM ================= #
+
 class ExamAdmin(admin.ModelAdmin):
-    list_display = ('name', 'topic', 'number_of_questions', 'duration')
+
+    list_display = (
+        'name',
+        'topic',
+        'number_of_questions',
+        'duration'
+    )
 
     def save_model(self, request, obj, form, change):
+
         super().save_model(request, obj, form, change)
 
         ExamQuestion.objects.filter(exam=obj).delete()
 
-        questions = list(Question.objects.filter(topic=obj.topic))
+        questions = list(
+            Question.objects.filter(topic=obj.topic)
+        )
 
         selected_questions = random.sample(
             questions,
@@ -267,16 +293,21 @@ class ExamAdmin(admin.ModelAdmin):
         )
 
         for q in selected_questions:
-            ExamQuestion.objects.create(exam=obj, question=q)
+            ExamQuestion.objects.create(
+                exam=obj,
+                question=q
+            )
 
 admin_site.register(Exam, ExamAdmin)
 
 
 # ================= EXAM QUESTION ================= #
+
 class ExamQuestionAdmin(admin.ModelAdmin):
     list_display = ('exam', 'question')
 
 admin_site.register(ExamQuestion, ExamQuestionAdmin)
+
 
 from .models import StudentExamAttempt, StudentAnswer
 

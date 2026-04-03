@@ -191,7 +191,9 @@ def download_defaulter_report(request):
 
 
 # ================= ATTENDANCE ================= #
+
 def mark_attendance(request, batch_id):
+
     today = date.today()
 
     batch = Batch.objects.get(id=batch_id)
@@ -201,7 +203,29 @@ def mark_attendance(request, batch_id):
         date=today
     )
 
-    students = Student.objects.filter(batch=batch, is_active=True)
+    students = Student.objects.filter(batch=batch, is_active=True).order_by("student_name")
+
+    if request.method == "POST":
+
+        for student in students:
+
+            status = request.POST.get(f"student_{student.id}", "A")
+
+            AttendanceRecord.objects.update_or_create(
+                session=session,
+                student=student,
+                defaults={'status': status}
+            )
+
+        messages.success(request, "Attendance saved successfully ✅")
+
+        return redirect('student_dashboard')
+
+    return render(request, "attendance/mark.html", {
+        'students': students,
+        'batch': batch
+    })
+
 
     if request.method == "POST":
         for student in students:

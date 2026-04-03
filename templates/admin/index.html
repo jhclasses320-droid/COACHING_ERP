@@ -1,3 +1,4 @@
+
 {% extends "admin/index.html" %}
 
 {% block extrastyle %}
@@ -92,34 +93,42 @@
 <div class="dashboard-cards">
 
 <!-- TOTAL STUDENTS -->
+
 <a href="/admin/students/student/" class="dashboard-card green">
     <h3>Total Students</h3>
     <h1 class="mask-value" data-value="{{ total_students }}">****</h1>
 </a>
 
 <!-- TOTAL FEES -->
+
 <a href="/admin/students/feepayment/" class="dashboard-card blue">
     <h3>Total Fees</h3>
     <h1 class="mask-value" data-value="₹ {{ total_fees }}">****</h1>
 </a>
 
 <!-- PENDING FEES -->
+
 <div class="dashboard-card red">
     <h3>Pending Fees</h3>
     <h1 class="mask-value" data-value="₹ {{ pending_fees }}">****</h1>
 
-    <a href="/admin/students/student/" class="whatsapp-btn" style="display:inline-block;margin-top:10px;">
-        📲 Send Reminder
-    </a>
+```
+<a href="/admin/students/student/" class="whatsapp-btn" style="display:inline-block;margin-top:10px;">
+    📲 Send Reminder
+</a>
+```
+
 </div>
 
 <!-- REPORTS -->
+
 <a href="{% url 'reports' %}" class="dashboard-card purple">
     <h3>📊 Reports</h3>
     <h1>Open</h1>
 </a>
 
 <!-- ✅ ATTENDANCE (FIXED FINAL) -->
+
 <a href="/attendance/" class="dashboard-card teal">
     <h3>📅 Attendance</h3>
     <h1>Open</h1>
@@ -133,31 +142,32 @@
     <h3>🎂 Today's Birthdays</h3>
 
 {% if birthday_students %}
-    {% for student in birthday_students %}
-        <div class="birthday-student">
+{% for student in birthday_students %} <div class="birthday-student">
 
-            <div class="birthday-left">
-                {% if student.student_photo %}
-                    <img src="{{ student.student_photo.url }}">
-                {% endif %}
-                <div>
-                    <strong>{{ student.student_name }}</strong><br>
-                    <small>{{ student.date_of_birth }}</small>
-                </div>
-            </div>
-
-            {% if student.student_mobile %}
-                <a href="https://wa.me/91{{ student.student_mobile }}?text=Happy%20Birthday%20{{ student.student_name }}%20🎉"
-                   target="_blank"
-                   class="whatsapp-btn">
-                    🎂 Wish
-                </a>
+```
+        <div class="birthday-left">
+            {% if student.student_photo %}
+                <img src="{{ student.student_photo.url }}">
             {% endif %}
-
+            <div>
+                <strong>{{ student.student_name }}</strong><br>
+                <small>{{ student.date_of_birth }}</small>
+            </div>
         </div>
-    {% endfor %}
-{% else %}
-    <p>No birthdays today</p>
+
+        {% if student.student_mobile %}
+            <a href="https://wa.me/91{{ student.student_mobile }}?text=Happy%20Birthday%20{{ student.student_name }}%20🎉"
+               target="_blank"
+               class="whatsapp-btn">
+                🎂 Wish
+            </a>
+        {% endif %}
+
+    </div>
+{% endfor %}
+```
+
+{% else %} <p>No birthdays today</p>
 {% endif %}
 
 </div>
@@ -170,12 +180,33 @@ document.addEventListener("DOMContentLoaded", function(){
 
     document.querySelectorAll(".mask-value").forEach(function(el){
 
-        el.addEventListener("click", function(){
+        el.addEventListener("click", function(e){
 
-            if(this.innerText === "****"){
-                this.innerText = this.dataset.value
-            } else {
-                this.innerText = "****"
+            let parentLink = this.closest("a")
+
+            // Special behaviour only for Total Fees
+            if(parentLink && parentLink.getAttribute("href") === "/admin/students/feepayment/"){
+
+                if(this.innerText === "****"){
+                    e.preventDefault()
+                    this.innerText = this.dataset.value
+                    parentLink.dataset.revealed = "true"
+                }
+                else if(parentLink.dataset.revealed === "true"){
+                    window.location.href = "/admin/students/student/"
+                }
+
+            }
+
+            // Normal behaviour for other cards
+            else{
+
+                if(this.innerText === "****"){
+                    this.innerText = this.dataset.value
+                } else {
+                    this.innerText = "****"
+                }
+
             }
 
         })
@@ -187,6 +218,8 @@ document.addEventListener("DOMContentLoaded", function(){
 </script>
 
 {% endblock %}
+
+
 
 
 
