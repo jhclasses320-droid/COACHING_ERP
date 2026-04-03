@@ -91,23 +91,22 @@
 
 <div class="dashboard-cards">
 
-```
 <!-- TOTAL STUDENTS -->
 <a href="/admin/students/student/" class="dashboard-card green">
     <h3>Total Students</h3>
-    <h1>{{ total_students }}</h1>
+    <h1 class="mask-value" data-value="{{ total_students }}">****</h1>
 </a>
 
 <!-- TOTAL FEES -->
 <a href="/admin/students/feepayment/" class="dashboard-card blue">
     <h3>Total Fees</h3>
-    <h1>₹ {{ total_fees }}</h1>
+    <h1 class="mask-value" data-value="₹ {{ total_fees }}">****</h1>
 </a>
 
 <!-- PENDING FEES -->
 <div class="dashboard-card red">
     <h3>Pending Fees</h3>
-    <h1>₹ {{ pending_fees }}</h1>
+    <h1 class="mask-value" data-value="₹ {{ pending_fees }}">****</h1>
 
     <a href="/admin/students/student/" class="whatsapp-btn" style="display:inline-block;margin-top:10px;">
         📲 Send Reminder
@@ -125,7 +124,6 @@
     <h3>📅 Attendance</h3>
     <h1>Open</h1>
 </a>
-```
 
 </div>
 
@@ -134,7 +132,6 @@
 <div class="birthday-card">
     <h3>🎂 Today's Birthdays</h3>
 
-```
 {% if birthday_students %}
     {% for student in birthday_students %}
         <div class="birthday-student">
@@ -162,11 +159,32 @@
 {% else %}
     <p>No birthdays today</p>
 {% endif %}
-```
 
 </div>
 
 {{ block.super }}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    document.querySelectorAll(".mask-value").forEach(function(el){
+
+        el.addEventListener("click", function(){
+
+            if(this.innerText === "****"){
+                this.innerText = this.dataset.value
+            } else {
+                this.innerText = "****"
+            }
+
+        })
+
+    })
+
+})
+
+</script>
 
 {% endblock %}
 
