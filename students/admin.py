@@ -1,3 +1,4 @@
+
 from django.contrib import admin
 from django.db.models import Sum
 import random
@@ -20,7 +21,10 @@ class MyAdminSite(admin.AdminSite):
 
     def index(self, request, extra_context=None):
 
+
         total_students = Student.objects.filter(is_active=True).count()
+
+
 
         total_fees = Student.objects.filter(
             is_active=True
@@ -109,6 +113,8 @@ This is JH Classes.
 
 Fee for {obj.student_name} ({obj.batch}) of ₹{obj.fee_amount} is pending.
 Kindly pay at the earliest.
+
+This a a computer generated message. Pls ignore if already paid
 
 Thank you.
 """

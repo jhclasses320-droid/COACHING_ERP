@@ -13,9 +13,6 @@ urlpatterns = [
     path('student/exam/<int:exam_id>/', views.start_exam, name='start_exam'),
 
     # ================= ADMIN REPORTS ================= #
-    
-    # ================= ADMIN REPORTS ================= #
-    
     path('reports/', views.reports_dashboard, name='reports'),
 
     # ================= PDF DOWNLOADS ================= #
@@ -28,7 +25,8 @@ urlpatterns = [
     path('attendance/<int:batch_id>/', views.mark_attendance, name='mark_attendance'),
     path('attendance-report/', views.attendance_report, name='attendance_report'),
 
+    # ================= STAFF PANEL ================= #
+    path('staff-login/', views.staff_login, name='staff_login'),
+    path('staff-dashboard/', views.staff_dashboard, name='staff_dashboard'),
+
 ]
-
-
-

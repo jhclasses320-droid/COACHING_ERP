@@ -306,4 +306,114 @@ def start_exam(request, exam_id):
         'questions': questions
     })
 
-    
+    from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+
+# ================= STAFF LOGIN ================= #
+
+def staff_login(request):
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None and user.is_staff:
+            login(request, user)
+            return redirect("question_dashboard")
+
+        messages.error(request, "Invalid username or password")
+
+    return render(request, "staff/login.html")
+
+
+# ================= QUESTION DASHBOARD ================= #
+
+@login_required
+def question_dashboard(request):
+
+    if not request.user.groups.filter(name="Question Entry").exists():
+        return redirect("/")
+
+    questions = Question.objects.order_by("-id")[:20]
+
+    return render(request, "staff/dashboard.html", {
+        "questions": questions
+    })
+
+    from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+
+# ================= STAFF LOGIN ================= #
+
+def staff_login(request):
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None and user.is_staff:
+            login(request, user)
+            return redirect("staff_dashboard")
+
+        messages.error(request, "Invalid username or password")
+
+    return render(request, "staff/login.html")
+
+
+# ================= STAFF DASHBOARD ================= #
+
+@login_required
+def staff_dashboard(request):
+
+    if not request.user.groups.filter(name="Question Entry").exists():
+        return redirect("/")
+
+    questions = Question.objects.order_by("-id")[:20]
+
+    return render(request, "staff/dashboard.html", {
+        "questions": questions
+    })
+
+    from django.contrib.auth.decorators import login_required
+
+@login_required
+def staff_dashboard(request):
+    return render(request, "staff/dashboard.html")
+
+    # ================= STAFF LOGIN ================= #
+
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+
+def staff_login(request):
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None and user.is_staff:
+            login(request, user)
+            return redirect("staff_dashboard")
+
+        messages.error(request, "Invalid username or password")
+
+    return render(request, "staff/login.html")
+
+
+@login_required
+def staff_dashboard(request):
+
+    if not request.user.groups.filter(name="Question Entry").exists():
+        return redirect("/")
+
+    questions = Question.objects.order_by("-id")[:20]
+
+    return render(request, "staff/dashboard.html", {
+        "questions": questions
+    })
