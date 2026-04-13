@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import os
 
@@ -11,7 +10,7 @@ SECRET_KEY = 'django-insecure-change-this'
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-DEBUG = False
+DEBUG = True   # changed for local debugging
 
 ALLOWED_HOSTS = [
     "jhclasses.in",
@@ -25,7 +24,6 @@ CSRF_TRUSTED_ORIGINS = [
     "https://www.jhclasses.in",
     "https://*.onrender.com",
 ]
-
 
 
 SESSION_COOKIE_SECURE = False
@@ -157,5 +155,5 @@ JAZZMIN_SETTINGS = {
 # Reduce server logs
 
 import logging
-logging.getLogger('django.server').setLevel(logging.ERROR)
+# logging.getLogger('django.server').setLevel(logging.ERROR)
 
