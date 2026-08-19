@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Assessment Report</title>
+
+<style>
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    margin:30px;
+    color:#000;
+    background:#fff;
+    font-size:14px;
+}
+
+.container{
+    width:100%;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:5px;
+}
+
+h2{
+    text-align:center;
+    margin-top:0;
+    margin-bottom:25px;
+    font-size:20px;
+}
+
+.summary-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:25px;
+}
+
+.summary-table td{
+    border:1px solid #555;
+    padding:8px;
+}
+
+.summary-table td.label{
+    background:#efefef;
+    font-weight:bold;
+    width:20%;
+}
+
+.results-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+.results-table th{
+    background:#333;
+    color:white;
+    border:1px solid #000;
+    padding:8px;
+    text-align:center;
+}
+
+.results-table td{
+    border:1px solid #000;
+    padding:8px;
+}
+
+.center{
+    text-align:center;
+}
+
+.left{
+    text-align:left;
+}
+
+.bold{
+    font-weight:bold;
+}
+
+.summary-box{
+
+    margin-top:30px;
+    width:45%;
+}
+
+.summary-box table{
+
+    width:100%;
+    border-collapse:collapse;
+}
+
+.summary-box td{
+
+    border:1px solid #444;
+    padding:8px;
+}
+
+.summary-box td:first-child{
+
+    background:#efefef;
+    font-weight:bold;
+}
+
+.print-btn{
+
+    margin-bottom:20px;
+    padding:10px 20px;
+    cursor:pointer;
+    font-size:15px;
+}
+
+@media print{
+
+    .print-btn{
+
+        display:none;
+    }
+
+    body{
+
+        margin:0;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<button
+class="print-btn"
+onclick="window.print();">
+Print Report
+</button>
+
+<h1>JH CLASSES</h1>
+
+<h2>Assessment Report</h2>
+
+<table class="summary-table">
+
+<tr>
+
+<td class="label">
+Assessment Name
+</td>
+
+<td>
+{{ assessment_subject.assessment.assessment_name }}
+</td>
+
+<td class="label">
+Assessment Type
+</td>
+
+<td>
+{{ assessment_subject.assessment.assessment_type }}
+</td>
+
+</tr>
+
+<tr>
+
+<td class="label">
+Subject
+</td>
+
+<td>
+{{ assessment_subject.subject.name }}
+</td>
+
+<td class="label">
+Batch
+</td>
+
+<td>
+{{ assessment_subject.assessment.batch }}
+</td>
+
+</tr>
+
+<tr>
+
+<td class="label">
+Academic Session
+</td>
+
+<td>
+{{ assessment_subject.assessment.academic_session }}
+</td>
+
+<td class="label">
+Assessment Date
+</td>
+
+<td>
+{{ assessment_subject.assessment.assessment_date }}
+</td>
+
+</tr>
+
+<tr>
+
+<td class="label">
+Chapter Covered
+</td>
+
+<td>
+{{ assessment_subject.chapter_covered }}
+</td>
+
+<td class="label">
+Duration
+</td>
+
+<td>
+{{ assessment_subject.duration_minutes }} Minutes
+</td>
+
+</tr>
+
+<tr>
+
+<td class="label">
+Maximum Marks
+</td>
+
+<td>
+{{ assessment_subject.maximum_marks }}
+</td>
+
+<td class="label">
+Report Generated
+</td>
+
+<td>
+{{ generated_on|date:"d M Y H:i" }}
+</td>
+
+</tr>
+
+</table>
+
+<table class="results-table">
+
+<thead>
+
+<tr>
+
+<th width="8%">
+Rank
+</th>
+
+<th width="15%">
+Student ID
+</th>
+
+<th>
+Student Name
+</th>
+
+<th width="15%">
+Marks Obtained
+</th>
+
+<th width="15%">
+Maximum Marks
+</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+{% for row in rows %}
+
+<tr>
+
+    <td class="center">
+        {{ row.rank }}
+    </td>
+
+    <td class="center">
+        {{ row.student_id }}
+    </td>
+
+    <td class="left">
+        {{ row.student_name }}
+    </td>
+
+    <td class="center bold">
+        {{ row.marks_obtained }}
+    </td>
+
+    <td class="center">
+        {{ row.maximum_marks }}
+    </td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+
+    <td colspan="5" class="center">
+        No records found.
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+
+<div class="summary-box">
+
+<table>
+
+<tr>
+
+    <td>
+        Total Students
+    </td>
+
+    <td class="center">
+        {{ total_students }}
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>
+        Present
+    </td>
+
+    <td class="center">
+        {{ present }}
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>
+        Absent
+    </td>
+
+    <td class="center">
+        {{ absent }}
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>
+        Highest Marks
+    </td>
+
+    <td class="center">
+        {{ highest }}
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>
+        Lowest Marks
+    </td>
+
+    <td class="center">
+        {{ lowest }}
+    </td>
+
+</tr>
+
+<tr>
+
+    <td>
+        Average Marks
+    </td>
+
+    <td class="center">
+        {{ average }}
+    </td>
+
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

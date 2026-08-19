@@ -32,6 +32,7 @@ CSRF_COOKIE_SECURE = False
 
 # APPLICATIONS
 
+
 INSTALLED_APPS = [
     'jazzmin',
 
@@ -43,8 +44,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'students',
-]
+    'performance',
+    'questionbank',
 
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'api',
+]
 
 # MIDDLEWARE
 
@@ -129,7 +135,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # MEDIA FILES
@@ -145,12 +151,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # JAZZMIN ADMIN THEME
 
+# JAZZMIN ADMIN THEME
+
 JAZZMIN_SETTINGS = {
     "site_title": "JH CLASSES",
     "site_header": "JH CLASSES",
     "site_brand": "JH CLASSES",
-}
 
+    "hide_apps": ["auth"],
+
+    "hide_models": [
+        "auth.user",
+        "auth.group",
+    ],
+}
 
 # Reduce server logs
 

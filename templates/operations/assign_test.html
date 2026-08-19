@@ -1,0 +1,481 @@
+{% extends 'website/home.html' %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="mb-1 fw-bold">
+                Assign Test
+            </h2>
+
+            <div class="text-muted">
+                {{ exam.name }}
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- TEST INFORMATION -->
+    <!-- ================================================== -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+
+                    <div class="text-muted small">
+                        Batch
+                    </div>
+
+                    <div class="fw-semibold">
+                        {{ exam.batch }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="text-muted small">
+                        Topic
+                    </div>
+
+                    <div class="fw-semibold">
+                        {{ exam.topic }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="text-muted small">
+                        Total Marks
+                    </div>
+
+                    <div class="fw-semibold">
+                        {{ exam.total_marks }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================================== -->
+    <!-- ASSIGNMENT FORM -->
+    <!-- ================================================== -->
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body">
+
+                <h5 class="fw-bold mb-4">
+                    Assign To
+                </h5>
+
+
+                <!-- ================================================== -->
+                <!-- ASSIGNMENT MODE -->
+                <!-- ================================================== -->
+
+                <div class="mb-4">
+
+                    <label class="form-label fw-semibold">
+                        Assignment Mode
+                    </label>
+
+
+                    <div class="row g-3">
+
+
+                        <!-- ENTIRE BATCH -->
+
+                        <div class="col-md-4">
+
+                            <div class="form-check border rounded p-3">
+
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="assignment_mode"
+                                    value="batch"
+                                    id="assign_batch"
+                                    checked
+                                >
+
+                                <label
+                                    class="form-check-label fw-semibold"
+                                    for="assign_batch"
+                                >
+                                    Entire Batch
+                                </label>
+
+                                <div class="small text-muted mt-1">
+                                    Assign this test to all active students in the batch.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- SELECTED STUDENTS -->
+
+                        <div class="col-md-4">
+
+                            <div class="form-check border rounded p-3">
+
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="assignment_mode"
+                                    value="selected"
+                                    id="assign_selected"
+                                >
+
+                                <label
+                                    class="form-check-label fw-semibold"
+                                    for="assign_selected"
+                                >
+                                    Selected Students
+                                </label>
+
+                                <div class="small text-muted mt-1">
+                                    Select multiple students from the batch.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- INDIVIDUAL STUDENT -->
+
+                        <div class="col-md-4">
+
+                            <div class="form-check border rounded p-3">
+
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="assignment_mode"
+                                    value="individual"
+                                    id="assign_individual"
+                                >
+
+                                <label
+                                    class="form-check-label fw-semibold"
+                                    for="assign_individual"
+                                >
+                                    Individual Student
+                                </label>
+
+                                <div class="small text-muted mt-1">
+                                    Assign this test to one student.
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================== -->
+                <!-- STUDENT SELECTION -->
+                <!-- ================================================== -->
+
+                <div class="mb-3">
+
+                    <label class="form-label fw-semibold">
+                        Students
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="studentSearch"
+                        class="form-control mb-3"
+                        placeholder="Search student by name or ID..."
+                    >
+
+
+                    <div
+                        class="border rounded"
+                        style="max-height: 350px; overflow-y: auto;"
+                    >
+
+                        {% for student in students %}
+
+                        <div
+                            class="student-row border-bottom p-3"
+                            data-name="{{ student.student_name|lower }}"
+                            data-id="{{ student.student_id|lower }}"
+                        >
+
+                            <div class="form-check">
+
+                                <input
+                                    class="form-check-input student-checkbox"
+                                    type="checkbox"
+                                    name="students"
+                                    value="{{ student.id }}"
+                                    id="student_{{ student.id }}"
+                                >
+
+                                <label
+                                    class="form-check-label"
+                                    for="student_{{ student.id }}"
+                                >
+
+                                    <span class="fw-semibold">
+                                        {{ student.student_name }}
+                                    </span>
+
+                                    {% if student.student_id %}
+
+                                        <span class="text-muted">
+                                            — {{ student.student_id }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+                        {% empty %}
+
+                        <div class="text-center text-muted py-4">
+                            No active students found.
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================== -->
+                <!-- SELECT ALL -->
+                <!-- ================================================== -->
+
+                <div class="d-flex align-items-center gap-3 mb-4">
+
+                    <button
+                        type="button"
+                        id="selectAllStudents"
+                        class="btn btn-sm btn-outline-primary"
+                    >
+                        Select All
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="clearAllStudents"
+                        class="btn btn-sm btn-outline-secondary"
+                    >
+                        Clear All
+                    </button>
+
+
+                    <span
+                        id="selectedCount"
+                        class="text-muted"
+                    >
+                        0 students selected
+                    </span>
+
+                </div>
+
+
+                <!-- ================================================== -->
+                <!-- ACTIONS -->
+                <!-- ================================================== -->
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a
+                        href="{% url 'exam_library' %}"
+                        class="btn btn-secondary"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Assign Test
+                    </button>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- ================================================== -->
+<!-- JAVASCRIPT -->
+<!-- ================================================== -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput =
+        document.getElementById("studentSearch");
+
+    const rows =
+        document.querySelectorAll(".student-row");
+
+    const checkboxes =
+        document.querySelectorAll(".student-checkbox");
+
+    const selectAllButton =
+        document.getElementById("selectAllStudents");
+
+    const clearAllButton =
+        document.getElementById("clearAllStudents");
+
+    const selectedCount =
+        document.getElementById("selectedCount");
+
+
+    function updateCount() {
+
+        const count =
+            document.querySelectorAll(
+                ".student-checkbox:checked"
+            ).length;
+
+        selectedCount.textContent =
+            count + " students selected";
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        function () {
+
+            const search =
+                this.value.toLowerCase().trim();
+
+
+            rows.forEach(function (row) {
+
+                const name =
+                    row.dataset.name || "";
+
+                const id =
+                    row.dataset.id || "";
+
+
+                if (
+                    name.includes(search) ||
+                    id.includes(search)
+                ) {
+
+                    row.style.display = "";
+
+                } else {
+
+                    row.style.display = "none";
+
+                }
+
+            });
+
+        }
+    );
+
+
+    checkboxes.forEach(function (checkbox) {
+
+        checkbox.addEventListener(
+            "change",
+            updateCount
+        );
+
+    });
+
+
+    selectAllButton.addEventListener(
+        "click",
+        function () {
+
+            checkboxes.forEach(function (checkbox) {
+
+                if (
+                    checkbox.closest(".student-row")
+                    .style.display !== "none"
+                ) {
+
+                    checkbox.checked = true;
+
+                }
+
+            });
+
+            updateCount();
+
+        }
+    );
+
+
+    clearAllButton.addEventListener(
+        "click",
+        function () {
+
+            checkboxes.forEach(function (checkbox) {
+
+                checkbox.checked = false;
+
+            });
+
+            updateCount();
+
+        }
+    );
+
+
+    updateCount();
+
+});
+
+</script>
+
+{% endblock %}

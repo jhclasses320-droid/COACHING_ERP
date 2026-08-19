@@ -1,4 +1,3 @@
-
 <h2>{{ exam.name }}</h2>
 
 <div style="display:flex">
@@ -16,24 +15,75 @@
 
 <p><b>Q{{ forloop.counter }}.</b> {{ q.question.question_text }}</p>
 
-<label>
+<!-- QUESTION IMAGE -->
+
+	<p>
+		<strong>Question ID:</strong> {{ q.question.id }}
+	</p>
+
+	<p>
+		<strong>Mode:</strong> {{ q.question.question_mode }}
+	</p>
+
+	<p>
+		<strong>Image Path:</strong> {{ q.question.question_image }}
+	</p>
+
+	{% if q.question.question_image %}
+	<img src="{{ q.question.question_image.url }}" width="350">
+		{% else %}
+		<p style="color:red;">No image found for this question.</p>
+		{% endif %}
+
+		<label>
 <input type="radio" name="q{{ q.question.id }}" value="A">
+
 {{ q.question.option_a_text }}
-</label><br>
+
+{% if q.question.option_a_image %}
+<br>
+<img src="{{ q.question.option_a_image.url }}" width="200">
+{% endif %}
+
+</label><br><br>
+
 
 <label>
 <input type="radio" name="q{{ q.question.id }}" value="B">
+
 {{ q.question.option_b_text }}
-</label><br>
+
+{% if q.question.option_b_image %}
+<br>
+<img src="{{ q.question.option_b_image.url }}" width="200">
+{% endif %}
+
+</label><br><br>
+
 
 <label>
 <input type="radio" name="q{{ q.question.id }}" value="C">
+
 {{ q.question.option_c_text }}
-</label><br>
+
+{% if q.question.option_c_image %}
+<br>
+<img src="{{ q.question.option_c_image.url }}" width="200">
+{% endif %}
+
+</label><br><br>
+
 
 <label>
 <input type="radio" name="q{{ q.question.id }}" value="D">
+
 {{ q.question.option_d_text }}
+
+{% if q.question.option_d_image %}
+<br>
+<img src="{{ q.question.option_d_image.url }}" width="200">
+{% endif %}
+
 </label>
 
 <hr>

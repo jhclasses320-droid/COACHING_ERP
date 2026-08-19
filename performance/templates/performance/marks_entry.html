@@ -1,0 +1,270 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}
+Marks Entry | JH CLASSES
+{% endblock %}
+
+{% block extrastyle %}
+<style>
+    /* Hide Django/Jazzmin navigation on Marks Entry */
+    #jazzy-sidebar,
+    .main-sidebar {
+        display: none !important;
+    }
+
+    /* Expand content after hiding sidebar */
+    .content-wrapper,
+    .main-footer,
+    .main-header {
+        margin-left: 0 !important;
+    }
+
+    /* Hide Django user/navigation area */
+    .user-panel,
+    .navbar-nav {
+        display: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+
+<div id="content-main">
+
+    <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+
+    <h3 class="card-title mb-0">
+        Marks Entry
+    </h3>
+
+    <a href="/staff-dashboard/" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i>
+        Back to ERP Dashboard
+    </a>
+
+</div>
+
+        <div class="card-body">
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- ============================= -->
+            <!-- SELECT ASSESSMENT -->
+            <!-- ============================= -->
+
+            <form method="get">
+
+                <div class="form-group">
+
+                    <label>
+                        <strong>Select Assessment / Subject</strong>
+                    </label>
+
+                    <select
+                        name="assessment_subject"
+                        class="form-control"
+                        required
+                    >
+
+                        <option value="">
+                            Select Assessment / Subject
+                        </option>
+
+                        {% for item in assessment_subjects %}
+
+                            <option
+                                value="{{ item.id }}"
+                                {% if selected_subject and selected_subject.id == item.id %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ item.assessment.assessment_name }}
+                                -
+                                {{ item.subject.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Load Students
+                </button>
+
+            </form>
+
+            {% if selected_subject %}
+
+                <hr>
+
+                <h4>
+                    {{ selected_subject.assessment.assessment_name }}
+                </h4>
+
+                <div class="row mb-3">
+
+                    <div class="col-md-4">
+                        <strong>Subject :</strong>
+                        {{ selected_subject.subject.name }}
+                    </div>
+
+                    <div class="col-md-4">
+                        <strong>Batch :</strong>
+                        {{ selected_subject.assessment.batch }}
+                    </div>
+
+                    <div class="col-md-4">
+                        <strong>Maximum Marks :</strong>
+                        {{ selected_subject.maximum_marks }}
+                    </div>
+
+                </div>
+
+                <!-- ============================= -->
+                <!-- MARKS ENTRY -->
+                <!-- ============================= -->
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="assessment_subject"
+                        value="{{ selected_subject.id }}"
+                    >
+
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered table-striped">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th width="50%">
+                                        Student Name
+                                    </th>
+
+                                    <th width="30%">
+                                        Marks Scored
+                                    </th>
+
+                                    <th width="20%">
+                                        Absent
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {% for student in students %}
+
+                                    <tr>
+
+                                        <td>
+                                            {{ student.student_name }}
+                                        </td>
+
+                                        <td>
+
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                max="{{ selected_subject.maximum_marks }}"
+                                                name="marks_{{ student.id }}"
+                                                class="form-control"
+                                                style="max-width:150px;"
+
+                                                {% if student.saved_mark %}
+                                                    value="{{ student.saved_mark.marks_scored }}"
+                                                {% endif %}
+                                            >
+
+                                        </td>
+
+                                        <td class="text-center">
+
+                                            <input
+                                                type="checkbox"
+                                                name="absent_{{ student.id }}"
+
+                                                {% if student.saved_mark and student.saved_mark.is_absent %}
+                                                    checked
+                                                {% endif %}
+                                            >
+
+                                        </td>
+
+                                    </tr>
+
+                                {% empty %}
+
+                                    <tr>
+
+                                        <td colspan="3">
+                                            No active students found.
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% if students %}
+
+                        <div class="mt-3">
+
+                            <button
+                                type="submit"
+                                class="btn btn-success"
+                            >
+                                Save All Marks
+                            </button>
+
+                            <a
+                                href="{% url 'assessment_report' selected_subject.id %}"
+                                class="btn btn-primary ml-2"
+                                target="_blank"
+                            >
+                                📊 View Assessment Report
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+                </form>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}  
+

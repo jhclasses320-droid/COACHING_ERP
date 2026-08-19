@@ -1,0 +1,64 @@
+{% extends 'website/home.html' %}
+
+{% block title %}Performance Reports{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Performance Reports</h2>
+            <p class="text-muted mb-0">Student assessment and performance reports</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-person-lines-fill fs-1 text-primary"></i>
+                    <h5 class="mt-3">Student Performance Report</h5>
+                    <p class="text-muted">View detailed report card for an individual student.</p>
+                    <a href="/performance/reports/student/" class="btn btn-primary">Open</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-people fs-1 text-success"></i>
+                    <h5 class="mt-3">Parent / Combined Report</h5>
+                    <p class="text-muted">Generate combined subject performance reports for parents.</p>
+                    <a href="/performance/reports/parent/" class="btn btn-success">Open</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-bar-chart-line fs-1 text-warning"></i>
+                    <h5 class="mt-3">Subject Analysis</h5>
+                    <p class="text-muted">Compare student performance subject-wise.</p>
+                    <a href="/performance/reports/subject/" class="btn btn-warning">Open</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-graph-up-arrow fs-1 text-danger"></i>
+                    <h5 class="mt-3">Batch Performance</h5>
+                    <p class="text-muted">View batch-wise assessment performance summary.</p>
+                    <a href="/performance/reports/batch/" class="btn btn-danger">Open</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

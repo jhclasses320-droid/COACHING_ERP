@@ -83,9 +83,25 @@
     font-size: 24px;
 }
 
+/* MARKS ENTRY ALIGNMENT */
+.marks-entry-row th {
+    font-weight: normal !important;
+}
+
+.marks-entry-open {
+    display: inline-block;
+    background: #17a2b8;
+    color: #000 !important;
+    padding: 8px 14px;
+    border-radius: 4px;
+    text-decoration: none !important;
+    line-height: 1.2;
+}
+
 </style>
 
 {% endblock %}
+
 
 {% block content %}
 
@@ -100,6 +116,7 @@
     <h1 class="mask-value" data-value="{{ total_students }}">****</h1>
 </a>
 
+
 <!-- TOTAL FEES -->
 
 <a href="/admin/students/feepayment/" class="dashboard-card blue">
@@ -107,16 +124,20 @@
     <h1 class="mask-value" data-value="₹ {{ total_fees }}">****</h1>
 </a>
 
+
 <!-- PENDING FEES -->
 
 <div class="dashboard-card red">
     <h3>Pending Fees</h3>
     <h1 class="mask-value" data-value="₹ {{ pending_fees }}">****</h1>
 
-    <a href="/admin/students/student/" class="whatsapp-btn" style="display:inline-block;margin-top:10px;">
+    <a href="/admin/students/student/"
+       class="whatsapp-btn"
+       style="display:inline-block;margin-top:10px;">
         📲 Send Reminder
     </a>
 </div>
+
 
 <!-- REPORTS -->
 
@@ -124,6 +145,7 @@
     <h3>📊 Reports</h3>
     <h1>Open</h1>
 </a>
+
 
 <!-- ATTENDANCE -->
 
@@ -134,94 +156,166 @@
 
 </div>
 
+
 <!-- BIRTHDAY SECTION -->
 
 <div class="birthday-card">
+
     <h3>🎂 Today's Birthdays</h3>
 
-{% if birthday_students %}
-{% for student in birthday_students %}
+    {% if birthday_students %}
 
-<div class="birthday-student">
+        {% for student in birthday_students %}
 
-    <div class="birthday-left">
-        {% if student.student_photo %}
-            <img src="{{ student.student_photo.url }}">
-        {% endif %}
-        <div>
-            <strong>{{ student.student_name }}</strong><br>
-            <small>{{ student.date_of_birth }}</small>
+        <div class="birthday-student">
+
+            <div class="birthday-left">
+
+                {% if student.student_photo %}
+                    <img src="{{ student.student_photo.url }}">
+                {% endif %}
+
+                <div>
+                    <strong>{{ student.student_name }}</strong><br>
+                    <small>{{ student.date_of_birth }}</small>
+                </div>
+
+            </div>
+
+            {% if student.student_mobile %}
+
+                <a href="https://wa.me/91{{ student.student_mobile }}?text=Happy%20Birthday%20{{ student.student_name }}%20🎉"
+                   target="_blank"
+                   class="whatsapp-btn">
+                    🎂 Wish
+                </a>
+
+            {% endif %}
+
         </div>
-    </div>
 
-    {% if student.student_mobile %}
-        <a href="https://wa.me/91{{ student.student_mobile }}?text=Happy%20Birthday%20{{ student.student_name }}%20🎉"
-           target="_blank"
-           class="whatsapp-btn">
-            🎂 Wish
-        </a>
+        {% endfor %}
+
+    {% else %}
+
+        <p>No birthdays today</p>
+
     {% endif %}
 
 </div>
 
-{% endfor %}
-{% else %}
-<p>No birthdays today</p>
 {% endif %}
 
-</div>
-
-{% endif %}
 
 {{ block.super }}
+
 
 <script>
 
 document.addEventListener("DOMContentLoaded", function(){
 
+    /* MASK / UNMASK VALUES */
+
     document.querySelectorAll(".mask-value").forEach(function(el){
 
         el.addEventListener("click", function(e){
 
-            let parentLink = this.closest("a")
+            let parentLink = this.closest("a");
 
-            // Special behaviour only for Total Fees
-            if(parentLink && parentLink.getAttribute("href") === "/admin/students/feepayment/"){
+            if(
+                parentLink &&
+                parentLink.getAttribute("href") === "/admin/students/feepayment/"
+            ){
 
                 if(this.innerText === "****"){
-                    e.preventDefault()
-                    this.innerText = this.dataset.value
-                    parentLink.dataset.revealed = "true"
+
+                    e.preventDefault();
+
+                    this.innerText = this.dataset.value;
+
+                    parentLink.dataset.revealed = "true";
+
                 }
+
                 else if(parentLink.dataset.revealed === "true"){
-                    window.location.href = "/admin/students/student/"
+
+                    window.location.href = "/admin/students/student/";
+
                 }
 
             }
 
-            // Normal behaviour for other cards
             else{
 
                 if(this.innerText === "****"){
-                    this.innerText = this.dataset.value
-                } else {
-                    this.innerText = "****"
+
+                    this.innerText = this.dataset.value;
+
+                }
+
+                else{
+
+                    this.innerText = "****";
+
                 }
 
             }
 
-        })
+        });
 
-    })
+    });
 
-})
+
+    /* ADD MARKS ENTRY INSIDE PERFORMANCE BOX */
+
+    let headings = document.querySelectorAll("h1, h2, h3, h4, h5");
+
+    headings.forEach(function(heading){
+
+        if(heading.textContent.trim() === "Performance"){
+
+            let performanceCard = heading.closest(".card");
+
+            if(performanceCard){
+
+                let tableBody = performanceCard.querySelector("tbody");
+
+                if(tableBody && !tableBody.querySelector(".marks-entry-row")){
+
+                    let row = document.createElement("tr");
+
+                    row.className = "marks-entry-row";
+
+                    row.innerHTML = `
+                        <th scope="row">
+                            <a href="/performance/marks-entry/">
+                                Marks Entry
+                            </a>
+                        </th>
+
+                        <td>
+                        </td>
+
+                        <td>
+                            <a href="/performance/marks-entry/"
+                               class="marks-entry-open">
+                                Open
+                            </a>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+
+                }
+
+            }
+
+        }
+
+    });
+
+});
 
 </script>
 
 {% endblock %}
-
-
-
-
-
-

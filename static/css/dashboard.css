@@ -1,0 +1,610 @@
+/* ==========================================================
+   JH CLASSES ERP
+   DASHBOARD STYLES
+   ========================================================== */
+
+
+/* ==========================================================
+   PAGE HEADER
+   ========================================================== */
+
+.erp-content .page-title {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #172033;
+}
+
+.erp-content .page-title + p {
+    font-size: 15px;
+    color: #6b7280 !important;
+}
+
+
+/* ==========================================================
+   SUMMARY CARDS
+   ========================================================== */
+
+.erp-content .row.g-4.mb-4 > .col-lg-3 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+}
+
+.erp-content .row.g-4.mb-4 > .col-lg-3 .card {
+    min-height: 205px;
+    border-radius: 16px;
+    background: #ffffff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.erp-content .row.g-4.mb-4 > .col-lg-3 .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.erp-content .row.g-4.mb-4 .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.erp-content .row.g-4.mb-4 .card-body > i {
+    font-size: 38px !important;
+    margin-bottom: 6px;
+}
+
+.erp-content .row.g-4.mb-4 h2 {
+    font-size: 34px;
+    line-height: 1;
+    margin-top: 10px !important;
+    margin-bottom: 8px;
+    color: #172033;
+}
+
+.erp-content .row.g-4.mb-4 p {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
+/* ==========================================================
+   GENERAL DASHBOARD CARDS
+   ========================================================== */
+
+.erp-content .card-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.erp-content .card-header h5 {
+    font-size: 19px;
+    font-weight: 600;
+    color: #172033;
+}
+
+.erp-content .card-body {
+    padding: 22px;
+}
+
+
+/* ==========================================================
+   QUICK ACTIONS
+   ========================================================== */
+
+.erp-content > .card.mb-4 .row.g-3 {
+    display: flex;
+    align-items: stretch;
+    gap: 16px;
+}
+
+.erp-content > .card.mb-4 .row.g-3 > div {
+    flex: 0 0 300px;
+    max-width: 300px;
+}
+
+.erp-content > .card.mb-4 .row.g-3 .btn {
+    width: 100%;
+    min-height: 105px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.erp-content > .card.mb-4 .row.g-3 .btn i {
+    margin-bottom: 8px;
+}
+
+.erp-content > .card.mb-4 .row.g-3 .btn:hover {
+    transform: translateY(-3px);
+}
+
+
+/* Enter Marks */
+
+.erp-content .btn-info {
+    background: #16b9d4;
+    border-color: #16b9d4;
+}
+
+
+/* Question Bank */
+
+.erp-content .btn-dark {
+    background: #20252a;
+    border-color: #20252a;
+}
+
+
+/* ==========================================================
+   RECENT QUESTIONS
+   ========================================================== */
+
+.erp-content .table-responsive {
+    border-radius: 0 0 14px 14px;
+}
+
+.erp-content table {
+    margin-bottom: 0;
+}
+
+.erp-content table thead th {
+    font-size: 13px;
+    font-weight: 700;
+    color: #172033;
+    padding: 13px 16px;
+    white-space: nowrap;
+}
+
+.erp-content table tbody td {
+    padding: 14px 16px;
+    font-size: 14px;
+    color: #374151;
+    border-color: #edf0f3;
+}
+
+.erp-content table tbody tr {
+    transition: background 0.15s ease;
+}
+
+.erp-content table tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* ==========================================================
+   TABLE ACTION BUTTONS
+   ========================================================== */
+
+.erp-content table .btn {
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 11px;
+}
+
+.erp-content table .btn-info {
+    color: #ffffff;
+}
+
+
+/* ==========================================================
+   NEW QUESTION BUTTON
+   ========================================================== */
+
+.erp-content .btn-primary {
+    border-radius: 9px;
+    font-weight: 600;
+    padding: 10px 18px;
+    box-shadow: 0 3px 8px rgba(13, 110, 253, 0.18);
+}
+
+.erp-content .btn-primary:hover {
+    transform: translateY(-1px);
+}
+
+
+/* ==========================================================
+   DASHBOARD CARD SPACING
+   ========================================================== */
+
+.erp-content .card {
+    overflow: hidden;
+}
+
+
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media (max-width: 992px) {
+
+    .erp-content .row.g-4.mb-4 > .col-lg-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .erp-content > .card.mb-4 .row.g-3 > div {
+        flex: 1 1 280px;
+        max-width: none;
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .erp-content .page-title {
+        font-size: 24px;
+    }
+
+    .erp-content .row.g-4.mb-4 > .col-lg-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .erp-content .row.g-4.mb-4 > .col-lg-3 .card {
+        min-height: 175px;
+    }
+
+    .erp-content .card-body {
+        padding: 18px;
+    }
+
+}
+/* ==========================================================
+   QUICK ACTION BUTTON FIX
+   ========================================================== */
+
+.erp-content .card .row.g-3 > .col-lg-3 {
+    flex: 0 0 320px !important;
+    max-width: 320px !important;
+    width: 320px !important;
+}
+
+.erp-content .card .row.g-3 > .col-lg-3 .btn {
+    width: 100% !important;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    white-space: normal;
+}
+
+.erp-content .card .row.g-3 > .col-lg-3 .btn i {
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* ==========================================================
+   COLOURFUL QUICK ACTIONS
+   ========================================================== */
+
+.dashboard-quick-card {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.dashboard-quick-card .card-header {
+    padding: 18px 22px;
+}
+
+.dashboard-quick-card .card-header h5 {
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.dashboard-quick-actions {
+    align-items: stretch;
+}
+
+.dashboard-action {
+    min-height: 125px;
+    width: 100%;
+    padding: 18px 14px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    color: #ffffff !important;
+    text-align: center;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.dashboard-action:hover {
+    color: #ffffff !important;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-action i {
+    font-size: 30px;
+    margin-bottom: 9px;
+}
+
+.dashboard-action span {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.dashboard-action small {
+    margin-top: 5px;
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+
+/* BLUE */
+
+.action-blue {
+    background: #0d6efd;
+}
+
+
+/* PURPLE */
+
+.action-purple {
+    background: #6f42c1;
+}
+
+
+/* GREEN */
+
+.action-green {
+    background: #198754;
+}
+
+
+/* ORANGE */
+
+.action-orange {
+    background: #fd7e14;
+}
+
+
+/* RED */
+
+.action-red {
+    background: #dc3545;
+}
+
+
+/* ==========================================================
+   QUICK ACTION RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 1199px) {
+
+    .dashboard-action {
+        min-height: 115px;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .dashboard-action {
+        min-height: 105px;
+    }
+
+}
+/* ==========================================================
+   QUICK ACTION CARDS - FINAL VISUAL FIX
+   ========================================================== */
+
+.dashboard-quick-actions {
+    display: flex;
+    gap: 14px;
+}
+
+.dashboard-quick-actions > div {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.dashboard-quick-actions .dashboard-action {
+    display: flex !important;
+    width: 100% !important;
+    min-height: 125px !important;
+    padding: 18px 12px !important;
+
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border-radius: 14px !important;
+    border: none !important;
+
+    text-decoration: none !important;
+    text-align: center !important;
+
+    color: #ffffff !important;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+    transition: transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.dashboard-quick-actions .dashboard-action:hover {
+    color: #ffffff !important;
+    text-decoration: none !important;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-quick-actions .dashboard-action i {
+    display: block !important;
+    font-size: 30px !important;
+    margin-bottom: 8px !important;
+}
+
+.dashboard-quick-actions .dashboard-action span {
+    display: block !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+}
+
+.dashboard-quick-actions .dashboard-action small {
+    display: block !important;
+    margin-top: 5px !important;
+    font-size: 12px !important;
+    color: #ffffff !important;
+    opacity: 0.9;
+}
+
+
+/* COLOURS */
+
+.dashboard-quick-actions .action-blue {
+    background: #0d6efd !important;
+}
+
+.dashboard-quick-actions .action-purple {
+    background: #6f42c1 !important;
+}
+
+.dashboard-quick-actions .action-green {
+    background: #198754 !important;
+}
+
+.dashboard-quick-actions .action-orange {
+    background: #fd7e14 !important;
+}
+
+.dashboard-quick-actions .action-red {
+    background: #dc3545 !important;
+}
+
+
+/* ==========================================================
+   QUICK ACTION RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 1199px) {
+
+    .dashboard-quick-actions {
+        flex-wrap: wrap;
+    }
+
+    .dashboard-quick-actions > div {
+        flex: 1 1 30%;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .dashboard-quick-actions > div {
+        flex: 1 1 100%;
+    }
+
+}
+/* ==========================================================
+   FOUR WORKSPACE SUMMARY CARDS
+   ========================================================== */
+
+.dashboard-summary {
+    display: flex;
+    align-items: stretch;
+}
+
+.dashboard-summary > div {
+    flex: 0 0 25%;
+    max-width: 25%;
+}
+
+.dashboard-summary-card {
+    min-height: 255px !important;
+    border-radius: 16px !important;
+    background: #ffffff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.10);
+}
+
+.dashboard-summary-card .card-body {
+    padding: 24px 18px !important;
+}
+
+.dashboard-summary-icon {
+    font-size: 40px;
+    margin-bottom: 8px;
+}
+
+.dashboard-summary-number {
+    font-size: 34px !important;
+    font-weight: 700;
+    margin: 8px 0 !important;
+    color: #172033;
+}
+
+.dashboard-summary-title {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    margin-bottom: 3px !important;
+    color: #374151;
+}
+
+.dashboard-summary-subtitle {
+    font-size: 12px !important;
+    color: #6b7280 !important;
+    margin-bottom: 16px !important;
+}
+
+.dashboard-summary-button {
+    border-radius: 8px !important;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 14px !important;
+    color: #ffffff !important;
+}
+
+.dashboard-summary-button:hover {
+    color: #ffffff !important;
+}
+
+.dashboard-search-button {
+    background: #6f42c1 !important;
+    border-color: #6f42c1 !important;
+}
+
+.text-purple {
+    color: #6f42c1 !important;
+}
+
+
+/* ==========================================================
+   SUMMARY CARD RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 1199px) {
+
+    .dashboard-summary > div {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .dashboard-summary > div {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+}

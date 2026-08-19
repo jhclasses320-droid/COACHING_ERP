@@ -1,0 +1,332 @@
+{% extends 'website/home.html' %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0 fw-bold">Edit Test</h2>
+    </div>
+
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- ================================================== -->
+                <!-- TEST DETAILS -->
+                <!-- ================================================== -->
+
+                <h5 class="fw-bold mb-4">
+                    Test Details
+                </h5>
+
+
+                <div class="row g-3">
+
+
+                    <!-- TEST NAME -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Test Name
+                        </label>
+
+                        <input
+                            type="text"
+                            name="assessment_name"
+                            class="form-control"
+                            value="{{ assessment.assessment_name }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- TEST TYPE -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Test Type
+                        </label>
+
+                        <select
+                            name="assessment_type"
+                            class="form-select"
+                            required
+                        >
+
+                            {% for item in assessment_types %}
+
+                                <option
+                                    value="{{ item.id }}"
+                                    {% if assessment.assessment_type_id == item.id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ item.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- ACADEMIC SESSION -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Academic Session
+                        </label>
+
+                        <select
+                            name="academic_session"
+                            class="form-select"
+                            required
+                        >
+
+                            {% for value, label in academic_sessions %}
+
+                                <option
+                                    value="{{ value }}"
+                                    {% if assessment.academic_session == value %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ label }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- BATCH -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Batch
+                        </label>
+
+                        <select
+                            name="batch"
+                            class="form-select"
+                            required
+                        >
+
+                            {% for batch in batches %}
+
+                                <option
+                                    value="{{ batch.id }}"
+                                    {% if assessment.batch_id == batch.id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ batch }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- TEST DATE -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Test Date
+                        </label>
+
+                        <input
+                            type="date"
+                            name="assessment_date"
+                            class="form-control"
+                            value="{{ assessment.assessment_date|date:'Y-m-d' }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- SUBJECT -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Subject
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ assessment_subject.subject }}"
+                            readonly
+                        >
+
+                    </div>
+
+
+                    <!-- TOPIC -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Topic
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="{{ exam.topic }}"
+                            readonly
+                        >
+
+                    </div>
+
+
+                    <!-- CHAPTER COVERED -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Chapter(s) Covered
+                        </label>
+
+                        <input
+                            type="text"
+                            name="chapter_covered"
+                            class="form-control"
+                            value="{{ assessment_subject.chapter_covered }}"
+                        >
+
+                    </div>
+
+
+                    <!-- MAXIMUM MARKS -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-semibold">
+                            Maximum Marks
+                        </label>
+
+                        <input
+                            type="number"
+                            name="maximum_marks"
+                            class="form-control"
+                            min="1"
+                            value="{{ assessment_subject.maximum_marks }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- DURATION -->
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-semibold">
+                            Duration (Minutes)
+                        </label>
+
+                        <input
+                            type="number"
+                            name="duration_minutes"
+                            class="form-control"
+                            min="1"
+                            value="{{ assessment_subject.duration_minutes }}"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- ================================================== -->
+                    <!-- ONLINE EXAM TIMING -->
+                    <!-- ================================================== -->
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Start Date &amp; Time
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            name="start_time"
+                            class="form-control"
+                            value="{{ exam.start_time|date:'Y-m-d\\TH:i' }}"
+                        >
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            End Date &amp; Time
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            name="end_time"
+                            class="form-control"
+                            value="{{ exam.end_time|date:'Y-m-d\\TH:i' }}"
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- ================================================== -->
+                <!-- ACTIONS -->
+                <!-- ================================================== -->
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+
+                    <a
+                        href="{% url 'exam_library' %}"
+                        class="btn btn-secondary"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Save Changes
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

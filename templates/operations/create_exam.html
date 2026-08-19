@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Exam</title>
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f5f5f5;
+        }
+        .card{
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 700px;
+        }
+        input, select{
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        button{
+            background: #0d6efd;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        h2{
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class='card'>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <h2 style="margin:0;">Create Exam</h2>
+
+    <a href="/staff-dashboard/"
+       style="padding:8px 14px;background:#0d6efd;color:white;text-decoration:none;border-radius:6px;">
+        ← Back to Dashboard
+    </a>
+</div>
+
+    <form method='post'>
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type='submit'>Save Exam</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>

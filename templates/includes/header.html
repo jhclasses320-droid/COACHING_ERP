@@ -1,0 +1,116 @@
+<header class="erp-header">
+
+    <div class="erp-header-left">
+
+        <!-- Sidebar Toggle -->
+        <button class="btn btn-link header-icon d-lg-none"
+                id="sidebarToggle"
+                title="Toggle Menu">
+
+            <i class="bi bi-list"></i>
+
+        </button>
+
+        <!-- Logo -->
+        <div class="erp-brand">
+
+            <div class="erp-brand-title">
+                JH Classes
+            </div>
+
+            <div class="erp-brand-subtitle">
+                Operations Portal
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= SEARCH ================= -->
+
+    <div class="erp-header-center">
+
+        <div class="erp-search">
+
+            <i class="bi bi-search"></i>
+
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Search anything...">
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= RIGHT ================= -->
+
+    <div class="erp-header-right">
+
+        <!-- Notifications -->
+
+        <button class="btn header-icon position-relative"
+                title="Notifications">
+
+            <i class="bi bi-bell"></i>
+
+            <span class="badge bg-danger rounded-pill notification-badge">
+                3
+            </span>
+
+        </button>
+
+
+        <!-- Help -->
+
+        <button class="btn header-icon"
+                title="Help">
+
+            <i class="bi bi-question-circle"></i>
+
+        </button>
+
+
+        <!-- Settings -->
+
+        <button class="btn header-icon"
+                title="Settings">
+
+            <i class="bi bi-gear"></i>
+
+        </button>
+
+
+        <!-- User -->
+
+        <div class="erp-user">
+
+            <div class="erp-user-avatar">
+
+                <i class="bi bi-person-circle"></i>
+
+            </div>
+
+            <div class="erp-user-info">
+
+                <div class="erp-user-name">
+
+                    {{ request.user.username|default:"Administrator" }}
+
+                </div>
+
+                <div class="erp-user-role">
+
+                    Operations
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>

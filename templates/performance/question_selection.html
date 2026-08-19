@@ -1,0 +1,859 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Question Selection - JH Classes</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #172b4d;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .header,
+        .filter-box,
+        .selection-header,
+        .questions-container,
+        .actions {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .header {
+            padding: 22px 25px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0 0 15px;
+            font-size: 25px;
+            color: #123c70;
+        }
+
+        .exam-info {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .info-box {
+            background: #f5f8fc;
+            border: 1px solid #dbe3ef;
+            border-radius: 7px;
+            padding: 12px 15px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #65758b;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #172b4d;
+        }
+
+        /* FILTERS */
+
+        .filter-box {
+            padding: 18px 22px;
+            margin-bottom: 18px;
+        }
+
+        .filter-title {
+            margin: 0 0 15px;
+            font-size: 19px;
+            color: #123c70;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #52657d;
+            margin-bottom: 5px;
+        }
+
+        .field select,
+        .field input {
+            height: 39px;
+            padding: 0 9px;
+            border: 1px solid #ccd6e2;
+            border-radius: 6px;
+            background: white;
+            font-size: 13px;
+            color: #172b4d;
+        }
+
+        .search-field {
+            grid-column: span 2;
+        }
+
+        .filter-buttons {
+            margin-top: 14px;
+            display: flex;
+            gap: 8px;
+        }
+
+        /* SELECTION HEADER */
+
+        .selection-header {
+            padding: 18px 22px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .selection-header h2 {
+            margin: 0;
+            font-size: 20px;
+            color: #123c70;
+        }
+
+        .count-area {
+            display: flex;
+            gap: 8px;
+        }
+
+        .count-box,
+        .marks-box {
+            font-weight: bold;
+            padding: 9px 13px;
+            border-radius: 6px;
+        }
+
+        .count-box {
+            background: #e9f2ff;
+            color: #1261c9;
+        }
+
+        .marks-box {
+            background: #fff5d9;
+            color: #8a6500;
+        }
+
+        /* BUTTONS */
+
+        .btn,
+        .tool-btn {
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .btn {
+            border: none;
+            padding: 12px 25px;
+            font-size: 15px;
+        }
+
+        .btn-search,
+        .btn-save {
+            background: #126df5;
+            color: white;
+        }
+
+        .btn-search:hover,
+        .btn-save:hover {
+            background: #0759d1;
+        }
+
+        .btn-clear {
+            background: #e9edf2;
+            color: #172b4d;
+        }
+
+        .select-tools {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tool-btn {
+            border: 1px solid #cbd5e1;
+            background: white;
+            color: #29415f;
+            padding: 8px 13px;
+            font-size: 13px;
+        }
+
+        /* QUESTIONS */
+
+        .questions-container {
+            overflow: hidden;
+        }
+
+        .question-row {
+            display: flex;
+            gap: 15px;
+            padding: 18px 22px;
+            border-bottom: 1px solid #e5eaf0;
+            align-items: flex-start;
+        }
+
+        .question-row:last-child {
+            border-bottom: none;
+        }
+
+        .question-row:hover {
+            background: #f8fbff;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            margin-top: 3px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .question-content {
+            flex: 1;
+        }
+
+        .question-number {
+            font-weight: bold;
+            color: #123c70;
+            margin-bottom: 7px;
+        }
+
+        .question-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #26374d;
+            white-space: pre-wrap;
+        }
+
+        .question-meta {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: #f0f3f7;
+            border: 1px solid #dce3eb;
+            color: #53657a;
+            padding: 4px 9px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .empty {
+            padding: 50px 20px;
+            text-align: center;
+            color: #718096;
+        }
+
+        .empty h3 {
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+
+        /* ACTIONS */
+
+        .actions {
+            margin-top: 20px;
+            padding: 18px 22px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        @media (max-width: 800px) {
+
+            .exam-info,
+            .filter-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .selection-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+        }
+
+        @media (max-width: 500px) {
+
+            .exam-info,
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-field {
+                grid-column: span 1;
+            }
+
+            .count-area {
+                flex-wrap: wrap;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- ===================================================== -->
+    <!-- EXAM DETAILS -->
+    <!-- ===================================================== -->
+
+    <div class="header">
+
+        <h1>Question Selection</h1>
+
+        <div class="exam-info">
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Exam Name
+                </div>
+
+                <div class="info-value">
+                    {{ exam.name }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Class / Batch
+                </div>
+
+                <div class="info-value">
+                    {{ exam.batch }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Subject
+                </div>
+
+                <div class="info-value">
+                    {{ exam.topic.subject }}
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Topic
+                </div>
+
+                <div class="info-value">
+                    {{ exam.topic }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- FILTERS -->
+    <!-- ===================================================== -->
+
+    <form method="GET">
+
+        <div class="filter-box">
+
+            <h2 class="filter-title">
+                Question Filters
+            </h2>
+
+           <div class="filter-grid">
+
+    <div class="field">
+
+        <label>
+            Difficulty
+        </label>
+
+        <select name="difficulty">
+
+            <option value="">
+                All Difficulties
+            </option>
+
+            {% for value, label in difficulty_choices %}
+
+                <option
+                    value="{{ value }}"
+                    {% if selected_difficulty == value %}selected{% endif %}
+                >
+                    {{ label }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            Question Type
+        </label>
+
+        <select name="question_type">
+
+            <option value="">
+                All Question Types
+            </option>
+
+            {% for value, label in question_type_choices %}
+
+                <option
+                    value="{{ value }}"
+                    {% if selected_question_type == value %}selected{% endif %}
+                >
+                    {{ label }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            Question Mode
+        </label>
+
+        <select name="question_mode">
+
+            <option value="">
+                All Modes
+            </option>
+
+            {% for value, label in question_mode_choices %}
+
+                <option
+                    value="{{ value }}"
+                    {% if selected_question_mode == value %}selected{% endif %}
+                >
+                    {{ label }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            Marks
+        </label>
+
+        <input
+            type="number"
+            name="marks"
+            min="1"
+            value="{{ selected_marks }}"
+            placeholder="Any marks"
+        >
+
+    </div>
+
+
+    <div class="field">
+
+        <label>
+            Source
+        </label>
+
+        <select name="source">
+
+            <option value="">
+                All Sources
+            </option>
+
+            {% for value, label in source_choices %}
+
+                <option
+                    value="{{ value }}"
+                    {% if selected_source == value %}selected{% endif %}
+                >
+                    {{ label }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+
+    <div class="field search-field">
+
+        <label>
+            Search Question
+        </label>
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="Search question text or solution..."
+        >
+
+    </div>
+
+</div>
+
+
+<div class="filter-buttons">
+
+    <button
+        type="submit"
+        class="btn btn-search"
+    >
+        Apply Filters
+    </button>
+
+    <a
+        href="{% url 'performance_question_selection' exam.id %}"
+        class="btn btn-clear"
+    >
+        Clear Filters
+    </a>
+
+</div>
+
+</div>
+
+</form>
+
+    <!-- ===================================================== -->
+    <!-- SELECTION HEADER -->
+    <!-- ===================================================== -->
+
+    <div class="selection-header">
+
+        <h2>
+            Select Questions
+        </h2>
+
+        <div class="count-area">
+
+            <div class="count-box">
+
+                Selected:
+                <span id="selectedCount">0</span>
+
+            </div>
+
+            <div class="marks-box">
+
+                Marks:
+                <span id="selectedMarks">0</span>
+                /
+                {{ exam.total_marks }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- QUESTION SELECTION -->
+    <!-- ===================================================== -->
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+
+        <div class="select-tools">
+
+            <button
+                type="button"
+                class="tool-btn"
+                onclick="selectAllQuestions()"
+            >
+                Select All
+            </button>
+
+            <button
+                type="button"
+                class="tool-btn"
+                onclick="clearAllQuestions()"
+            >
+                Clear All
+            </button>
+
+        </div>
+
+
+        <div class="questions-container">
+
+            {% if questions %}
+
+                {% for question in questions %}
+
+                    <div class="question-row">
+
+                        <input
+                            type="checkbox"
+                            class="checkbox question-checkbox"
+                            name="questions"
+                            value="{{ question.id }}"
+                            data-marks="{{ question.marks }}"
+                            {% if question.id in selected_question_ids %}checked{% endif %}
+                        >
+
+
+                        <div class="question-content">
+
+                            <div class="question-number">
+                                Question {{ forloop.counter }}
+                            </div>
+
+
+                            <div class="question-text">
+
+                                {% if question.question_text %}
+
+                                    {{ question.question_text }}
+
+                                {% else %}
+
+                                    Image Question #{{ question.id }}
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="question-meta">
+
+                                <span class="badge">
+                                    {{ question.get_difficulty_display }}
+                                </span>
+
+                                <span class="badge">
+                                    {{ question.get_question_mode_display }}
+                                </span>
+
+                                <span class="badge">
+                                    {{ question.get_source_display }}
+                                </span>
+
+                                <span class="badge">
+                                    {{ question.marks }} Marks
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="empty">
+
+                    <h3>
+                        No Questions Found
+                    </h3>
+
+                    <p>
+                        No active questions match the current filters.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- ACTIONS -->
+        <!-- ================================================= -->
+
+        <div class="actions">
+
+            <a
+                href="{% url 'performance_create_test' %}"
+                class="btn btn-clear"
+            >
+                Back
+            </a>
+
+
+            <button
+                type="submit"
+                class="btn btn-save"
+            >
+                Save Selected Questions
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<script>
+
+    const checkboxes = document.querySelectorAll(
+        ".question-checkbox"
+    );
+
+    const selectedCount = document.getElementById(
+        "selectedCount"
+    );
+
+    const selectedMarks = document.getElementById(
+        "selectedMarks"
+    );
+
+
+    function updateSelectionSummary() {
+
+        let count = 0;
+        let marks = 0;
+
+        checkboxes.forEach(function(checkbox) {
+
+            if (checkbox.checked) {
+
+                count += 1;
+
+                marks += parseFloat(
+                    checkbox.dataset.marks || 0
+                );
+
+            }
+
+        });
+
+        selectedCount.textContent = count;
+
+        selectedMarks.textContent = marks;
+
+    }
+
+
+    function selectAllQuestions() {
+
+        checkboxes.forEach(function(checkbox) {
+
+            checkbox.checked = true;
+
+        });
+
+        updateSelectionSummary();
+
+    }
+
+
+    function clearAllQuestions() {
+
+        checkboxes.forEach(function(checkbox) {
+
+            checkbox.checked = false;
+
+        });
+
+        updateSelectionSummary();
+
+    }
+
+
+    checkboxes.forEach(function(checkbox) {
+
+        checkbox.addEventListener(
+            "change",
+            updateSelectionSummary
+        );
+
+    });
+
+
+    updateSelectionSummary();
+
+</script>
+
+
+</body>
+
+</html>

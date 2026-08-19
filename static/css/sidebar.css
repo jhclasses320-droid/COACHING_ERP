@@ -1,0 +1,102 @@
+/* ===========================
+   SIDEBAR
+=========================== */
+
+.erp-sidebar{
+
+    width:260px;
+    background:#ffffff;
+    border-right:1px solid #e5e7eb;
+    min-height:calc(100vh - 70px);
+    padding:20px 0;
+
+}
+
+.sidebar-logo{
+
+    text-align:center;
+    padding:0 20px 25px;
+
+    border-bottom:1px solid #ececec;
+
+}
+
+.sidebar-logo h3{
+
+    color:#0F6CBD;
+    font-family:"Segoe UI", Arial, sans-serif;
+    font-weight:700;
+    margin-bottom:2px;
+
+}
+
+.sidebar-logo small{
+
+    color:#777;
+
+}
+
+.sidebar-nav{
+
+    margin-top:20px;
+
+}
+
+.nav-section{
+
+    margin-bottom:25px;
+
+}
+
+.nav-section-title{
+
+    padding:0 20px 8px;
+    color:#999;
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:1px;
+
+}
+
+.nav-item{
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    padding:12px 20px;
+
+    color:#444;
+
+    text-decoration:none;
+
+    transition:.2s;
+
+}
+
+.nav-item i{
+
+    font-size:18px;
+
+}
+
+.nav-item:hover{
+
+    background:#f4f8ff;
+
+    color:#0F6CBD;
+
+}
+
+.nav-item.active{
+
+    background:#0F6CBD;
+
+    color:#ffffff;
+
+    border-radius:0 25px 25px 0;
+
+    margin-right:15px;
+
+}

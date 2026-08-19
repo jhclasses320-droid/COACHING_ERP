@@ -1,0 +1,590 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Test - JH Classes</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #172b4d;
+        }
+
+        .page {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 25px 40px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 30px;
+            color: #172b4d;
+        }
+
+        .header p {
+            margin: 6px 0 0;
+            color: #6b778c;
+            font-size: 15px;
+        }
+
+        .back-btn {
+            background: #0d6efd;
+            color: white;
+            text-decoration: none;
+            padding: 11px 18px;
+            border-radius: 7px;
+            font-weight: 600;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e4e9f0;
+        }
+
+        .section-title {
+            font-size: 19px;
+            font-weight: 700;
+            margin: 0 0 22px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        input,
+        select {
+            width: 100%;
+            min-height: 44px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            padding: 10px 12px;
+            font-size: 15px;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.12);
+        }
+
+        .help-text {
+            margin-top: 6px;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .chapter-box {
+            min-height: 150px;
+        }
+
+        .actions {
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 7px;
+            padding: 12px 22px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #0d6efd;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #172b4d;
+            text-decoration: none;
+        }
+
+        .message {
+            padding: 12px 15px;
+            border-radius: 7px;
+            margin-bottom: 20px;
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        @media (max-width: 800px) {
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .actions {
+                justify-content: stretch;
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="header">
+
+        <div>
+            <h1>Create Test</h1>
+            <p>Create an assessment for a batch and subject.</p>
+        </div>
+
+        <a href="{% url 'staff_dashboard' %}" class="back-btn">
+
+            ← Back to Dashboard
+        </a>
+
+    </div>
+
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+    <div class="card">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <h2 class="section-title">
+                Test Details
+            </h2>
+
+     
+
+<!-- TEST MODE -->
+
+<div class="form-group full">
+
+    <label>
+        Test Mode <span class="required">*</span>
+    </label>
+
+    <select name="test_mode" required>
+
+        <option value="">
+            Select Test Mode
+        </option>
+
+        <option value="offline">
+            Offline Test
+        </option>
+
+        <option value="online">
+            Online Test
+        </option>
+
+    </select>
+
+    <div class="help-text">
+        Offline tests are conducted on paper. Online tests are taken by students through the Student Portal.
+    </div>
+
+</div>
+
+<div class="form-grid">
+            
+
+
+                <!-- TEST NAME -->
+
+                <div class="form-group full">
+
+                    <label>
+                        Test Name <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="assessment_name"
+                        placeholder="Enter test name"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- ASSESSMENT TYPE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Test Type <span class="required">*</span>
+                    </label>
+
+                    <select name="assessment_type" required>
+
+                        <option value="">
+                            Select Test Type
+                        </option>
+
+                        {% for item in assessment_types %}
+
+                            <option value="{{ item.id }}">
+                                {{ item.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- ACADEMIC SESSION -->
+
+                <div class="form-group">
+
+                    <label>
+                        Academic Session <span class="required">*</span>
+                    </label>
+
+                    <select name="academic_session" required>
+
+                        <option value="">
+                            Select Session
+                        </option>
+
+                        {% for value, label in academic_sessions %}
+
+                            <option value="{{ value }}">
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- BATCH -->
+
+                <div class="form-group">
+
+                    <label>
+                        Batch <span class="required">*</span>
+                    </label>
+
+                    <select name="batch" required>
+
+                        <option value="">
+                            Select Batch
+                        </option>
+
+                        {% for batch in batches %}
+
+                            <option value="{{ batch.id }}">
+                                {{ batch }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- SUBJECT -->
+
+                <div class="form-group">
+
+                    <label>
+                        Subject <span class="required">*</span>
+                    </label>
+
+                    <select name="subject" required>
+
+                        <option value="">
+                            Select Subject
+                        </option>
+
+                        {% for subject in subjects %}
+
+                            <option value="{{ subject.id }}">
+                                {{ subject.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- TOPIC -->
+
+                <div class="form-group">
+
+                    <label>
+                        Topic
+                    </label>
+
+                    <select name="topic">
+
+                        <option value="">
+                            Select Topic
+                        </option>
+
+                        {% for topic in topics %}
+
+                            <option value="{{ topic.id }}">
+                                {{ topic.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                    <div class="help-text">
+                        Topic is selected from the existing Django Topic list.
+                    </div>
+
+                </div>
+
+
+                <!-- DATE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Test Date <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        name="assessment_date"
+                        required
+                    >
+
+                </div>
+
+                <!-- START DATE / TIME -->
+
+<div class="form-group">
+
+    <label>
+        Start Date & Time <span class="required">*</span>
+    </label>
+
+    <input
+        type="datetime-local"
+        name="start_time"
+        required
+    >
+
+</div>
+
+
+<!-- END DATE / TIME -->
+
+<div class="form-group">
+
+    <label>
+        End Date & Time <span class="required">*</span>
+    </label>
+
+    <input
+        type="datetime-local"
+        name="end_time"
+        required
+    >
+
+</div>
+                <!-- DURATION -->
+
+                <div class="form-group">
+
+                    <label>
+                        Duration (Minutes) <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="number"
+                        name="duration_minutes"
+                        value="60"
+                        min="1"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- MAXIMUM MARKS -->
+
+                <div class="form-group">
+
+                    <label>
+                        Maximum Marks <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="number"
+                        name="maximum_marks"
+                        min="1"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- CHAPTERS -->
+
+                <div class="form-group full">
+
+                    <label>
+                        Chapters Covered
+                    </label>
+
+                    <select
+                        name="chapters"
+                        multiple
+                        class="chapter-box"
+                    >
+
+                        {% for chapter in chapters %}
+
+                            <option value="{{ chapter.id }}">
+                                {{ chapter.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                    <div class="help-text">
+                        Hold Ctrl (Windows) or Command (Mac) to select multiple chapters.
+                    </div>
+
+                </div>
+
+
+                <!-- CHAPTER COVERED -->
+
+                <div class="form-group full">
+
+                    <label>
+                        Chapter Covered
+                    </label>
+
+                    <input
+                        type="text"
+                        name="chapter_covered"
+                        placeholder="Optional description, e.g. Ch 1, Ch 2, Ch 3"
+                    >
+
+                    <div class="help-text">
+                        This is an additional text description. Multiple chapters can be selected above.
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="actions">
+
+               <a
+    href="{% url 'staff_dashboard' %}"
+    class="btn btn-secondary"
+>
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Create Test
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

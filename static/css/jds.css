@@ -1,0 +1,99 @@
+/* ==========================================================
+   JH DESIGN SYSTEM (JDS) v1.0
+   Master Stylesheet
+   ========================================================== */
+
+/* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Core Layout */
+@import url("layout.css");
+
+/* Components */
+@import url("header.css");
+@import url("sidebar.css");
+@import url("dashboard.css");
+@import url("cards.css");
+@import url("buttons.css");
+@import url("forms.css");
+@import url("tables.css");
+@import url("workspace.css");
+
+/* Utilities */
+@import url("utilities.css");
+
+
+/* ==========================================================
+   ROOT VARIABLES
+   ========================================================== */
+
+:root{
+
+    --primary:#0d6efd;
+    --primary-dark:#0b5ed7;
+
+    --accent:#ffc107;
+
+    --success:#198754;
+    --danger:#dc3545;
+    --warning:#fd7e14;
+
+    --bg:#f4f6f9;
+
+    --card:#ffffff;
+
+    --border:#e5e7eb;
+
+    --text:#212529;
+
+    --muted:#6c757d;
+
+    --radius:14px;
+
+    --shadow:
+        0 2px 8px rgba(0,0,0,.05);
+
+}
+
+
+/* ==========================================================
+   GLOBAL
+   ========================================================== */
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+
+body{
+
+    font-family:Inter,sans-serif;
+
+    background:var(--bg);
+
+    color:var(--text);
+
+}
+
+
+a{
+
+    text-decoration:none;
+
+}
+
+.card{
+
+    border:none;
+
+    border-radius:var(--radius);
+
+    box-shadow:var(--shadow);
+
+}
