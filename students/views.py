@@ -10,7 +10,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import ExamForm
 
@@ -23,8 +23,11 @@ from .models import (
     Batch,
     AttendanceSession,
     AttendanceRecord,
-    ExamAssignment
+    ExamAssignment,
+    StudyMaterial,
 )
+
+
 
 from performance.models import (
     Assessment,
@@ -324,6 +327,14 @@ def student_dashboard(request):
         id=student_id
     )
 
+    study_materials = StudyMaterial.objects.filter(
+        batch=student.batch,
+        is_active=True
+    ).order_by(
+        "subject",
+        "title"
+    )
+
     exams = Exam.objects.filter(
         batch=student.batch
     )
@@ -338,7 +349,8 @@ def student_dashboard(request):
         {
             "student": student,
             "exams": exams,
-            "attendance": attendance
+            "attendance": attendance,
+            "study_materials": study_materials
         }
     )
 
@@ -812,6 +824,15 @@ def staff_login(request):
         messages.error(request, "Invalid username or password")
 
     return render(request, "staff/login.html")
+
+
+# ================= STAFF LOGOUT ================= #
+
+def staff_logout(request):
+
+    logout(request)
+
+    return redirect("staff_login")
 
 
 # ================= STAFF DASHBOARD ================= #

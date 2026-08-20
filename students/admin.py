@@ -21,8 +21,10 @@ from .models import (
     Exam,
     ExamQuestion,
     StudentExamAttempt,
-    StudentAnswer,
+       StudentAnswer,
+    StudyMaterial,
 )
+
 
 # ================= CUSTOM ADMIN SITE ================= #
 
@@ -198,13 +200,17 @@ Wishing you success and happiness.
         return "-"
 
     whatsapp_birthday.short_description = "Birthday"
-    def save_model(self, request, obj, form, change):
+
+    
+def save_model(self, request, obj, form, change):
 
         if not change and not obj.password:
             obj.password = make_password("1234")
-            obj.must_change_password = True
+            obj.must_change_password = False
 
-        super().save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)      
+
+
 
 admin_site.register(Student, StudentAdmin)
 
@@ -551,3 +557,37 @@ admin_site.register(ExamQuestion, ExamQuestionAdmin)
 
 admin_site.register(StudentExamAttempt)
 admin_site.register(StudentAnswer)
+
+# ================= STUDY MATERIAL ================= #
+
+class StudyMaterialAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'title',
+        'batch',
+        'subject',
+        'chapter',
+        'is_active',
+    )
+
+    list_filter = (
+        'batch',
+        'subject',
+        'chapter',
+        'is_active',
+    )
+
+    search_fields = (
+        'title',
+        'dropbox_link',
+    )
+
+    ordering = (
+        'batch',
+        'subject',
+        'chapter',
+        'title',
+    )
+
+
+admin_site.register(StudyMaterial, StudyMaterialAdmin)

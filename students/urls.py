@@ -67,6 +67,7 @@ path('student/logout/', views.student_logout, name='student_logout'),
 
     path('staff-login/', views.staff_login, name='staff_login'),
     path('staff-dashboard/', views.staff_dashboard, name='staff_dashboard'),
+    path("staff-logout/", views.staff_logout, name="staff_logout"),
 
     # ==========================================================
     # EXAMS

@@ -281,17 +281,42 @@
     </a>
 
 
+
     <!-- STUDY MATERIAL -->
 
-    <div class="dashboard-card material-card">
+<div class="dashboard-card material-card">
 
-        <h3>📚 Study Material</h3>
+    <h3>📚 Study Material</h3>
+
+    {% if study_materials %}
+
+        {% for material in study_materials %}
+
+            <a href="{{ material.dropbox_link }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               style="
+                   display:block;
+                   color:#172554;
+                   text-decoration:none;
+                   margin-bottom:8px;
+               ">
+
+                📂 {{ material.title }}
+
+            </a>
+
+        {% endfor %}
+
+    {% else %}
 
         <div class="card-value">
-            Coming Soon
+            No Material Available
         </div>
 
-    </div>
+    {% endif %}
+
+</div>
 
 
     <!-- RESULTS -->
