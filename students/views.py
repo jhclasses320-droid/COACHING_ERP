@@ -327,8 +327,37 @@ def student_dashboard(request):
         id=student_id
     )
 
+      # ================= STUDY MATERIAL ================= #
+
+    study_batches = [student.batch]
+
+    if student.batch:
+        batch_name = student.batch.batch_name
+
+        if batch_name.endswith("_Maths_Science"):
+
+            maths_batch = Batch.objects.filter(
+                batch_name=batch_name.replace(
+                    "_Maths_Science",
+                    "_Maths"
+                )
+            ).first()
+
+            science_batch = Batch.objects.filter(
+                batch_name=batch_name.replace(
+                    "_Maths_Science",
+                    "_Science"
+                )
+            ).first()
+
+            if maths_batch:
+                study_batches.append(maths_batch)
+
+            if science_batch:
+                study_batches.append(science_batch)
+
     study_materials = StudyMaterial.objects.filter(
-        batch=student.batch,
+        batch__in=study_batches,
         is_active=True
     ).order_by(
         "subject",
@@ -352,7 +381,7 @@ def student_dashboard(request):
             "attendance": attendance,
             "study_materials": study_materials
         }
-    )
+    )  
 
 # ================= REPORT PAGE ================= #
 
