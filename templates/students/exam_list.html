@@ -1,17 +1,232 @@
+{% extends "website/home.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+	<!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+	<div class="mb-4">
+
+		<h2 class="fw-bold mb-1">
+			Available Exams
+		</h2>
+
+		<p class="text-muted mb-0">
+			Select an examination to begin.
+		</p>
+
+	</div>
 
 
-<h2>Available Exams</h2>
+	<!-- =====================================================
+         EXAMS
+    ====================================================== -->
 
-{% for exam in exams %}
+	<div class="row g-4">
 
-<div>
-    <h3>{{ exam.name }}</h3>
-    <p>Topic: {{ exam.topic }}</p>
-    <p>Duration: {{ exam.duration }} minutes</p>
+		{% for exam in exams %}
 
-    <a href="{% url 'start_exam' exam.id %}">
-        Start Exam
-    </a>
+		<div class="col-12 col-md-6 col-xl-4">
+
+			<div class="card border-0 shadow-sm h-100 exam-card">
+
+				<div class="card-body p-4">
+
+					<!-- STATUS -->
+
+					<div class="d-flex justify-content-between align-items-center mb-3">
+
+						<span class="badge bg-success px-3 py-2">
+							AVAILABLE
+						</span>
+
+					</div>
+
+
+					<!-- EXAM NAME -->
+
+					<h4 class="fw-bold mb-2">
+						{{ exam.name }}
+					</h4>
+
+
+					<!-- TOPIC -->
+
+					<p class="text-muted mb-4">
+						{{ exam.topic }}
+					</p>
+
+
+					<!-- EXAM DETAILS -->
+
+					<div class="row g-3 mb-4">
+
+						<div class="col-6">
+
+							<div class="detail-box">
+
+								<small class="text-muted d-block">
+									Duration
+								</small>
+
+								<strong>
+									{{ exam.duration }} min
+								</strong>
+
+							</div>
+
+						</div>
+
+
+						<div class="col-6">
+
+							<div class="detail-box">
+
+								<small class="text-muted d-block">
+									Questions
+								</small>
+
+								<strong>
+									{{ exam.number_of_questions }}
+								</strong>
+
+							</div>
+
+						</div>
+
+
+						<div class="col-6">
+
+							<div class="detail-box">
+
+								<small class="text-muted d-block">
+									Maximum Marks
+								</small>
+
+								<strong>
+									{{ exam.total_marks }}
+								</strong>
+
+							</div>
+
+						</div>
+
+
+						<div class="col-6">
+
+							<div class="detail-box">
+
+								<small class="text-muted d-block">
+									Subject
+								</small>
+
+								<strong>
+									{{ exam.topic }}
+								</strong>
+
+							</div>
+
+						</div>
+
+					</div>
+
+
+					<!-- START BUTTON -->
+
+					<a
+                        href="{% url 'start_exam' exam.id %}"
+                        class="btn btn-primary w-100 py-2 fw-semibold"
+                    >
+						Start Exam
+					</a>
+
+				</div>
+
+			</div>
+
+		</div>
+
+
+		{% empty %}
+
+		<!-- =================================================
+             NO EXAMS
+        ================================================== -->
+
+		<div class="col-12">
+
+			<div class="card border-0 shadow-sm">
+
+				<div class="card-body text-center py-5">
+
+					<h4 class="fw-bold mb-2">
+						No Exams Available
+					</h4>
+
+					<p class="text-muted mb-0">
+						There are currently no examinations assigned to you.
+					</p>
+
+				</div>
+
+			</div>
+
+		</div>
+
+		{% endfor %}
+
+	</div>
+
 </div>
 
-{% endfor %}
+
+<!-- =========================================================
+     PAGE STYLES
+========================================================= -->
+
+<style>
+
+	.exam-card {
+	border-radius: 16px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+
+	.exam-card:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.10) !important;
+	}
+
+
+	.detail-box {
+	background: #f8f9fa;
+	border-radius: 10px;
+	padding: 12px;
+	min-height: 65px;
+	}
+
+
+	.detail-box strong {
+	font-size: 15px;
+	}
+
+
+	.exam-card .btn-primary {
+	border-radius: 10px;
+	}
+
+
+	@media (max-width: 576px) {
+
+	.exam-card {
+	border-radius: 12px;
+	}
+
+	}
+
+</style>
+
+{% endblock %}

@@ -1,0 +1,328 @@
+{% extends "website/home.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- PAGE HEADER -->
+    <div class="mb-4">
+
+        <h2 class="fw-bold mb-1">
+            Student Performance Report
+        </h2>
+
+        <p class="text-muted mb-0">
+            View detailed performance of an individual student.
+        </p>
+
+    </div>
+
+
+    <!-- FILTER CARD -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <form method="get">
+
+                <div class="row g-3">
+
+                    <!-- BATCH -->
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Batch
+                        </label>
+
+                        <select
+                            name="batch"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Select Batch
+                            </option>
+
+                            {% for batch in batches %}
+
+                                <option
+                                    value="{{ batch.id }}"
+                                    {% if selected_batch and selected_batch.id == batch.id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ batch }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- STUDENT -->
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Student
+                        </label>
+
+                        <select
+                            name="student"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Select Student
+                            </option>
+
+                            {% for student in students %}
+
+                                <option
+                                    value="{{ student.id }}"
+                                    {% if selected_student and selected_student.id == student.id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ student }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- SESSION -->
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Academic Session
+                        </label>
+
+                        <input
+                            type="text"
+                            name="session"
+                            class="form-control"
+                            value="{{ selected_session|default:'' }}"
+                            placeholder="e.g. 2026-27"
+                        >
+
+                    </div>
+
+
+                    <!-- BUTTON -->
+                    <div class="col-12">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary px-4"
+                        >
+                            View Report
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    {% if selected_student %}
+
+    <!-- STUDENT SUMMARY -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="row text-center g-3">
+
+                <div class="col-md-3">
+
+                    <div class="summary-box">
+
+                        <small class="text-muted">
+                            Student
+                        </small>
+
+                        <div class="fw-bold">
+                            {{ selected_student }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="summary-box">
+
+                        <small class="text-muted">
+                            Tests
+                        </small>
+
+                        <div class="fw-bold">
+                            {{ report_rows|length }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="summary-box">
+
+                        <small class="text-muted">
+                            Marks Obtained
+                        </small>
+
+                        <div class="fw-bold">
+                            {{ total_obtained }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <div class="summary-box">
+
+                        <small class="text-muted">
+                            Percentage
+                        </small>
+
+                        <div class="fw-bold">
+                            {{ overall_percentage }}%
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REPORT TABLE -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-4">
+
+            <h5 class="fw-bold mb-3">
+                Performance Details
+            </h5>
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Assessment</th>
+                            <th>Subject</th>
+                            <th>Maximum Marks</th>
+                            <th>Marks Obtained</th>
+                            <th>Percentage</th>
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for row in report_rows %}
+
+                        <tr>
+
+                            <td>
+                                {{ row.assessment }}
+                            </td>
+
+                            <td>
+                                {{ row.subject }}
+                            </td>
+
+                            <td>
+                                {{ row.maximum_marks }}
+                            </td>
+
+                            <td>
+                                {{ row.marks_obtained }}
+                            </td>
+
+                            <td>
+                                {{ row.percentage }}%
+                            </td>
+
+                            <td>
+
+                                {% if row.status %}
+                                    {{ row.status }}
+                                {% else %}
+                                    <span class="text-muted">—</span>
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                class="text-center text-muted py-4"
+                            >
+                                No performance records found.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<style>
+
+.summary-box {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 18px;
+    min-height: 80px;
+}
+
+</style>
+
+{% endblock %}

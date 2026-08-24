@@ -398,12 +398,16 @@ class Question(models.Model):
         return f"Image Question #{self.pk}"
 
 
-# ================= EXAM ================= #
+    # ================= EXAM ================= #
 
 class Exam(models.Model):
 
-    name = models.CharField(max_length=100)
+    STATUS_CHOICES = [
+        ("DRAFT", "Draft"),
+        ("PUBLISHED", "Published"),
+    ]
 
+    name = models.CharField(max_length=100)
 
     assessment = models.OneToOneField(
         'performance.Assessment',
@@ -413,15 +417,10 @@ class Exam(models.Model):
         blank=True
     )
 
-
-
     topic = models.ForeignKey(
         Topic,
         on_delete=models.CASCADE
-    )   
-
-
-
+    )
 
     batch = models.ForeignKey(
         Batch,
@@ -439,6 +438,17 @@ class Exam(models.Model):
     start_time = models.DateTimeField()
 
     end_time = models.DateTimeField()
+
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default="DRAFT"
+    )
+
+    published_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
         return self.name

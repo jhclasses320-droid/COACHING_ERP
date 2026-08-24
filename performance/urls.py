@@ -6,17 +6,35 @@ from . import views
 
 urlpatterns = [
 
+    # ==========================================================
+    # CREATE TEST
+    # ==========================================================
 
-        path(
+    path(
         "create-test/",
         views.create_test,
         name="performance_create_test",
     ),
-path(
-    "question-selection/<int:exam_id>/",
-    views.question_selection,
-    name="performance_question_selection",
-),
+
+    # ==========================================================
+    # ONLINE EXAM - QUESTION SELECTION
+    # ==========================================================
+
+    path(
+        "question-selection/<int:exam_id>/",
+        views.question_selection,
+        name="performance_question_selection",
+    ),
+
+    # ==========================================================
+    # ONLINE EXAM - PUBLISH
+    # ==========================================================
+
+    path(
+        "exams/<int:exam_id>/publish/",
+        views.publish_test,
+        name="publish_test",
+    ),
 
     # ==========================================================
     # TRANSACTIONS

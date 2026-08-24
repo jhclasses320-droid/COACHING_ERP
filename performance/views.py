@@ -259,9 +259,12 @@ def student_performance_report(request):
         is_active=True
     ).order_by("student_name")
 
-    selected_batch = request.GET.get("batch")
-    selected_student = request.GET.get("student")
+    selected_batch_id = request.GET.get("batch")
+    selected_student_id = request.GET.get("student")
     selected_session = request.GET.get("session")
+
+    selected_batch = None
+    selected_student = None
 
     report_rows = []
 
@@ -270,12 +273,33 @@ def student_performance_report(request):
     total_present = 0
     total_absent = 0
 
-    if selected_batch:
+    # ------------------------------------------------------
+    # SELECTED BATCH
+    # ------------------------------------------------------
+
+    if selected_batch_id:
+
+        selected_batch = get_object_or_404(
+            Batch,
+            id=selected_batch_id
+        )
+
         students = students.filter(
-            batches__id=selected_batch
+            Q(batch=selected_batch) |
+            Q(additional_batches=selected_batch)
         ).distinct()
 
-    if selected_student:
+    # ------------------------------------------------------
+    # SELECTED STUDENT
+    # ------------------------------------------------------
+
+    if selected_student_id:
+
+        selected_student = get_object_or_404(
+            Student,
+            id=selected_student_id,
+            is_active=True,
+        )
 
         marks = StudentMark.objects.select_related(
             "assessment_subject",
@@ -283,18 +307,32 @@ def student_performance_report(request):
             "assessment_subject__subject",
             "student",
         ).filter(
-            student_id=selected_student
+            student=selected_student
         )
 
+        # --------------------------------------------------
+        # ACADEMIC SESSION FILTER
+        # --------------------------------------------------
+
         if selected_session:
+
             marks = marks.filter(
-                assessment_subject__assessment__academic_session=selected_session
+                assessment_subject__assessment__academic_session=
+                selected_session
             )
+
+        # --------------------------------------------------
+        # ORDER
+        # --------------------------------------------------
 
         marks = marks.order_by(
             "-assessment_subject__assessment__assessment_date",
             "assessment_subject__subject__name",
         )
+
+        # --------------------------------------------------
+        # BUILD REPORT
+        # --------------------------------------------------
 
         for mark in marks:
 
@@ -304,6 +342,7 @@ def student_performance_report(request):
             percentage = 0
 
             if not mark.is_absent and maximum > 0:
+
                 percentage = round(
                     (obtained / maximum) * 100,
                     2,
@@ -311,44 +350,95 @@ def student_performance_report(request):
 
             report_rows.append(
                 {
-                    "assessment": mark.assessment_subject.assessment.assessment_name,
-                    "subject": mark.assessment_subject.subject.name,
-                    "date": mark.assessment_subject.assessment.assessment_date,
-                    "maximum": maximum,
-                    "obtained": obtained,
-                    "percentage": percentage,
-                    "status": "Absent" if mark.is_absent else "Present",
+                    "assessment":
+                        mark.assessment_subject.assessment.assessment_name,
+
+                    "subject":
+                        mark.assessment_subject.subject.name,
+
+                    "date":
+                        mark.assessment_subject.assessment.assessment_date,
+
+                    "maximum":
+                        maximum,
+
+                    "obtained":
+                        obtained,
+
+                    "percentage":
+                        percentage,
+
+                    "status":
+                        "Absent" if mark.is_absent else "Present",
                 }
             )
+
+            # --------------------------------------------------
+            # TOTALS
+            # --------------------------------------------------
 
             total_maximum += maximum
 
             if not mark.is_absent:
+
                 total_obtained += obtained
                 total_present += 1
+
             else:
+
                 total_absent += 1
+
+    # ------------------------------------------------------
+    # OVERALL PERCENTAGE
+    # ------------------------------------------------------
 
     overall_percentage = 0
 
     if total_maximum:
+
         overall_percentage = round(
             (total_obtained / total_maximum) * 100,
             2,
         )
 
+    # ------------------------------------------------------
+    # CONTEXT
+    # ------------------------------------------------------
+
     context = {
-        "batches": batches,
-        "students": students,
-        "selected_batch": selected_batch,
-        "selected_student": selected_student,
-        "selected_session": selected_session,
-        "report_rows": report_rows,
-        "total_maximum": total_maximum,
-        "total_obtained": total_obtained,
-        "overall_percentage": overall_percentage,
-        "total_present": total_present,
-        "total_absent": total_absent,
+
+        "batches":
+            batches,
+
+        "students":
+            students,
+
+        "selected_batch":
+            selected_batch,
+
+        "selected_student":
+            selected_student,
+
+        "selected_session":
+            selected_session,
+
+        "report_rows":
+            report_rows,
+
+        "total_maximum":
+            total_maximum,
+
+        "total_obtained":
+            total_obtained,
+
+        "overall_percentage":
+            overall_percentage,
+
+        "total_present":
+            total_present,
+
+        "total_absent":
+            total_absent,
     }
 
     return render(
@@ -728,4 +818,97 @@ def question_selection(request, exam_id):
         context,
     )
 
-    
+    # ==========================================================
+# ONLINE EXAM - PUBLISH TEST
+# ==========================================================
+
+def publish_test(request, exam_id):
+
+    exam = get_object_or_404(
+        Exam,
+        id=exam_id,
+    )
+
+    # ------------------------------------------------------
+    # ALREADY PUBLISHED
+    # ------------------------------------------------------
+
+    if exam.status == "PUBLISHED":
+
+        messages.warning(
+            request,
+            "This exam has already been published."
+        )
+
+        return redirect("performance_exam_library")
+
+
+    # ------------------------------------------------------
+    # VALIDATE EXAM BEFORE PUBLISHING
+    # ------------------------------------------------------
+
+    question_count = ExamQuestion.objects.filter(
+        exam=exam
+    ).count()
+
+    if question_count == 0:
+
+        messages.error(
+            request,
+            "This exam cannot be published because no questions have been added."
+        )
+
+        return redirect(
+            "performance_question_selection",
+            exam_id=exam.id,
+        )
+
+
+    if not exam.duration or exam.duration <= 0:
+
+        messages.error(
+            request,
+            "A valid exam duration is required before publishing."
+        )
+
+        return redirect(
+            "edit_test",
+            exam.id,
+        )
+
+
+    if not exam.total_marks or exam.total_marks <= 0:
+
+        messages.error(
+            request,
+            "Maximum marks must be greater than zero before publishing."
+        )
+
+        return redirect(
+            "edit_test",
+            exam.id,
+        )
+
+
+    # ------------------------------------------------------
+    # PUBLISH
+    # ------------------------------------------------------
+
+    exam.status = "PUBLISHED"
+    exam.published_at = timezone.now()
+
+    exam.save(
+        update_fields=[
+            "status",
+            "published_at",
+        ]
+    )
+
+    messages.success(
+        request,
+        f"'{exam.name}' has been published successfully."
+    )
+
+    return redirect(
+        "performance_exam_library"
+    )

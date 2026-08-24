@@ -1,130 +1,651 @@
-<h2>{{ exam.name }}</h2>
 
-<div style="display:flex">
+{% extends "website/home.html" %}
 
-<!-- LEFT SIDE : QUESTIONS -->
+{% block content %}
 
-<div style="width:70%">
+<div class="container-fluid py-4">
 
-<form method="post">
-{% csrf_token %}
+	<!-- =====================================================
+         EXAM HEADER
+    ====================================================== -->
 
-{% for q in questions %}
+	<div class="card border-0 shadow-sm mb-4">
 
-<div id="q{{ forloop.counter }}" style="margin-bottom:25px">
+		<div class="card-body">
 
-<p><b>Q{{ forloop.counter }}.</b> {{ q.question.question_text }}</p>
+			<div class="row align-items-center">
 
-<!-- QUESTION IMAGE -->
+				<div class="col-md-8">
 
-	<p>
-		<strong>Question ID:</strong> {{ q.question.id }}
-	</p>
+					<h2 class="fw-bold mb-1">
+						{{ exam.name }}
+					</h2>
 
-	<p>
-		<strong>Mode:</strong> {{ q.question.question_mode }}
-	</p>
+					<div class="text-muted">
+						{{ exam.topic }}
+					</div>
 
-	<p>
-		<strong>Image Path:</strong> {{ q.question.question_image }}
-	</p>
-
-	{% if q.question.question_image %}
-	<img src="{{ q.question.question_image.url }}" width="350">
-		{% else %}
-		<p style="color:red;">No image found for this question.</p>
-		{% endif %}
-
-		<label>
-<input type="radio" name="q{{ q.question.id }}" value="A">
-
-{{ q.question.option_a_text }}
-
-{% if q.question.option_a_image %}
-<br>
-<img src="{{ q.question.option_a_image.url }}" width="200">
-{% endif %}
-
-</label><br><br>
+				</div>
 
 
-<label>
-<input type="radio" name="q{{ q.question.id }}" value="B">
+				<div class="col-md-4 text-md-end mt-3 mt-md-0">
 
-{{ q.question.option_b_text }}
+					<div class="small text-muted">
+						Time Remaining
+					</div>
 
-{% if q.question.option_b_image %}
-<br>
-<img src="{{ q.question.option_b_image.url }}" width="200">
-{% endif %}
+					<div
+                        id="timer"
+                        class="fw-bold fs-3 text-danger"
+                    >
+						{{ exam.duration }}:00
+					</div>
 
-</label><br><br>
+				</div>
 
+			</div>
 
-<label>
-<input type="radio" name="q{{ q.question.id }}" value="C">
+		</div>
 
-{{ q.question.option_c_text }}
-
-{% if q.question.option_c_image %}
-<br>
-<img src="{{ q.question.option_c_image.url }}" width="200">
-{% endif %}
-
-</label><br><br>
+	</div>
 
 
-<label>
-<input type="radio" name="q{{ q.question.id }}" value="D">
+	<!-- =====================================================
+         EXAM FORM
+    ====================================================== -->
 
-{{ q.question.option_d_text }}
+	<form
+        method="post"
+        id="examForm"
+    >
 
-{% if q.question.option_d_image %}
-<br>
-<img src="{{ q.question.option_d_image.url }}" width="200">
-{% endif %}
+		{% csrf_token %}
 
-</label>
 
-<hr>
+		<div class="row g-4">
+
+			<!-- =================================================
+                 QUESTION AREA
+            ================================================== -->
+
+			<div class="col-lg-9">
+
+				{% for exam_question in questions %}
+
+				{% with question=exam_question.question %}
+
+				<div
+                    class="card border-0 shadow-sm mb-4 question-card"
+                    id="question-{{ forloop.counter }}"
+                >
+
+					<div class="card-body p-4">
+
+						<!-- QUESTION NUMBER -->
+
+						<div class="d-flex justify-content-between align-items-center mb-4">
+
+							<h5 class="fw-bold mb-0">
+
+								Question {{ forloop.counter }}
+
+							</h5>
+
+
+							<span class="badge bg-light text-dark border">
+
+								{{ question.marks }} Mark{{ question.marks|pluralize }}
+
+							</span>
+
+						</div>
+
+
+						<!-- =================================================
+                             QUESTION IMAGE
+                        ================================================== -->
+
+						{% if question.question_image %}
+
+						<div class="text-center mb-4">
+
+							<img
+                                src="{{ question.question_image.url }}"
+                                alt="Question {{ forloop.counter }}"
+                                class="img-fluid question-image"
+                            >
+
+							</div>
+
+						{% endif %}
+
+
+						<!-- =================================================
+                             QUESTION TEXT
+                        ================================================== -->
+
+						{% if question.question_text %}
+
+						<div class="fs-5 mb-4">
+
+							{{ question.question_text|linebreaksbr }}
+
+						</div>
+
+						{% endif %}
+
+
+						<!-- =================================================
+                             OPTIONS
+                        ================================================== -->
+
+						<div class="options-area">
+
+							<!-- OPTION A -->
+
+							<label class="option-card">
+
+								<input
+                                    type="radio"
+                                    name="q{{ question.id }}"
+                                    value="A"
+                                    class="form-check-input option-radio"
+                                >
+
+									<span class="option-label">
+										A
+									</span>
+
+									<span class="option-content">
+
+										{% if question.option_a_image %}
+
+										<img
+											src="{{ question.option_a_image.url }}"
+											alt="Option A"
+											class="img-fluid option-image"
+                                    >
+
+											{% endif %}
+
+
+											{% if question.option_a_text %}
+
+											<span>
+												{{ question.option_a_text }}
+											</span>
+
+											{% endif %}
+
+										</span>
+
+								</label>
+
+
+							<!-- OPTION B -->
+
+							<label class="option-card">
+
+								<input
+                                    type="radio"
+                                    name="q{{ question.id }}"
+                                    value="B"
+                                    class="form-check-input option-radio"
+                                >
+
+									<span class="option-label">
+										B
+									</span>
+
+									<span class="option-content">
+
+										{% if question.option_b_image %}
+
+										<img
+											src="{{ question.option_b_image.url }}"
+											alt="Option B"
+											class="img-fluid option-image"
+                                    >
+
+											{% endif %}
+
+
+											{% if question.option_b_text %}
+
+											<span>
+												{{ question.option_b_text }}
+											</span>
+
+											{% endif %}
+
+										</span>
+
+								</label>
+
+
+							<!-- OPTION C -->
+
+							<label class="option-card">
+
+								<input
+                                    type="radio"
+                                    name="q{{ question.id }}"
+                                    value="C"
+                                    class="form-check-input option-radio"
+                                >
+
+									<span class="option-label">
+										C
+									</span>
+
+									<span class="option-content">
+
+										{% if question.option_c_image %}
+
+										<img
+											src="{{ question.option_c_image.url }}"
+											alt="Option C"
+											class="img-fluid option-image"
+                                    >
+
+											{% endif %}
+
+
+											{% if question.option_c_text %}
+
+											<span>
+												{{ question.option_c_text }}
+											</span>
+
+											{% endif %}
+
+										</span>
+
+								</label>
+
+
+							<!-- OPTION D -->
+
+							<label class="option-card">
+
+								<input
+                                    type="radio"
+                                    name="q{{ question.id }}"
+                                    value="D"
+                                    class="form-check-input option-radio"
+                                >
+
+									<span class="option-label">
+										D
+									</span>
+
+									<span class="option-content">
+
+										{% if question.option_d_image %}
+
+										<img
+											src="{{ question.option_d_image.url }}"
+											alt="Option D"
+											class="img-fluid option-image"
+                                    >
+
+											{% endif %}
+
+
+											{% if question.option_d_text %}
+
+											<span>
+												{{ question.option_d_text }}
+											</span>
+
+											{% endif %}
+
+										</span>
+
+								</label>
+
+						</div>
+
+					</div>
+
+				</div>
+
+				{% endwith %}
+
+				{% endfor %}
+
+
+				<!-- =================================================
+                     SUBMIT
+                ================================================== -->
+
+				<div class="card border-0 shadow-sm mb-4">
+
+					<div class="card-body text-center p-4">
+
+						<button
+                            type="submit"
+                            class="btn btn-success btn-lg px-5"
+                            onclick="return confirm('Are you sure you want to submit the exam?');"
+                        >
+							Submit Exam
+						</button>
+
+					</div>
+
+				</div>
+
+			</div>
+
+
+			<!-- =================================================
+                 QUESTION NAVIGATOR
+            ================================================== -->
+
+			<div class="col-lg-3">
+
+				<div
+                    class="card border-0 shadow-sm sticky-top"
+                    style="top: 20px;"
+                >
+
+					<div class="card-body">
+
+						<h5 class="fw-bold mb-3">
+							Questions
+						</h5>
+
+
+						<div class="question-navigator">
+
+							{% for exam_question in questions %}
+
+							<a
+                                href="#question-{{ forloop.counter }}"
+                                class="question-number"
+                                id="nav-{{ forloop.counter }}"
+                            >
+								{{ forloop.counter }}
+							</a>
+
+							{% endfor %}
+
+						</div>
+
+
+						<hr>
+
+
+							<div class="small text-muted">
+
+								<div class="mb-2">
+
+									<span class="status-dot unanswered"></span>
+
+									Unanswered
+
+								</div>
+
+
+								<div>
+
+									<span class="status-dot answered"></span>
+
+									Answered
+
+								</div>
+
+							</div>
+
+						</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</form>
 
 </div>
 
-{% endfor %}
 
-<button type="submit">Submit Exam</button>
+<!-- =========================================================
+     STYLES
+========================================================= -->
 
-</form>
+<style>
 
-</div>
+	.question-card {
+	scroll-margin-top: 20px;
+	}
 
 
-<!-- RIGHT SIDE : NAVIGATION PANEL -->
+	.question-image {
+	display: block;
+	max-width: 100%;
+	width: auto;
+	max-height: 520px;
+	height: auto;
+	margin: 0 auto;
+	object-fit: contain;
+	}
 
-<div style="width:30%;padding-left:20px">
 
-<h3>Questions</h3>
+	.option-card {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	width: 100%;
+	padding: 18px;
+	margin-bottom: 14px;
+	border: 2px solid #e5e7eb;
+	border-radius: 12px;
+	background: #ffffff;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	}
 
-{% for q in questions %}
 
-<a href="#q{{ forloop.counter }}"
-style="
-display:inline-block;
-width:40px;
-height:40px;
-text-align:center;
-line-height:40px;
-border:1px solid black;
-margin:5px;
-text-decoration:none;
-">
+	.option-card:hover {
+	border-color: #0d6efd;
+	background: #f8fbff;
+	}
 
-{{ forloop.counter }}
 
-</a>
+	.option-card:has(.option-radio:checked) {
+	border-color: #198754;
+	background: #f0fff7;
+	}
 
-{% endfor %}
 
-</div>
+	.option-radio {
+	flex-shrink: 0;
+	}
 
-</div>
+
+	.option-label {
+	font-weight: 700;
+	font-size: 18px;
+	min-width: 28px;
+	}
+
+
+	.option-content {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	width: 100%;
+	font-size: 17px;
+	}
+
+
+	.option-image {
+	max-width: 100%;
+	max-height: 180px;
+	width: auto;
+	height: auto;
+	object-fit: contain;
+	}
+
+
+	.question-navigator {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 8px;
+	}
+
+
+	.question-number {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 42px;
+	border: 1px solid #dee2e6;
+	border-radius: 8px;
+	text-decoration: none;
+	color: #212529;
+	background: #ffffff;
+	font-weight: 600;
+	}
+
+
+	.question-number:hover {
+	background: #0d6efd;
+	color: white;
+	}
+
+
+	.question-number.answered {
+	background: #198754;
+	color: white;
+	border-color: #198754;
+	}
+
+
+	.status-dot {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	margin-right: 6px;
+	}
+
+
+	.status-dot.unanswered {
+	background: #dee2e6;
+	}
+
+
+	.status-dot.answered {
+	background: #198754;
+	}
+
+
+	@media (max-width: 767px) {
+
+	.question-image {
+	max-height: 400px;
+	}
+
+
+	.option-card {
+	padding: 14px;
+	}
+
+
+	.option-content {
+	font-size: 15px;
+	}
+
+	}
+
+</style>
+
+
+<!-- =========================================================
+     TIMER + ANSWER NAVIGATION
+========================================================= -->
+
+<script>
+
+	let totalSeconds = {{ exam.duration }} * 60;
+
+	const timerElement = document.getElementById("timer");
+
+	const examForm = document.getElementById("examForm");
+
+
+	function updateTimer() {
+
+	const minutes = Math.floor(totalSeconds / 60);
+
+	const seconds = totalSeconds % 60;
+
+	timerElement.textContent =
+	String(minutes).padStart(2, "0")
+	+ ":"
+	+ String(seconds).padStart(2, "0");
+
+
+	if (totalSeconds <= 0) {
+
+	examForm.submit();
+
+	return;
+
+	}
+
+
+	totalSeconds--;
+
+	}
+
+
+	updateTimer();
+
+	setInterval(updateTimer, 1000);
+
+
+	/* ========================================================
+	MARK QUESTIONS AS ANSWERED
+	======================================================== */
+
+	document.querySelectorAll(".option-radio").forEach(
+	function(radio) {
+
+	radio.addEventListener(
+	"change",
+	function() {
+
+	const questionCard =
+	this.closest(".question-card");
+
+	const questionNumber =
+	questionCard.id.replace(
+	"question-",
+	""
+	);
+
+	const navigator =
+	document.getElementById(
+	"nav-" + questionNumber
+	);
+
+	if (navigator) {
+
+	navigator.classList.add(
+	"answered"
+	);
+
+	}
+
+	}
+	);
+
+	}
+	);
+
+</script>
+
+{% endblock %}

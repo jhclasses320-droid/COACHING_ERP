@@ -25,6 +25,7 @@ from .models import (
     AttendanceRecord,
     ExamAssignment,
     StudyMaterial,
+    StudentExamAttempt,
 )
 
 
@@ -61,7 +62,9 @@ def student_login(request):
                     "Your account is inactive."
                 )
 
-                return redirect("student_login")
+                return redirect(
+                "exam_library"
+                )
 
 
             # --------------------------------------------------
@@ -603,18 +606,58 @@ def student_exam_list(request):
         is_active=True,
     )
 
-    exams = Exam.objects.filter(
+    # --------------------------------------------------
+    # ALL ACTIVE ASSIGNED EXAMS
+    # --------------------------------------------------
+
+    assigned_exams = Exam.objects.filter(
         assignments__student=student,
         assignments__is_active=True,
+        status="PUBLISHED",
     ).distinct().order_by(
         "-id"
     )
+
+
+    # --------------------------------------------------
+    # ATTEMPTED EXAMS
+    # --------------------------------------------------
+
+    attempted_exam_ids = set(
+        StudentExamAttempt.objects.filter(
+            student=student,
+            completed=True,
+        ).values_list(
+            "exam_id",
+            flat=True,
+        )
+    )
+
+
+    # --------------------------------------------------
+    # PENDING EXAMS
+    # --------------------------------------------------
+
+    pending_exams = assigned_exams.exclude(
+        id__in=attempted_exam_ids
+    )
+
+
+    # --------------------------------------------------
+    # ATTEMPTED EXAMS
+    # --------------------------------------------------
+
+    attempted_exams = assigned_exams.filter(
+        id__in=attempted_exam_ids
+    )
+
 
     return render(
         request,
         "students/exam_list.html",
         {
-            "exams": exams,
+            "pending_exams": pending_exams,
+            "attempted_exams": attempted_exams,
         }
     )
 

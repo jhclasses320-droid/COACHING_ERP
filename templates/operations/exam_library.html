@@ -4,123 +4,337 @@
 
 <div class="container-fluid py-4">
 
+    <!-- ======================================================
+         HEADER
+    ======================================================= -->
+
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h2 class="mb-0 fw-bold">
-            Exam Library
-        </h2>
+        <div>
 
-    </div>
+            <h2 class="fw-bold mb-1">
+                Exam Library
+            </h2>
 
-
-    <div class="card shadow-sm border-0">
-
-        <div class="card-body">
-
-            <p class="text-muted mb-4">
-                All created examinations will appear here.
+            <p class="text-muted mb-0">
+                Create, manage, publish and assign examinations.
             </p>
 
+        </div>
 
-            <table class="table table-bordered align-middle">
-
-                <thead class="table-light">
-
-                    <tr>
-
-                        <th>Exam Name</th>
-                        <th>Batch</th>
-                        <th>Topic</th>
-                        <th>Duration</th>
-                        <th>Total Marks</th>
-                        <th>Actions</th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    {% for exam in exams %}
-
-                    <tr>
-
-                        <td>
-
-    <div class="d-flex gap-2">
 
         <a
-            href="{% url 'edit_test' exam.id %}"
-            class="btn btn-sm btn-outline-primary"
+            href="{% url 'performance_create_test' %}"
+            class="btn btn-primary px-4"
         >
-            Edit
-        </a>
-
-        <a
-            href="{% url 'assign_test' exam.id %}"
-            class="btn btn-sm btn-outline-success"
-        >
-            Assign
+            + Create Exam
         </a>
 
     </div>
 
-</td>
+
+    <!-- ======================================================
+         EXAM LIBRARY CARD
+    ======================================================= -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <!-- ==================================================
+                         TABLE HEADER
+                    =================================================== -->
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th class="ps-4">
+                                Exam
+                            </th>
+
+                            <th>
+                                Batch
+                            </th>
+
+                            <th>
+                                Topic
+                            </th>
+
+                            <th>
+                                Questions
+                            </th>
+
+                            <th>
+                                Marks
+                            </th>
+
+                            <th>
+                                Duration
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th class="text-center pe-4">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
 
 
-                        <td>
-                            {{ exam.batch }}
-                        </td>
+                    <!-- ==================================================
+                         TABLE BODY
+                    =================================================== -->
+
+                    <tbody>
+
+                        {% for exam in exams %}
+
+                        <tr>
+
+                            <!-- ==================================================
+                                 EXAM NAME
+                            =================================================== -->
+
+                            <td class="ps-4">
+
+                                <div class="fw-semibold">
+
+                                    {{ exam.name }}
+
+                                </div>
 
 
-                        <td>
-                            {{ exam.topic }}
-                        </td>
+                                <small class="text-muted">
+
+                                    Exam #{{ exam.id }}
+
+                                </small>
+
+                            </td>
 
 
-                        <td>
-                            {{ exam.duration }} minutes
-                        </td>
+                            <!-- ==================================================
+                                 BATCH
+                            =================================================== -->
+
+                            <td>
+
+                                {{ exam.batch }}
+
+                            </td>
 
 
-                        <td>
-                            {{ exam.total_marks }}
-                        </td>
+                            <!-- ==================================================
+                                 TOPIC
+                            =================================================== -->
+
+                            <td>
+
+                                {{ exam.topic }}
+
+                            </td>
 
 
-                        <td>
+                            <!-- ==================================================
+                                 NUMBER OF QUESTIONS
+                            =================================================== -->
 
-                            <a
-                                href="{% url 'edit_test' exam.id %}"
-                                class="btn btn-sm btn-outline-primary"
+                            <td>
+
+                                <span class="fw-semibold">
+
+                                    {{ exam.number_of_questions }}
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- ==================================================
+                                 MAXIMUM MARKS
+                            =================================================== -->
+
+                            <td>
+
+                                {{ exam.total_marks }}
+
+                            </td>
+
+
+                            <!-- ==================================================
+                                 DURATION
+                            =================================================== -->
+
+                            <td>
+
+                                {{ exam.duration }} min
+
+                            </td>
+
+
+                            <!-- ==================================================
+                                 STATUS
+                            =================================================== -->
+
+                            <td>
+
+                                {% if exam.status == "DRAFT" %}
+
+                                    <span
+                                        class="badge bg-warning text-dark px-3 py-2"
+                                    >
+                                        DRAFT
+                                    </span>
+
+                                {% else %}
+
+                                    <span
+                                        class="badge bg-success px-3 py-2"
+                                    >
+                                        PUBLISHED
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ==================================================
+                                 ACTIONS
+                            =================================================== -->
+
+                            <td class="text-center pe-4">
+
+                                {% if exam.status == "DRAFT" %}
+
+                                    <div
+                                        class="d-flex justify-content-center gap-2"
+                                    >
+
+                                        <!-- EDIT -->
+
+                                        <a
+                                            href="{% url 'edit_test' exam.id %}"
+                                            class="btn btn-sm btn-outline-primary"
+                                        >
+                                            Edit
+                                        </a>
+
+
+                                        <!-- QUESTIONS -->
+
+                                        <a
+                                            href="{% url 'performance_question_selection' exam.id %}"
+                                            class="btn btn-sm btn-outline-secondary"
+                                        >
+                                            Questions
+                                        </a>
+
+
+                                        <!-- PUBLISH -->
+
+                                        <a
+                                            href="{% url 'publish_test' exam.id %}"
+                                            class="btn btn-sm btn-success"
+                                            onclick="return confirm('Are you sure you want to publish this exam? Once published, it cannot be edited.');"
+                                        >
+                                            Publish
+                                        </a>
+
+                                    </div>
+
+
+                                {% else %}
+
+
+                                    <div
+                                        class="d-flex justify-content-center gap-2"
+                                    >
+
+                                        <!-- PUBLISHED STATUS -->
+
+                                        <span
+                                            class="badge bg-light text-success border px-3 py-2"
+                                        >
+                                            Published
+                                        </span>
+
+
+                                        <!-- ASSIGN -->
+
+                                        <a
+                                            href="{% url 'assign_test' exam.id %}"
+                                            class="btn btn-sm btn-outline-success"
+                                        >
+                                            Assign
+                                        </a>
+
+                                    </div>
+
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+
+                        <!-- ==================================================
+                             NO EXAMS
+                        =================================================== -->
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="text-center py-5"
                             >
-                                Edit
-                            </a>
 
-                        </td>
+                                <h5 class="fw-semibold mb-2">
 
-                    </tr>
+                                    No exams created yet
+
+                                </h5>
 
 
-                    {% empty %}
+                                <p class="text-muted mb-3">
 
-                    <tr>
+                                    Create your first examination to get started.
 
-                        <td
-                            colspan="6"
-                            class="text-center text-muted py-4"
-                        >
-                            No exams created yet.
-                        </td>
+                                </p>
 
-                    </tr>
 
-                    {% endfor %}
+                                <a
+                                    href="{% url 'performance_create_test' %}"
+                                    class="btn btn-primary"
+                                >
 
-                </tbody>
+                                    + Create Exam
 
-            </table>
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
 
