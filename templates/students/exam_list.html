@@ -1,232 +1,548 @@
-{% extends "website/home.html" %}
+{% extends "students/base.html" %}
 
 {% block content %}
 
-<div class="container-fluid py-4">
+<style>
 
-	<!-- =====================================================
+	.exam-page {
+	max-width: 1200px;
+	margin: 0 auto;
+	}
+
+	/* =========================
+	HEADER
+	========================= */
+
+	.exam-header {
+	margin-bottom: 25px;
+	}
+
+	.exam-header h1 {
+	margin: 0;
+	color: #102a56;
+	font-size: 32px;
+	font-weight: 700;
+	}
+
+	.exam-header p {
+	margin: 6px 0 0;
+	color: #64748b;
+	font-size: 15px;
+	}
+
+
+	/* =========================
+	TABS
+	========================= */
+
+	.exam-tabs {
+	display: flex;
+	gap: 12px;
+	margin-bottom: 25px;
+	}
+
+	.exam-tab {
+	border: none;
+	border-radius: 10px;
+	padding: 12px 22px;
+	font-size: 14px;
+	font-weight: 700;
+	cursor: pointer;
+	transition: 0.2s;
+	}
+
+	.pending-tab {
+	background: #0878e8;
+	color: white;
+	}
+
+	.attempted-tab {
+	background: white;
+	color: #102a56;
+	border: 1px solid #d6dfeb;
+	}
+
+	.exam-tab:hover {
+	transform: translateY(-1px);
+	}
+
+	.attempted-tab.active {
+	background: #16a34a;
+	color: white;
+	border-color: #16a34a;
+	}
+
+
+	/* =========================
+	EXAM GRID
+	========================= */
+
+	.exam-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
+	}
+
+
+	/* =========================
+	EXAM CARD
+	========================= */
+
+	.exam-card {
+	background: white;
+	border-radius: 16px;
+	padding: 22px;
+	border: 1px solid #e1e7ef;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+	transition: 0.2s;
+	}
+
+	.exam-card:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10);
+	}
+
+	.exam-status {
+	display: inline-block;
+	padding: 6px 12px;
+	border-radius: 20px;
+	font-size: 11px;
+	font-weight: 700;
+	margin-bottom: 15px;
+	}
+
+	.status-pending {
+	background: #e8f3ff;
+	color: #0878e8;
+	}
+
+	.status-completed {
+	background: #e8f8ee;
+	color: #15803d;
+	}
+
+	.exam-card h2 {
+	margin: 0 0 7px;
+	color: #102a56;
+	font-size: 20px;
+	}
+
+	.exam-topic {
+	margin: 0 0 20px;
+	color: #64748b;
+	font-size: 14px;
+	}
+
+
+	/* =========================
+	DETAILS
+	========================= */
+
+	.exam-details {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+	margin-bottom: 20px;
+	}
+
+	.detail-box {
+	background: #f4f7fb;
+	border-radius: 10px;
+	padding: 12px;
+	}
+
+	.detail-label {
+	display: block;
+	color: #64748b;
+	font-size: 11px;
+	margin-bottom: 4px;
+	}
+
+	.detail-value {
+	color: #102a56;
+	font-size: 14px;
+	font-weight: 700;
+	}
+
+
+	/* =========================
+	BUTTON
+	========================= */
+
+	.start-button {
+	display: block;
+	width: 100%;
+	padding: 12px;
+	background: #0878e8;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+	border-radius: 10px;
+	font-size: 14px;
+	font-weight: 700;
+	transition: 0.2s;
+	}
+
+	.start-button:hover {
+	background: #063b91;
+	}
+
+
+	/* =========================
+	EMPTY
+	========================= */
+
+	.empty-card {
+	background: white;
+	border: 1px solid #e1e7ef;
+	border-radius: 16px;
+	padding: 45px 20px;
+	text-align: center;
+	grid-column: 1 / -1;
+	}
+
+	.empty-card h3 {
+	margin: 0 0 8px;
+	color: #102a56;
+	}
+
+	.empty-card p {
+	margin: 0;
+	color: #64748b;
+	font-size: 14px;
+	}
+
+
+	/* =========================
+	MOBILE
+	========================= */
+
+	@media (max-width: 900px) {
+
+	.exam-grid {
+	grid-template-columns: repeat(2, 1fr);
+	}
+
+	}
+
+
+	@media (max-width: 600px) {
+
+	.exam-page {
+	width: 100%;
+	}
+
+	.exam-header h1 {
+	font-size: 26px;
+	}
+
+	.exam-tabs {
+	width: 100%;
+	}
+
+	.exam-tab {
+	flex: 1;
+	padding: 11px 8px;
+	font-size: 13px;
+	}
+
+	.exam-grid {
+	grid-template-columns: 1fr;
+	}
+
+	.exam-card {
+	padding: 18px;
+	}
+
+	}
+
+</style>
+
+
+<div class="exam-page">
+
+
+	<!-- =========================
          PAGE HEADER
-    ====================================================== -->
+    ========================= -->
 
-	<div class="mb-4">
+	<div class="exam-header">
 
-		<h2 class="fw-bold mb-1">
-			Available Exams
-		</h2>
+		<h1>My Exams</h1>
 
-		<p class="text-muted mb-0">
-			Select an examination to begin.
+		<p>
+			View your pending and attempted examinations.
 		</p>
 
 	</div>
 
 
-	<!-- =====================================================
-         EXAMS
-    ====================================================== -->
+	<!-- =========================
+         TABS
+    ========================= -->
 
-	<div class="row g-4">
+	<div class="exam-tabs">
 
-		{% for exam in exams %}
+		<button
+            type="button"
+            id="pendingTab"
+            class="exam-tab pending-tab"
+            onclick="showExamTab('pending')"
+        >
+			🟢 Pending Tests
+		</button>
 
-		<div class="col-12 col-md-6 col-xl-4">
+		<button
+            type="button"
+            id="attemptedTab"
+            class="exam-tab attempted-tab"
+            onclick="showExamTab('attempted')"
+        >
+			🔵 Attempted Tests
+		</button>
 
-			<div class="card border-0 shadow-sm h-100 exam-card">
+	</div>
 
-				<div class="card-body p-4">
 
-					<!-- STATUS -->
+	<!-- =========================
+         PENDING TESTS
+    ========================= -->
 
-					<div class="d-flex justify-content-between align-items-center mb-3">
+	<div id="pendingTests">
 
-						<span class="badge bg-success px-3 py-2">
-							AVAILABLE
+		<div class="exam-grid">
+
+			{% for exam in pending_exams %}
+
+			<div class="exam-card">
+
+				<span class="exam-status status-pending">
+					PENDING
+				</span>
+
+				<h2>
+					{{ exam.name }}
+				</h2>
+
+				<p class="exam-topic">
+					{{ exam.topic }}
+				</p>
+
+
+				<div class="exam-details">
+
+					<div class="detail-box">
+
+						<span class="detail-label">
+							Duration
+						</span>
+
+						<span class="detail-value">
+							{{ exam.duration }} min
 						</span>
 
 					</div>
 
 
-					<!-- EXAM NAME -->
+					<div class="detail-box">
 
-					<h4 class="fw-bold mb-2">
-						{{ exam.name }}
-					</h4>
+						<span class="detail-label">
+							Questions
+						</span>
 
-
-					<!-- TOPIC -->
-
-					<p class="text-muted mb-4">
-						{{ exam.topic }}
-					</p>
-
-
-					<!-- EXAM DETAILS -->
-
-					<div class="row g-3 mb-4">
-
-						<div class="col-6">
-
-							<div class="detail-box">
-
-								<small class="text-muted d-block">
-									Duration
-								</small>
-
-								<strong>
-									{{ exam.duration }} min
-								</strong>
-
-							</div>
-
-						</div>
-
-
-						<div class="col-6">
-
-							<div class="detail-box">
-
-								<small class="text-muted d-block">
-									Questions
-								</small>
-
-								<strong>
-									{{ exam.number_of_questions }}
-								</strong>
-
-							</div>
-
-						</div>
-
-
-						<div class="col-6">
-
-							<div class="detail-box">
-
-								<small class="text-muted d-block">
-									Maximum Marks
-								</small>
-
-								<strong>
-									{{ exam.total_marks }}
-								</strong>
-
-							</div>
-
-						</div>
-
-
-						<div class="col-6">
-
-							<div class="detail-box">
-
-								<small class="text-muted d-block">
-									Subject
-								</small>
-
-								<strong>
-									{{ exam.topic }}
-								</strong>
-
-							</div>
-
-						</div>
+						<span class="detail-value">
+							{{ exam.number_of_questions }}
+						</span>
 
 					</div>
 
 
-					<!-- START BUTTON -->
+					<div class="detail-box">
 
-					<a
-                        href="{% url 'start_exam' exam.id %}"
-                        class="btn btn-primary w-100 py-2 fw-semibold"
-                    >
-						Start Exam
-					</a>
+						<span class="detail-label">
+							Maximum Marks
+						</span>
 
-				</div>
+						<span class="detail-value">
+							{{ exam.total_marks }}
+						</span>
 
-			</div>
-
-		</div>
+					</div>
 
 
-		{% empty %}
+					<div class="detail-box">
 
-		<!-- =================================================
-             NO EXAMS
-        ================================================== -->
+						<span class="detail-label">
+							Subject
+						</span>
 
-		<div class="col-12">
+						<span class="detail-value">
+							{{ exam.topic }}
+						</span>
 
-			<div class="card border-0 shadow-sm">
-
-				<div class="card-body text-center py-5">
-
-					<h4 class="fw-bold mb-2">
-						No Exams Available
-					</h4>
-
-					<p class="text-muted mb-0">
-						There are currently no examinations assigned to you.
-					</p>
+					</div>
 
 				</div>
 
+
+				<a
+                    href="{% url 'start_exam' exam.id %}"
+                    class="start-button"
+                >
+					Start Exam
+				</a>
+
 			</div>
+
+			{% empty %}
+
+			<div class="empty-card">
+
+				<h3>
+					No Pending Tests
+				</h3>
+
+				<p>
+					You have no pending examinations.
+				</p>
+
+			</div>
+
+			{% endfor %}
 
 		</div>
 
-		{% endfor %}
+	</div>
+
+
+	<!-- =========================
+         ATTEMPTED TESTS
+    ========================= -->
+
+	<div
+        id="attemptedTests"
+        style="display: none;"
+    >
+
+		<div class="exam-grid">
+
+			{% for attempt in attempted_attempts %}
+
+			<div class="exam-card">
+
+				<span class="exam-status status-completed">
+					COMPLETED
+				</span>
+
+				<h2>
+					{{ attempt.exam.name }}
+				</h2>
+
+				<p class="exam-topic">
+					{{ attempt.exam.topic }}
+				</p>
+
+
+				<div class="exam-details">
+
+					<div class="detail-box">
+
+						<span class="detail-label">
+							Duration
+						</span>
+
+						<span class="detail-value">
+							{{ attempt.exam.duration }} min
+						</span>
+
+					</div>
+
+
+					<div class="detail-box">
+
+						<span class="detail-label">
+							Score
+						</span>
+
+						<span class="detail-value">
+							{{ attempt.score|floatformat:0 }} / {{ attempt.exam.total_marks }}
+						</span>
+
+					</div>
+
+
+	
+
+			{% empty %}
+
+			<div class="empty-card">
+
+				<h3>
+					No Attempted Tests
+				</h3>
+
+				<p>
+					You have not attempted any tests yet.
+				</p>
+
+			</div>
+
+			{% endfor %}
+
+		</div>
 
 	</div>
 
 </div>
 
 
-<!-- =========================================================
-     PAGE STYLES
-========================================================= -->
+<script>
 
-<style>
+	function showExamTab(tab) {
 
-	.exam-card {
-	border-radius: 16px;
-	transition: transform 0.2s ease, box-shadow 0.2s ease;
-	}
+	const pendingTests =
+	document.getElementById("pendingTests");
 
+	const attemptedTests =
+	document.getElementById("attemptedTests");
 
-	.exam-card:hover {
-	transform: translateY(-3px);
-	box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.10) !important;
-	}
+	const pendingTab =
+	document.getElementById("pendingTab");
 
-
-	.detail-box {
-	background: #f8f9fa;
-	border-radius: 10px;
-	padding: 12px;
-	min-height: 65px;
-	}
+	const attemptedTab =
+	document.getElementById("attemptedTab");
 
 
-	.detail-box strong {
-	font-size: 15px;
-	}
+	if (tab === "pending") {
 
+	pendingTests.style.display = "block";
 
-	.exam-card .btn-primary {
-	border-radius: 10px;
-	}
+	attemptedTests.style.display = "none";
 
+	pendingTab.className =
+	"exam-tab pending-tab";
 
-	@media (max-width: 576px) {
-
-	.exam-card {
-	border-radius: 12px;
-	}
+	attemptedTab.className =
+	"exam-tab attempted-tab";
 
 	}
 
-</style>
+	else {
+
+	pendingTests.style.display = "none";
+
+	attemptedTests.style.display = "block";
+
+	pendingTab.className =
+	"exam-tab attempted-tab";
+
+	attemptedTab.className =
+	"exam-tab attempted-tab active";
+
+	}
+
+	}
+
+</script>
 
 {% endblock %}

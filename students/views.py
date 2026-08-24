@@ -26,6 +26,7 @@ from .models import (
     ExamAssignment,
     StudyMaterial,
     StudentExamAttempt,
+    StudentAnswer
 )
 
 
@@ -593,6 +594,8 @@ def attendance_batches(request):
 
 # ================= STUDENT EXAMS ================= #
 
+# ================= STUDENT EXAMS ================= #
+
 def student_exam_list(request):
 
     student_id = request.session.get("student_id")
@@ -618,9 +621,8 @@ def student_exam_list(request):
         "-id"
     )
 
-
     # --------------------------------------------------
-    # ATTEMPTED EXAMS
+    # ATTEMPTED EXAM IDS
     # --------------------------------------------------
 
     attempted_exam_ids = set(
@@ -633,7 +635,6 @@ def student_exam_list(request):
         )
     )
 
-
     # --------------------------------------------------
     # PENDING EXAMS
     # --------------------------------------------------
@@ -641,7 +642,6 @@ def student_exam_list(request):
     pending_exams = assigned_exams.exclude(
         id__in=attempted_exam_ids
     )
-
 
     # --------------------------------------------------
     # ATTEMPTED EXAMS
@@ -651,16 +651,28 @@ def student_exam_list(request):
         id__in=attempted_exam_ids
     )
 
+    # --------------------------------------------------
+    # ATTEMPTED EXAM DETAILS
+    # --------------------------------------------------
+
+    attempted_attempts = StudentExamAttempt.objects.filter(
+        student=student,
+        exam__in=attempted_exams,
+        completed=True,
+    ).select_related(
+        "exam"
+    )
 
     return render(
         request,
         "students/exam_list.html",
         {
+            "exams": pending_exams,
             "pending_exams": pending_exams,
             "attempted_exams": attempted_exams,
+            "attempted_attempts": attempted_attempts,
         }
     )
-
 # ================= START EXAM ================= #
 
 def start_exam(request, exam_id):
