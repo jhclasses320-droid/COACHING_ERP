@@ -22,14 +22,6 @@
 
         </div>
 
-
-        <a
-            href="{% url 'performance_create_test' %}"
-            class="btn btn-primary px-4"
-        >
-            + Create Exam
-        </a>
-
     </div>
 
 
@@ -255,7 +247,6 @@
 
                                 {% else %}
 
-
                                     <div
                                         class="d-flex justify-content-center gap-2"
                                     >
@@ -278,8 +269,17 @@
                                             Assign
                                         </a>
 
-                                    </div>
 
+                                        <!-- STUDENTS / RESULTS -->
+
+                                        <a
+                                            href="{% url 'exam_student_status' exam.id %}"
+                                            class="btn btn-sm btn-outline-primary"
+                                        >
+                                            Students / Results
+                                        </a>
+
+                                    </div>
 
                                 {% endif %}
 

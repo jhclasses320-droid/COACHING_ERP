@@ -912,3 +912,56 @@ def publish_test(request, exam_id):
     return redirect(
         "performance_exam_library"
     )
+
+# ==========================================================
+# ONLINE EXAM - ASSIGNED STUDENTS STATUS
+# ==========================================================
+
+def exam_student_status(request, exam_id):
+
+    from students.models import Exam, ExamAssignment, StudentExamAttempt
+
+    exam = Exam.objects.get(id=exam_id)
+
+    assignments = ExamAssignment.objects.filter(
+        exam=exam,
+        is_active=True
+    ).select_related("student")
+
+    attempts = {
+        attempt.student_id: attempt
+        for attempt in StudentExamAttempt.objects.filter(
+            exam=exam
+        )
+    }
+
+    student_status = []
+
+    for assignment in assignments:
+
+        attempt = attempts.get(assignment.student_id)
+
+        student_status.append({
+            "student": assignment.student,
+            "attempted": attempt is not None,
+            "attempt": attempt,
+        })
+
+    total_assigned = len(assignments)
+    total_attempted = sum(
+        1 for item in student_status
+        if item["attempted"]
+    )
+    total_pending = total_assigned - total_attempted
+
+    return render(
+        request,
+        "performance/exam_student_status.html",
+        {
+            "exam": exam,
+            "student_status": student_status,
+            "total_assigned": total_assigned,
+            "total_attempted": total_attempted,
+            "total_pending": total_pending,
+        }
+    )

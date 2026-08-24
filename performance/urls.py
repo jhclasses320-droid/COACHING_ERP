@@ -88,10 +88,17 @@ urlpatterns = [
         name="subject_analysis_report",
     ),
 
-    path(
+       path(
         "reports/parent/",
         views.parent_report,
         name="parent_report",
     ),
 
+    path(
+        "exams/<int:exam_id>/students/",
+        views.exam_student_status,
+        name="exam_student_status",
+    ),
+
 ]
+

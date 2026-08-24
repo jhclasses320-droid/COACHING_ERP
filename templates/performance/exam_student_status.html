@@ -1,0 +1,139 @@
+{% extends "students/base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <h2 class="fw-bold mb-1">
+        {{ exam.name }}
+    </h2>
+
+    <p class="text-muted mb-4">
+        Assigned Students
+    </p>
+
+
+    <!-- SUMMARY -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3">
+                <small class="text-muted">Total Assigned</small>
+                <h3 class="fw-bold mb-0">
+                    {{ total_assigned }}
+                </h3>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3">
+                <small class="text-muted">Attempted</small>
+                <h3 class="fw-bold text-success mb-0">
+                    {{ total_attempted }}
+                </h3>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-3">
+                <small class="text-muted">Pending</small>
+                <h3 class="fw-bold text-danger mb-0">
+                    {{ total_pending }}
+                </h3>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- STUDENTS -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Student</th>
+                            <th>Status</th>
+                            <th>Marks</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in student_status %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ item.student.student_name }}
+                                </strong>
+                            </td>
+
+                            <td>
+
+                                {% if item.attempted %}
+
+                                <span class="badge bg-success">
+                                    Attempted
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge bg-danger">
+                                    Pending
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if item.attempted %}
+
+                                    {{ item.attempt.score }} /
+                                    {{ exam.total_marks }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="3" class="text-center py-4">
+                                No students assigned to this exam.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
