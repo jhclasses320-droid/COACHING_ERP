@@ -1,0 +1,102 @@
+{% extends "website/home.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ======================================================
+         HEADER
+    ======================================================= -->
+
+    <div class="mb-4">
+
+        <h2 class="fw-bold mb-1">
+            Batch Performance
+        </h2>
+
+        <p class="text-muted mb-0">
+            View batch-wise assessment performance summary.
+        </p>
+
+    </div>
+
+
+    <!-- ======================================================
+         REPORT CARD
+    ======================================================= -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-4">
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <h5 class="fw-semibold mb-3">
+                        Batch
+                    </h5>
+
+                    <p class="text-muted">
+                        Select a batch to view its overall
+                        assessment performance.
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <h5 class="fw-semibold mb-3">
+                        Performance Summary
+                    </h5>
+
+                    <p class="text-muted">
+                        Batch-wise marks and performance
+                        summary will be displayed here.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <hr class="my-4">
+
+
+            <div class="text-center py-4">
+
+                <h5 class="fw-semibold mb-2">
+                    Batch Performance
+                </h5>
+
+                <p class="text-muted mb-0">
+                    Batch performance analysis interface
+                    will appear here.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         BACK
+    ======================================================= -->
+
+    <div class="mt-4">
+
+        <a
+            href="{% url 'performance_reports' %}"
+            class="btn btn-outline-primary"
+        >
+            ← Back to Performance Reports
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

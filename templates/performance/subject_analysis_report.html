@@ -1,0 +1,101 @@
+{% extends "website/home.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ======================================================
+         HEADER
+    ======================================================= -->
+
+    <div class="mb-4">
+
+        <h2 class="fw-bold mb-1">
+            Subject Analysis
+        </h2>
+
+        <p class="text-muted mb-0">
+            Compare student performance subject-wise.
+        </p>
+
+    </div>
+
+
+    <!-- ======================================================
+         REPORT CARD
+    ======================================================= -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-4">
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <h5 class="fw-semibold mb-3">
+                        Subject
+                    </h5>
+
+                    <p class="text-muted">
+                        Select a subject to analyse student
+                        performance.
+                    </p>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <h5 class="fw-semibold mb-3">
+                        Performance Analysis
+                    </h5>
+
+                    <p class="text-muted">
+                        Subject-wise assessment performance
+                        will be displayed here.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <hr class="my-4">
+
+
+            <div class="text-center py-4">
+
+                <h5 class="fw-semibold mb-2">
+                    Subject Analysis
+                </h5>
+
+                <p class="text-muted mb-0">
+                    Subject analysis interface will appear here.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         BACK
+    ======================================================= -->
+
+    <div class="mt-4">
+
+        <a
+            href="{% url 'performance_reports' %}"
+            class="btn btn-outline-primary"
+        >
+            ← Back to Performance Reports
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -38,6 +38,11 @@ path('student/logout/', views.student_logout, name='student_logout'),
 
     path('student/exams/', views.student_exam_list, name='student_exams'),
     path('student/exam/<int:exam_id>/', views.start_exam, name='start_exam'),
+    path(
+    'student/results/',
+    views.student_results,
+    name='student_results',
+),
 
     # ==========================================================
     # ADMIN REPORTS

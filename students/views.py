@@ -1287,3 +1287,36 @@ def assign_test(request, exam_id):
         "operations/assign_test.html",
         context,
     )
+
+# ================= STUDENT RESULTS ================= #
+
+def student_results(request):
+
+    student_id = request.session.get("student_id")
+
+    if not student_id:
+        return redirect("student_login")
+
+    student = get_object_or_404(
+        Student,
+        id=student_id,
+        is_active=True,
+    )
+
+    attempts = StudentExamAttempt.objects.filter(
+        student=student,
+        completed=True,
+    ).select_related(
+        "exam",
+    ).order_by(
+        "-end_time",
+    )
+
+    return render(
+        request,
+        "students/results.html",
+        {
+            "student": student,
+            "attempts": attempts,
+        }
+    )
