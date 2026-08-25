@@ -185,7 +185,7 @@ def marks_entry(request):
             for mark in saved_marks
         }
 
-        if request.method == "POST":
+    if request.method == "POST":
 
             for student in students:
 
@@ -193,27 +193,26 @@ def marks_entry(request):
                     f"marks_{student.id}"
                 )
 
-            is_absent = (
+                is_absent = (
                     request.POST.get(
                         f"absent_{student.id}"
                     ) == "on"
                 )
 
-            is_retest = (
+                is_retest = (
                     request.POST.get(
                         f"retest_{student.id}"
                     ) == "on"
                 )
 
-            if is_absent or is_retest:
+                if is_absent or is_retest:
                     marks_value = None
 
-            if (
+                if (
                     marks_value not in ("", None)
                     or is_absent
                     or is_retest
                 ):
-
 
                     StudentMark.objects.update_or_create(
                         assessment_subject=selected_subject,
@@ -230,11 +229,11 @@ def marks_entry(request):
                 "Marks saved successfully.",
             )
 
-            return redirect(
-                f"{request.path}?assessment_subject={selected_subject.id}"
+    return redirect(
+            f"{request.path}?assessment_subject={selected_subject.id}"
             )
 
-        for student in students:
+    for student in students:
             student.saved_mark = existing_marks.get(student.id)
 
     context = {
