@@ -185,7 +185,7 @@ def marks_entry(request):
             for mark in saved_marks
         }
 
-    if request.method == "POST":
+        if request.method == "POST":
 
             for student in students:
 
@@ -229,8 +229,8 @@ def marks_entry(request):
                 "Marks saved successfully.",
             )
 
-    return redirect(
-            f"{request.path}?assessment_subject={selected_subject.id}"
+            return redirect(
+                f"{request.path}?assessment_subject={selected_subject.id}"
             )
 
     for student in students:
