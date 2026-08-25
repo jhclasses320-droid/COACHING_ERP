@@ -985,15 +985,93 @@ def create_exam(request):
 
 
 def exam_library(request):
-    from .models import Exam
 
-    exams = Exam.objects.all().order_by('-id')
+    assessments = (
+        Assessment.objects
+        .select_related(
+            "assessment_type",
+            "batch",
+        )
+        .prefetch_related(
+    "subjects",
+)
+        .order_by("-id")
+    )
+
+    exams = []
+
+    for assessment in assessments:
+
+
+        assessment_subject = (
+    assessment.subjects.first()
+)
+        
+
+        if not assessment_subject:
+            continue
+
+        online_exam = (
+            Exam.objects
+            .filter(
+                assessment=assessment
+            )
+            .first()
+        )
+
+        exams.append({
+            "id": (
+                online_exam.id
+                if online_exam
+                else assessment.id
+            ),
+
+            "name":
+                assessment.assessment_name,
+
+            "batch":
+                assessment.batch,
+
+            "topic":
+                assessment_subject.topic,
+
+            "number_of_questions":
+                (
+                    online_exam.number_of_questions
+                    if online_exam
+                    else 0
+                ),
+
+            "total_marks":
+                assessment_subject.maximum_marks,
+
+            "duration":
+                assessment_subject.duration_minutes,
+
+            "status":
+                (
+                    online_exam.status
+                    if online_exam
+                    else "OFFLINE"
+                ),
+
+            "is_online":
+                online_exam is not None,
+
+            "assessment_subject_id":
+                assessment_subject.id,
+
+            "exam_id":
+                online_exam.id
+                if online_exam
+                else None,
+        })
 
     return render(
         request,
-        'operations/exam_library.html',
+        "operations/exam_library.html",
         {
-            'exams': exams,
+            "exams": exams,
         }
     )
 
