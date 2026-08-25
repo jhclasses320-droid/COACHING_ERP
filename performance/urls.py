@@ -100,5 +100,22 @@ urlpatterns = [
         name="exam_student_status",
     ),
 
+    # ==========================================================
+    # WORKSHEET GENERATOR
+    # ==========================================================
+
+    path(
+        "worksheets/",
+        views.worksheet_library,
+        name="worksheet_library",
+    ),
+
+    path(
+        "worksheets/create/",
+        views.worksheet_create,
+        name="worksheet_create",
+    ),
+
+
 ]
 

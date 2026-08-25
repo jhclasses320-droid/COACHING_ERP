@@ -164,9 +164,13 @@ Marks Entry | JH CLASSES
                                         Marks Scored
                                     </th>
 
-                                    <th width="20%">
-                                        Absent
-                                    </th>
+                                    <th width="15%">
+    Absent
+</th>
+
+<th width="15%">
+    Retest
+</th>
 
                                 </tr>
 
@@ -202,16 +206,29 @@ Marks Entry | JH CLASSES
 
                                         <td class="text-center">
 
-                                            <input
-                                                type="checkbox"
-                                                name="absent_{{ student.id }}"
+    <input
+        type="checkbox"
+        name="absent_{{ student.id }}"
 
-                                                {% if student.saved_mark and student.saved_mark.is_absent %}
-                                                    checked
-                                                {% endif %}
-                                            >
+        {% if student.saved_mark and student.saved_mark.is_absent %}
+            checked
+        {% endif %}
+    >
 
-                                        </td>
+</td>
+
+<td class="text-center">
+
+    <input
+        type="checkbox"
+        name="retest_{{ student.id }}"
+
+        {% if student.saved_mark and student.saved_mark.is_retest %}
+            checked
+        {% endif %}
+    >
+
+</td>
 
                                     </tr>
 

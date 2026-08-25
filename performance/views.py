@@ -11,6 +11,9 @@ from .models import (
     AssessmentSubject,
     AssessmentType,
     StudentMark,
+    WorksheetProject,
+    WorksheetSet,
+    Worksheet,
 )
 
 
@@ -190,16 +193,27 @@ def marks_entry(request):
                     f"marks_{student.id}"
                 )
 
-                is_absent = (
+            is_absent = (
                     request.POST.get(
                         f"absent_{student.id}"
                     ) == "on"
                 )
 
-                if is_absent:
+            is_retest = (
+                    request.POST.get(
+                        f"retest_{student.id}"
+                    ) == "on"
+                )
+
+            if is_absent or is_retest:
                     marks_value = None
 
-                if marks_value not in ("", None) or is_absent:
+            if (
+                    marks_value not in ("", None)
+                    or is_absent
+                    or is_retest
+                ):
+
 
                     StudentMark.objects.update_or_create(
                         assessment_subject=selected_subject,
@@ -207,6 +221,7 @@ def marks_entry(request):
                         defaults={
                             "marks_scored": marks_value,
                             "is_absent": is_absent,
+                            "is_retest": is_retest,
                         },
                     )
 
@@ -964,4 +979,214 @@ def exam_student_status(request, exam_id):
             "total_attempted": total_attempted,
             "total_pending": total_pending,
         }
+    )
+
+# ==========================================================
+# WORKSHEET LIBRARY
+# ==========================================================
+
+def worksheet_library(request):
+
+    worksheet_projects = (
+        WorksheetProject.objects
+        .select_related(
+            "subject",
+            "chapter",
+            "created_by",
+        )
+        .prefetch_related(
+            "worksheet_sets",
+        )
+        .filter(is_active=True)
+        .order_by("-created_on")
+    )
+
+    return render(
+        request,
+        "performance/worksheet_library.html",
+        {
+            "worksheet_projects": worksheet_projects,
+        },
+    )
+
+
+# ==========================================================
+# CREATE WORKSHEET PROJECT
+# ==========================================================
+
+def worksheet_create(request):
+
+    batches = Batch.objects.all().order_by(
+        "student_class",
+        "batch_name",
+    )
+
+    subjects = Subject.objects.all().order_by(
+        "name"
+    )
+
+    chapters = Chapter.objects.filter(
+        is_active=True
+    ).select_related(
+        "topic",
+        "topic__subject",
+    ).order_by(
+        "topic__subject__name",
+        "topic__name",
+        "name",
+    )
+
+    if request.method == "POST":
+
+        batch_id = request.POST.get("batch")
+        subject_id = request.POST.get("subject")
+        chapter_id = request.POST.get("chapter")
+
+        title = request.POST.get(
+            "title"
+        ).strip()
+
+        number_of_sets = int(
+            request.POST.get(
+                "number_of_sets",
+                1,
+            )
+        )
+
+        if not title:
+
+            messages.error(
+                request,
+                "Worksheet project title is required.",
+            )
+
+            return redirect(
+                "worksheet_create"
+            )
+
+        if number_of_sets < 1:
+
+            messages.error(
+                request,
+                "At least one worksheet set is required.",
+            )
+
+            return redirect(
+                "worksheet_create"
+            )
+
+        batch = get_object_or_404(
+            Batch,
+            id=batch_id,
+        )
+
+        subject = get_object_or_404(
+            Subject,
+            id=subject_id,
+        )
+
+        chapter = None
+
+        if chapter_id:
+
+            chapter = get_object_or_404(
+                Chapter,
+                id=chapter_id,
+                is_active=True,
+            )
+
+        project = WorksheetProject.objects.create(
+
+            class_level=(
+                batch.student_class
+                or ""
+            ),
+
+            subject=subject,
+
+            chapter=chapter,
+
+            chapter_name=(
+                chapter.name
+                if chapter
+                else ""
+            ),
+
+            title=title,
+
+            number_of_sets=number_of_sets,
+
+            worksheets_per_set=4,
+
+            created_by=(
+                request.user
+                if request.user.is_authenticated
+                else None
+            ),
+        )
+
+        # --------------------------------------------------
+        # CREATE THE REQUESTED NUMBER OF SETS
+        # --------------------------------------------------
+
+        for set_number in range(
+            1,
+            number_of_sets + 1,
+        ):
+
+            worksheet_set = WorksheetSet.objects.create(
+                project=project,
+                set_number=set_number,
+            )
+
+            # --------------------------------------------------
+            # EVERY SET STARTS WITH 4 WORKSHEETS
+            # --------------------------------------------------
+
+            worksheet_types = [
+                ("FOUNDATION", "Foundation"),
+                ("CONCEPTUAL", "Conceptual"),
+                ("APPLICATION", "Application"),
+                ("HOTS", "HOTS / Comprehensive"),
+            ]
+
+            for worksheet_number, (
+                worksheet_type,
+                worksheet_title,
+            ) in enumerate(
+                worksheet_types,
+                start=1,
+            ):
+
+                Worksheet.objects.create(
+                    set=worksheet_set,
+                    worksheet_number=worksheet_number,
+                    title=(
+                        f"{title} - "
+                        f"Set {set_number} - "
+                        f"Worksheet {worksheet_number}"
+                    ),
+                    worksheet_type=worksheet_type,
+                )
+
+        messages.success(
+            request,
+            (
+                f"Worksheet project created successfully "
+                f"with {number_of_sets * 4} worksheets."
+            ),
+        )
+
+        return redirect(
+            "worksheet_library"
+        )
+
+    return render(
+        request,
+        "performance/worksheet_create.html",
+        {
+            "batches": batches,
+            "subjects": subjects,
+            "chapters": chapters,
+        },
     )
