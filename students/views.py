@@ -1381,6 +1381,10 @@ def student_results(request):
         is_active=True,
     )
 
+    # --------------------------------------------------
+    # ONLINE EXAM RESULTS
+    # --------------------------------------------------
+
     attempts = StudentExamAttempt.objects.filter(
         student=student,
         completed=True,
@@ -1390,11 +1394,28 @@ def student_results(request):
         "-end_time",
     )
 
+    # --------------------------------------------------
+    # OFFLINE TEST RESULTS
+    # Only assessments which do NOT have an online Exam
+    # --------------------------------------------------
+
+    offline_marks = StudentMark.objects.filter(
+        student=student,
+        assessment_subject__assessment__exam__isnull=True,
+    ).select_related(
+        "assessment_subject",
+        "assessment_subject__assessment",
+        "assessment_subject__subject",
+    ).order_by(
+        "-assessment_subject__assessment__assessment_date",
+    )
+
     return render(
         request,
         "students/results.html",
         {
             "student": student,
             "attempts": attempts,
+            "offline_marks": offline_marks,
         }
     )
