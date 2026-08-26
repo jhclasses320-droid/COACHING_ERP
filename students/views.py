@@ -1248,98 +1248,79 @@ def edit_test(request, exam_id):
         context,
     )
 
-# ================= DELETE TEST ================= #
+# ================= DELETE OFFLINE TEST ================= #
 
 @login_required
-def delete_test(request, exam_id):
+def delete_test(request, assessment_subject_id):
 
     if not request.user.is_staff:
         return redirect('/')
 
-    exam = get_object_or_404(
-        Exam.objects.select_related(
-            "assessment",
-        ),
-        id=exam_id,
-    )
-
-    assessment = exam.assessment
-
     if request.method != "POST":
-
         messages.error(
             request,
             "Invalid request."
         )
+        return redirect("exam_library")
 
-        return redirect(
-            "exam_library"
+    assessment_subject = get_object_or_404(
+        AssessmentSubject.objects.select_related(
+            "assessment",
+            "subject",
+        ),
+        id=assessment_subject_id,
+    )
+
+    assessment = assessment_subject.assessment
+
+    # --------------------------------------------------
+    # DO NOT DELETE ONLINE TESTS
+    # --------------------------------------------------
+
+    online_exam_exists = Exam.objects.filter(
+        assessment=assessment
+    ).exists()
+
+    if online_exam_exists:
+        messages.error(
+            request,
+            "Online tests cannot be deleted from the Exam Library."
         )
+        return redirect("exam_library")
 
     # --------------------------------------------------
-    # DELETE ONLINE EXAM
+    # DELETE OFFLINE STUDENT MARKS
     # --------------------------------------------------
 
-    exam.delete()
+    StudentMark.objects.filter(
+        assessment_subject=assessment_subject
+    ).delete()
 
     # --------------------------------------------------
-    # DELETE ASSOCIATED ASSESSMENT
+    # DELETE OFFLINE ASSESSMENT SUBJECT
     # --------------------------------------------------
 
-    if assessment:
+    assessment_subject.delete()
+
+    # --------------------------------------------------
+    # DELETE ASSESSMENT IF NO SUBJECTS REMAIN
+    # --------------------------------------------------
+
+    if not AssessmentSubject.objects.filter(
+        assessment=assessment
+    ).exists():
 
         assessment.delete()
 
     messages.success(
         request,
-        "Test deleted successfully."
+        "Offline test deleted successfully."
     )
 
-    return redirect(
-        "exam_library"
-    )
+    return redirect("exam_library")
 
-# ================= DELETE TEST ================= #
 
-@login_required
-def delete_test(request, exam_id):
-
-    if not request.user.is_staff:
-        return redirect('/')
-
-    exam = get_object_or_404(
-        Exam.objects.select_related(
-            "assessment",
-        ),
-        id=exam_id,
-    )
-
-    assessment = exam.assessment
-
-    if request.method != "POST":
-
-        messages.error(
-            request,
-            "Invalid request."
-        )
-
-        return redirect(
-            "exam_library"
-        )
-
-    exam.delete()
-
-    if assessment:
-        assessment.delete()
-
-    messages.success(
-        request,
-        "Test deleted successfully."
-    )
-
-    return redirect(
-        "exam_library"
-    )
+# ================= ASSIGN TEST TO STUDENTS ================= #
 
 
 # ================= ASSIGN TEST TO STUDENTS ================= #
@@ -1489,13 +1470,24 @@ def student_results(request):
     )
 
     # --------------------------------------------------
+    # FIND ASSESSMENTS USED BY ONLINE EXAMS
+    # --------------------------------------------------
+
+    online_assessment_ids = Exam.objects.filter(
+        assessment__isnull=False
+    ).values_list(
+        "assessment_id",
+        flat=True,
+    )
+
+    # --------------------------------------------------
     # OFFLINE TEST RESULTS
-    # Only assessments which do NOT have an online Exam
     # --------------------------------------------------
 
     offline_marks = StudentMark.objects.filter(
         student=student,
-        assessment_subject__assessment__online_exam__isnull=True,
+    ).exclude(
+        assessment_subject__assessment_id__in=online_assessment_ids,
     ).select_related(
         "assessment_subject",
         "assessment_subject__assessment",
