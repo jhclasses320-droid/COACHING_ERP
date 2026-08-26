@@ -1248,6 +1248,57 @@ def edit_test(request, exam_id):
         context,
     )
 
+# ================= DELETE TEST ================= #
+
+@login_required
+def delete_test(request, exam_id):
+
+    if not request.user.is_staff:
+        return redirect('/')
+
+    exam = get_object_or_404(
+        Exam.objects.select_related(
+            "assessment",
+        ),
+        id=exam_id,
+    )
+
+    assessment = exam.assessment
+
+    if request.method != "POST":
+
+        messages.error(
+            request,
+            "Invalid request."
+        )
+
+        return redirect(
+            "exam_library"
+        )
+
+    # --------------------------------------------------
+    # DELETE ONLINE EXAM
+    # --------------------------------------------------
+
+    exam.delete()
+
+    # --------------------------------------------------
+    # DELETE ASSOCIATED ASSESSMENT
+    # --------------------------------------------------
+
+    if assessment:
+
+        assessment.delete()
+
+    messages.success(
+        request,
+        "Test deleted successfully."
+    )
+
+    return redirect(
+        "exam_library"
+    )
+
 # ================= ASSIGN TEST TO STUDENTS ================= #
 
 @login_required
@@ -1401,7 +1452,7 @@ def student_results(request):
 
     offline_marks = StudentMark.objects.filter(
         student=student,
-        assessment_subject__assessment__exam__isnull=True,
+        assessment_subject__assessment__online_exam__isnull=True,
     ).select_related(
         "assessment_subject",
         "assessment_subject__assessment",
