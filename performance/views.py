@@ -484,20 +484,26 @@ def assessment_report(request, assessment_subject_id):
         )
     )
 
-    # Present students only
+    # ------------------------------------------------------
+    # STUDENTS WITH VALID MARKS
+    # ------------------------------------------------------
 
     present_marks = [
-    m for m in marks
-    if not m.is_absent
-    and m.marks_scored is not None
-]
+        m for m in marks
+        if not m.is_absent
+        and not m.is_retest
+        and m.marks_scored is not None
+    ]
 
     present_marks.sort(
         key=lambda x: x.marks_scored,
         reverse=True,
     )
 
-    # Competition Ranking
+    # ------------------------------------------------------
+    # COMPETITION RANKING
+    # ------------------------------------------------------
+
     rank_map = {}
 
     previous_score = None
@@ -514,51 +520,110 @@ def assessment_report(request, assessment_subject_id):
         rank_map[mark.student_id] = current_rank
         previous_score = mark.marks_scored
 
+    # ------------------------------------------------------
+    # BUILD REPORT ROWS
+    # ------------------------------------------------------
+
     rows = []
 
     for mark in marks:
 
+        if mark.is_absent:
+
+            rank = "-"
+            marks_obtained = "AB"
+            sort_marks = -1
+
+        elif mark.is_retest:
+
+            rank = "-"
+            marks_obtained = "RT"
+            sort_marks = -1
+
+        elif mark.marks_scored is None:
+
+            rank = "-"
+            marks_obtained = "-"
+            sort_marks = -1
+
+        else:
+
+            rank = rank_map.get(
+                mark.student_id,
+                "-"
+            )
+
+            marks_obtained = mark.marks_scored
+            sort_marks = float(
+                mark.marks_scored
+            )
+
         rows.append(
             {
-                "rank": (
-    "-"
-    if mark.is_absent or mark.marks_scored is None
-    else rank_map.get(mark.student_id, "-")
-),
+                "rank": rank,
                 "student_id": mark.student.student_id,
                 "student_name": mark.student.student_name,
-                "marks_obtained": "AB" if mark.is_absent else mark.marks_scored,
+                "marks_obtained": marks_obtained,
                 "maximum_marks": assessment_subject.maximum_marks,
-                "sort_marks": -1 if mark.is_absent else float(mark.marks_scored),
+                "sort_marks": sort_marks,
                 "is_absent": mark.is_absent,
             }
         )
+
+    # ------------------------------------------------------
+    # SORT
+    # ------------------------------------------------------
 
     rows.sort(
         key=lambda x: x["sort_marks"],
         reverse=True,
     )
 
+    # ------------------------------------------------------
+    # SUMMARY
+    # ------------------------------------------------------
+
     present = len(present_marks)
-    absent = len(marks) - present
+
+    absent = sum(
+        1
+        for mark in marks
+        if mark.is_absent
+    )
 
     highest = (
-        max(float(x.marks_scored) for x in present_marks)
-        if present_marks else 0
+        max(
+            float(mark.marks_scored)
+            for mark in present_marks
+        )
+        if present_marks
+        else 0
     )
 
     lowest = (
-        min(float(x.marks_scored) for x in present_marks)
-        if present_marks else 0
+        min(
+            float(mark.marks_scored)
+            for mark in present_marks
+        )
+        if present_marks
+        else 0
     )
 
     average = (
         round(
-            sum(float(x.marks_scored) for x in present_marks) / present,
+            sum(
+                float(mark.marks_scored)
+                for mark in present_marks
+            ) / present,
             2,
         )
-        if present else 0
+        if present
+        else 0
     )
+
+    # ------------------------------------------------------
+    # CONTEXT
+    # ------------------------------------------------------
 
     context = {
         "assessment_subject": assessment_subject,
