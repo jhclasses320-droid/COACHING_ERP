@@ -485,10 +485,12 @@ def assessment_report(request, assessment_subject_id):
     )
 
     # Present students only
+
     present_marks = [
-        m for m in marks
-        if not m.is_absent
-    ]
+    m for m in marks
+    if not m.is_absent
+    and m.marks_scored is not None
+]
 
     present_marks.sort(
         key=lambda x: x.marks_scored,
