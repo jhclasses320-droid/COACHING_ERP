@@ -520,7 +520,11 @@ def assessment_report(request, assessment_subject_id):
 
         rows.append(
             {
-                "rank": "-" if mark.is_absent else rank_map[mark.student_id],
+                "rank": (
+    "-"
+    if mark.is_absent or mark.marks_scored is None
+    else rank_map.get(mark.student_id, "-")
+),
                 "student_id": mark.student.student_id,
                 "student_name": mark.student.student_name,
                 "marks_obtained": "AB" if mark.is_absent else mark.marks_scored,
