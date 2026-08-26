@@ -99,16 +99,11 @@
                             <td class="ps-4">
 
                                 <div class="fw-semibold">
-
                                     {{ exam.name }}
-
                                 </div>
 
-
                                 <small class="text-muted">
-
                                     Exam #{{ exam.id }}
-
                                 </small>
 
                             </td>
@@ -119,9 +114,7 @@
                             =================================================== -->
 
                             <td>
-
                                 {{ exam.batch }}
-
                             </td>
 
 
@@ -130,9 +123,7 @@
                             =================================================== -->
 
                             <td>
-
                                 {{ exam.topic }}
-
                             </td>
 
 
@@ -143,9 +134,7 @@
                             <td>
 
                                 <span class="fw-semibold">
-
                                     {{ exam.number_of_questions }}
-
                                 </span>
 
                             </td>
@@ -156,9 +145,7 @@
                             =================================================== -->
 
                             <td>
-
                                 {{ exam.total_marks }}
-
                             </td>
 
 
@@ -167,9 +154,7 @@
                             =================================================== -->
 
                             <td>
-
                                 {{ exam.duration }} min
-
                             </td>
 
 
@@ -187,12 +172,20 @@
                                         DRAFT
                                     </span>
 
-                                {% else %}
+                                {% elif exam.status == "PUBLISHED" %}
 
                                     <span
                                         class="badge bg-success px-3 py-2"
                                     >
                                         PUBLISHED
+                                    </span>
+
+                                {% else %}
+
+                                    <span
+                                        class="badge bg-secondary px-3 py-2"
+                                    >
+                                        OFFLINE
                                     </span>
 
                                 {% endif %}
@@ -209,7 +202,7 @@
                                 {% if exam.status == "DRAFT" %}
 
                                     <div
-                                        class="d-flex justify-content-center gap-2"
+                                        class="d-flex justify-content-center gap-2 flex-wrap"
                                     >
 
                                         <!-- EDIT -->
@@ -242,13 +235,34 @@
                                             Publish
                                         </a>
 
+
+                                        <!-- DELETE -->
+
+                                        <form
+                                            method="post"
+                                            action="{% url 'delete_test' exam.assessment_subject_id %}"
+                                            style="display:inline;"
+                                        >
+
+                                            {% csrf_token %}
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Are you sure you want to permanently delete this test? This will remove the test, questions, assignments, attempts, marks and related records. This action cannot be undone.');"
+                                            >
+                                                Delete
+                                            </button>
+
+                                        </form>
+
                                     </div>
 
 
-                                {% else %}
+                                {% elif exam.status == "PUBLISHED" %}
 
                                     <div
-                                        class="d-flex justify-content-center gap-2"
+                                        class="d-flex justify-content-center gap-2 flex-wrap"
                                     >
 
                                         <!-- PUBLISHED STATUS -->
@@ -279,6 +293,65 @@
                                             Students / Results
                                         </a>
 
+
+                                        <!-- DELETE -->
+
+                                        <form
+                                            method="post"
+                                            action="{% url 'delete_test' exam.assessment_subject_id %}"
+                                            style="display:inline;"
+                                        >
+
+                                            {% csrf_token %}
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Are you sure you want to permanently delete this published test? All questions, assignments, attempts, marks and related records will be deleted. This action cannot be undone.');"
+                                            >
+                                                Delete
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+
+                                {% else %}
+
+                                    <!-- OFFLINE TEST -->
+
+                                    <div
+                                        class="d-flex justify-content-center gap-2 flex-wrap"
+                                    >
+
+                                        <span
+                                            class="badge bg-light text-secondary border px-3 py-2"
+                                        >
+                                            Offline Test
+                                        </span>
+
+
+                                        <!-- DELETE -->
+
+                                        <form
+                                            method="post"
+                                            action="{% url 'delete_test' exam.assessment_subject_id %}"
+                                            style="display:inline;"
+                                        >
+
+                                            {% csrf_token %}
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Are you sure you want to permanently delete this offline test? Its marks and related records will also be deleted. This action cannot be undone.');"
+                                            >
+                                                Delete
+                                            </button>
+
+                                        </form>
+
                                     </div>
 
                                 {% endif %}
@@ -302,26 +375,18 @@
                             >
 
                                 <h5 class="fw-semibold mb-2">
-
                                     No exams created yet
-
                                 </h5>
 
-
                                 <p class="text-muted mb-3">
-
                                     Create your first examination to get started.
-
                                 </p>
-
 
                                 <a
                                     href="{% url 'performance_create_test' %}"
                                     class="btn btn-primary"
                                 >
-
                                     + Create Exam
-
                                 </a>
 
                             </td>

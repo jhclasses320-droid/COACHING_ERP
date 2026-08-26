@@ -172,7 +172,7 @@ urlpatterns = [
     ),
 
     path(
-        'operations/exams/<int:exam_id>/delete/',
+        'operations/exams/<int:assessment_subject_id>/delete/',
         views.delete_test,
         name='delete_test'
     ),
