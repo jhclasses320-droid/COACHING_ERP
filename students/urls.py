@@ -171,6 +171,12 @@ urlpatterns = [
         name='assign_test'
     ),
 
+    path(
+        'operations/exams/<int:exam_id>/delete/',
+        views.delete_test,
+        name='delete_test'
+    ),
+
     # ==========================================================
     # QUESTION BANK
     # ==========================================================

@@ -1299,6 +1299,49 @@ def delete_test(request, exam_id):
         "exam_library"
     )
 
+# ================= DELETE TEST ================= #
+
+@login_required
+def delete_test(request, exam_id):
+
+    if not request.user.is_staff:
+        return redirect('/')
+
+    exam = get_object_or_404(
+        Exam.objects.select_related(
+            "assessment",
+        ),
+        id=exam_id,
+    )
+
+    assessment = exam.assessment
+
+    if request.method != "POST":
+
+        messages.error(
+            request,
+            "Invalid request."
+        )
+
+        return redirect(
+            "exam_library"
+        )
+
+    exam.delete()
+
+    if assessment:
+        assessment.delete()
+
+    messages.success(
+        request,
+        "Test deleted successfully."
+    )
+
+    return redirect(
+        "exam_library"
+    )
+
+
 # ================= ASSIGN TEST TO STUDENTS ================= #
 
 @login_required
