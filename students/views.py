@@ -331,34 +331,18 @@ def student_dashboard(request):
         id=student_id
     )
 
-      # ================= STUDY MATERIAL ================= #
+         # ================= STUDY MATERIAL ================= #
 
-    study_batches = [student.batch]
+    study_batches = []
 
+    # Primary batch
     if student.batch:
-        batch_name = student.batch.batch_name
+        study_batches.append(student.batch)
 
-        if batch_name.endswith("_Maths_Science"):
-
-            maths_batch = Batch.objects.filter(
-                batch_name=batch_name.replace(
-                    "_Maths_Science",
-                    "_Maths"
-                )
-            ).first()
-
-            science_batch = Batch.objects.filter(
-                batch_name=batch_name.replace(
-                    "_Maths_Science",
-                    "_Science"
-                )
-            ).first()
-
-            if maths_batch:
-                study_batches.append(maths_batch)
-
-            if science_batch:
-                study_batches.append(science_batch)
+    # Additional batches
+    study_batches.extend(
+        list(student.additional_batches.all())
+    )
 
     study_materials = StudyMaterial.objects.filter(
         batch__in=study_batches,
@@ -367,25 +351,6 @@ def student_dashboard(request):
         "subject",
         "title"
     )
-
-    exams = Exam.objects.filter(
-        batch=student.batch
-    )
-
-    attendance = AttendanceRecord.objects.filter(
-        student=student
-    )
-
-    return render(
-        request,
-        "students/dashboard.html",
-        {
-            "student": student,
-            "exams": exams,
-            "attendance": attendance,
-            "study_materials": study_materials
-        }
-    )  
 
 # ================= REPORT PAGE ================= #
 
