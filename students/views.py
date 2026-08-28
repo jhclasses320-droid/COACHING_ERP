@@ -352,6 +352,25 @@ def student_dashboard(request):
         "title"
     )
 
+    exams = Exam.objects.filter(
+        batch=student.batch
+    )
+
+    attendance = AttendanceRecord.objects.filter(
+        student=student
+    )
+
+    return render(
+        request,
+        "students/dashboard.html",
+        {
+            "student": student,
+            "exams": exams,
+            "attendance": attendance,
+            "study_materials": study_materials
+        }
+    )
+
 # ================= REPORT PAGE ================= #
 
 def reports_dashboard(request):
