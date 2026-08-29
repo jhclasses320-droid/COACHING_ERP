@@ -1232,7 +1232,7 @@ def edit_test(request, exam_id):
         context,
     )
 
-# ================= DELETE OFFLINE TEST ================= #
+# ================= DELETE TEST ================= #
 
 @login_required
 def delete_test(request, assessment_subject_id):
@@ -1258,19 +1258,45 @@ def delete_test(request, assessment_subject_id):
     assessment = assessment_subject.assessment
 
     # --------------------------------------------------
-    # DO NOT DELETE ONLINE TESTS
+    # FIND LINKED ONLINE EXAMS
     # --------------------------------------------------
 
-    online_exam_exists = Exam.objects.filter(
+    online_exams = Exam.objects.filter(
         assessment=assessment
+    )
+
+    # --------------------------------------------------
+    # DO NOT DELETE IF STUDENTS HAVE ATTEMPTED
+    # --------------------------------------------------
+
+    attempted_exam_exists = StudentExamAttempt.objects.filter(
+        exam__in=online_exams
     ).exists()
 
-    if online_exam_exists:
+    if attempted_exam_exists:
+
         messages.error(
             request,
-            "Online tests cannot be deleted from the Exam Library."
+            "This test cannot be deleted because students have already attempted it."
         )
+
         return redirect("exam_library")
+
+    # --------------------------------------------------
+    # DELETE ONLINE EXAM DATA
+    # --------------------------------------------------
+
+    for exam in online_exams:
+
+        ExamAssignment.objects.filter(
+            exam=exam
+        ).delete()
+
+        ExamQuestion.objects.filter(
+            exam=exam
+        ).delete()
+
+        exam.delete()
 
     # --------------------------------------------------
     # DELETE OFFLINE STUDENT MARKS
@@ -1281,7 +1307,7 @@ def delete_test(request, assessment_subject_id):
     ).delete()
 
     # --------------------------------------------------
-    # DELETE OFFLINE ASSESSMENT SUBJECT
+    # DELETE ASSESSMENT SUBJECT
     # --------------------------------------------------
 
     assessment_subject.delete()
@@ -1298,14 +1324,12 @@ def delete_test(request, assessment_subject_id):
 
     messages.success(
         request,
-        "Offline test deleted successfully."
+        "Test deleted successfully."
     )
 
     return redirect("exam_library")
 
-
-# ================= ASSIGN TEST TO STUDENTS ================= #
-
+    
 
 # ================= ASSIGN TEST TO STUDENTS ================= #
 
@@ -1482,7 +1506,7 @@ def student_results(request):
 
     return render(
         request,
-        "students/results.html",
+        "students/results.html",    
         {
             "student": student,
             "attempts": attempts,
