@@ -943,7 +943,8 @@ def staff_dashboard(request):
     return render(request, "operations/dashboard.html", {
         "questions": questions
     })
-# ================= CREATE EXAM ================= #
+
+    # ================= CREATE EXAM ================= #
 
 @login_required
 def create_exam(request):
@@ -957,18 +958,32 @@ def create_exam(request):
 
         if form.is_valid():
             form.save()
-            messages.success(request, 'Exam created successfully.')
+            messages.success(
+                request,
+                'Exam created successfully.'
+            )
             return redirect('staff_dashboard')
 
     else:
+
         form = ExamForm()
 
-        return render(request, 'operations/create_exam.html', {
-        'form': form
-    })
+    return render(
+        request,
+        'operations/create_exam.html',
+        {
+            'form': form
+        }
+    )
 
 
+# ================= EXAM LIBRARY ================= #
+
+@login_required
 def exam_library(request):
+
+    if not request.user.is_staff:
+        return redirect('/')
 
     assessments = (
         Assessment.objects
@@ -977,8 +992,8 @@ def exam_library(request):
             "batch",
         )
         .prefetch_related(
-    "subjects",
-)
+            "subjects",
+        )
         .order_by("-id")
     )
 
@@ -986,11 +1001,7 @@ def exam_library(request):
 
     for assessment in assessments:
 
-
-        assessment_subject = (
-    assessment.subjects.first()
-)
-        
+        assessment_subject = assessment.subjects.first()
 
         if not assessment_subject:
             continue
@@ -1003,7 +1014,30 @@ def exam_library(request):
             .first()
         )
 
+        # --------------------------------------------------
+        # DETERMINE STATUS
+        # --------------------------------------------------
+
+        if online_exam:
+
+            status = online_exam.status
+
+        else:
+
+            # Offline test follows Assessment publish status.
+            # Once published, it remains locked even if its
+            # later marks-entry status changes.
+            if assessment.status in [
+                "PUBLISHED",
+                "READY_FOR_MARKS",
+                "COMPLETED",
+            ]:
+                status = "PUBLISHED"
+            else:
+                status = "DRAFT"
+
         exams.append({
+
             "id": (
                 online_exam.id
                 if online_exam
@@ -1033,11 +1067,7 @@ def exam_library(request):
                 assessment_subject.duration_minutes,
 
             "status":
-                (
-                    online_exam.status
-                    if online_exam
-                    else "OFFLINE"
-                ),
+                status,
 
             "is_online":
                 online_exam is not None,
@@ -1049,6 +1079,7 @@ def exam_library(request):
                 online_exam.id
                 if online_exam
                 else None,
+
         })
 
     return render(
@@ -1058,6 +1089,7 @@ def exam_library(request):
             "exams": exams,
         }
     )
+
 
 # ================= EDIT PERFORMANCE TEST ================= #
 
@@ -1231,6 +1263,168 @@ def edit_test(request, exam_id):
         "operations/edit_test.html",
         context,
     )
+
+# ================= EDIT OFFLINE TEST ================= #
+
+@login_required
+def edit_offline_test(request, assessment_id):
+
+    if not request.user.is_staff:
+        return redirect('/')
+
+    assessment = get_object_or_404(
+        Assessment.objects.select_related(
+            "assessment_type",
+            "batch",
+        ),
+        id=assessment_id,
+    )
+
+    # Published offline tests are locked.
+    if assessment.status != "DRAFT":
+        messages.error(
+            request,
+            "This test has already been published and cannot be edited."
+        )
+        return redirect("exam_library")
+
+    assessment_subject = get_object_or_404(
+        AssessmentSubject.objects.select_related(
+            "subject",
+        ),
+        assessment=assessment,
+    )
+
+    batches = Batch.objects.all().order_by("id")
+
+    assessment_types = (
+        Assessment.objects.model
+        .assessment_type
+        .field
+        .related_model
+        .objects
+        .filter(is_active=True)
+        .order_by("display_order", "name")
+    )
+
+    if request.method == "POST":
+
+        assessment.assessment_name = request.POST.get(
+            "assessment_name"
+        )
+
+        assessment.assessment_type_id = request.POST.get(
+            "assessment_type"
+        )
+
+        assessment.academic_session = request.POST.get(
+            "academic_session"
+        )
+
+        assessment.batch_id = request.POST.get(
+            "batch"
+        )
+
+        assessment.assessment_date = request.POST.get(
+            "assessment_date"
+        )
+
+        assessment.save()
+
+        assessment_subject.chapter_covered = request.POST.get(
+            "chapter_covered",
+            ""
+        )
+
+        assessment_subject.maximum_marks = request.POST.get(
+            "maximum_marks"
+        )
+
+        assessment_subject.duration_minutes = request.POST.get(
+            "duration_minutes"
+        )
+
+        assessment_subject.save()
+
+        messages.success(
+            request,
+            "Offline test updated successfully."
+        )
+
+        return redirect(
+            "exam_library"
+        )
+
+    context = {
+
+        "exam": None,
+
+        "assessment": assessment,
+
+        "assessment_subject": assessment_subject,
+
+        "batches": batches,
+
+        "assessment_types": assessment_types,
+
+        "academic_sessions":
+            Assessment.ACADEMIC_SESSION_CHOICES,
+
+    }
+
+    return render(
+        request,
+        "operations/edit_test.html",
+        context,
+    )
+
+
+# ================= PUBLISH OFFLINE TEST ================= #
+
+@login_required
+def publish_offline_test(request, assessment_id):
+
+    if not request.user.is_staff:
+        return redirect('/')
+
+    assessment = get_object_or_404(
+        Assessment,
+        id=assessment_id,
+    )
+
+    if assessment.status != "DRAFT":
+        messages.error(
+            request,
+            "This test has already been published."
+        )
+        return redirect("exam_library")
+
+    if not AssessmentSubject.objects.filter(
+        assessment=assessment
+    ).exists():
+
+        messages.error(
+            request,
+            "This test cannot be published because no subject has been added."
+        )
+
+        return redirect("exam_library")
+
+    assessment.status = "PUBLISHED"
+
+    assessment.save(
+        update_fields=["status"]
+    )
+
+    messages.success(
+        request,
+        "Offline test published successfully."
+    )
+
+    return redirect(
+        "exam_library"
+    )
+
 
 # ================= DELETE TEST ================= #
 

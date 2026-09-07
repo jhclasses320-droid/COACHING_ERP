@@ -205,35 +205,61 @@
                                         class="d-flex justify-content-center gap-2 flex-wrap"
                                     >
 
-                                        <!-- EDIT -->
+                                        {% if exam.is_online %}
 
-                                        <a
-                                            href="{% url 'edit_test' exam.id %}"
-                                            class="btn btn-sm btn-outline-primary"
-                                        >
-                                            Edit
-                                        </a>
+                                            <!-- ONLINE EDIT -->
 
-
-                                        <!-- QUESTIONS -->
-
-                                        <a
-                                            href="{% url 'performance_question_selection' exam.id %}"
-                                            class="btn btn-sm btn-outline-secondary"
-                                        >
-                                            Questions
-                                        </a>
+                                            <a
+                                                href="{% url 'edit_test' exam.id %}"
+                                                class="btn btn-sm btn-outline-primary"
+                                            >
+                                                Edit
+                                            </a>
 
 
-                                        <!-- PUBLISH -->
+                                            <!-- ONLINE QUESTIONS -->
 
-                                        <a
-                                            href="{% url 'publish_test' exam.id %}"
-                                            class="btn btn-sm btn-success"
-                                            onclick="return confirm('Are you sure you want to publish this exam? Once published, it cannot be edited.');"
-                                        >
-                                            Publish
-                                        </a>
+                                            <a
+                                                href="{% url 'performance_question_selection' exam.id %}"
+                                                class="btn btn-sm btn-outline-secondary"
+                                            >
+                                                Questions
+                                            </a>
+
+
+                                            <!-- ONLINE PUBLISH -->
+
+                                            <a
+                                                href="{% url 'publish_test' exam.id %}"
+                                                class="btn btn-sm btn-success"
+                                                onclick="return confirm('Are you sure you want to publish this exam? Once published, it cannot be edited.');"
+                                            >
+                                                Publish
+                                            </a>
+
+                                        {% else %}
+
+                                            <!-- OFFLINE EDIT -->
+
+                                            <a
+                                                href="{% url 'edit_offline_test' exam.id %}"
+                                                class="btn btn-sm btn-outline-primary"
+                                            >
+                                                Edit
+                                            </a>
+
+
+                                            <!-- OFFLINE PUBLISH -->
+
+                                            <a
+                                                href="{% url 'publish_offline_test' exam.id %}"
+                                                class="btn btn-sm btn-success"
+                                                onclick="return confirm('Are you sure you want to publish this offline test? Once published, it cannot be edited.');"
+                                            >
+                                                Publish
+                                            </a>
+
+                                        {% endif %}
 
 
                                         <!-- DELETE -->
@@ -249,7 +275,7 @@
                                             <button
                                                 type="submit"
                                                 class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Are you sure you want to permanently delete this test? This will remove the test, questions, assignments, attempts, marks and related records. This action cannot be undone.');"
+                                                onclick="return confirm('Are you sure you want to permanently delete this test? This will remove the test and related records. This action cannot be undone.');"
                                             >
                                                 Delete
                                             </button>
@@ -274,24 +300,38 @@
                                         </span>
 
 
-                                        <!-- ASSIGN -->
+                                        {% if exam.is_online %}
 
-                                        <a
-                                            href="{% url 'assign_test' exam.id %}"
-                                            class="btn btn-sm btn-outline-success"
-                                        >
-                                            Assign
-                                        </a>
+                                            <!-- ONLINE ASSIGN -->
+
+                                            <a
+                                                href="{% url 'assign_test' exam.id %}"
+                                                class="btn btn-sm btn-outline-success"
+                                            >
+                                                Assign
+                                            </a>
 
 
-                                        <!-- STUDENTS / RESULTS -->
+                                            <!-- ONLINE STUDENTS / RESULTS -->
 
-                                        <a
-                                            href="{% url 'exam_student_status' exam.id %}"
-                                            class="btn btn-sm btn-outline-primary"
-                                        >
-                                            Students / Results
-                                        </a>
+                                            <a
+                                                href="{% url 'exam_student_status' exam.id %}"
+                                                class="btn btn-sm btn-outline-primary"
+                                            >
+                                                Students / Results
+                                            </a>
+
+                                        {% else %}
+
+                                            <!-- OFFLINE LOCKED -->
+
+                                            <span
+                                                class="badge bg-light text-secondary border px-3 py-2"
+                                            >
+                                                Offline Test
+                                            </span>
+
+                                        {% endif %}
 
 
                                         <!-- DELETE -->
@@ -307,7 +347,7 @@
                                             <button
                                                 type="submit"
                                                 class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Are you sure you want to permanently delete this published test? All questions, assignments, attempts, marks and related records will be deleted. This action cannot be undone.');"
+                                                onclick="return confirm('Are you sure you want to permanently delete this published test? Its related records will also be deleted. This action cannot be undone.');"
                                             >
                                                 Delete
                                             </button>
@@ -319,7 +359,7 @@
 
                                 {% else %}
 
-                                    <!-- OFFLINE TEST -->
+                                    <!-- OTHER OFFLINE STATUS -->
 
                                     <div
                                         class="d-flex justify-content-center gap-2 flex-wrap"
@@ -356,6 +396,7 @@
 
                                 {% endif %}
 
+                            </td>
                             </td>
 
                         </tr>

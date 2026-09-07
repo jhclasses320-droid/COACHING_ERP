@@ -33,10 +33,11 @@ class AssessmentType(models.Model):
 class Assessment(models.Model):
 
     STATUS_CHOICES = [
-        ('DRAFT', 'Draft'),
-        ('READY_FOR_MARKS', 'Ready for Marks Entry'),
-        ('COMPLETED', 'Completed'),
-    ]
+    ('DRAFT', 'Draft'),
+    ('PUBLISHED', 'Published'),
+    ('READY_FOR_MARKS', 'Ready for Marks Entry'),
+    ('COMPLETED', 'Completed'),
+]
 
     ACADEMIC_SESSION_CHOICES = [
         ('2025-26', '2025-26'),

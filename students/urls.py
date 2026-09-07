@@ -159,17 +159,49 @@ urlpatterns = [
         name='exam_library'
     ),
 
+    # ----------------------------------------------------------
+    # ONLINE TEST EDIT
+    # ----------------------------------------------------------
+
     path(
         'operations/exams/<int:exam_id>/edit/',
         views.edit_test,
         name='edit_test'
     ),
 
+    # ----------------------------------------------------------
+    # OFFLINE TEST EDIT
+    # ----------------------------------------------------------
+
+    path(
+        'operations/assessments/<int:assessment_id>/edit/',
+        views.edit_offline_test,
+        name='edit_offline_test'
+    ),
+
+    # ----------------------------------------------------------
+    # OFFLINE TEST PUBLISH
+    # ----------------------------------------------------------
+
+    path(
+        'operations/assessments/<int:assessment_id>/publish/',
+        views.publish_offline_test,
+        name='publish_offline_test'
+    ),
+
+    # ----------------------------------------------------------
+    # ASSIGN TEST
+    # ----------------------------------------------------------
+
     path(
         'operations/exams/<int:exam_id>/assign/',
         views.assign_test,
         name='assign_test'
     ),
+
+    # ----------------------------------------------------------
+    # DELETE TEST
+    # ----------------------------------------------------------
 
     path(
         'operations/exams/<int:assessment_subject_id>/delete/',
