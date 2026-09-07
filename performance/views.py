@@ -925,7 +925,7 @@ def publish_test(request, exam_id):
             "This exam has already been published."
         )
 
-        return redirect("performance_exam_library")
+        return redirect("exam_library")
 
 
     # ------------------------------------------------------
@@ -944,9 +944,11 @@ def publish_test(request, exam_id):
         )
 
         return redirect(
-            "performance_question_selection",
-            exam_id=exam.id,
+             "exam_library"
         )
+            
+           
+        
 
 
     if not exam.duration or exam.duration <= 0:
