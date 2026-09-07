@@ -7,7 +7,7 @@
 </head>
 <body class="bg-light">
 
-<div class="container-fluid py-3">
+<div class="container-fluid py-3 question-entry-page">
 
 {% load static %}
 
@@ -22,370 +22,431 @@
         padding-top: 0 !important;
         margin-top: 0 !important;
     }
+
+    /* =========================================
+       COMPACT LAYOUT
+       Layout only - no functionality removed
+       ========================================= */
+
+    .question-entry-page .accordion-item {
+        margin-bottom: 8px !important;
+    }
+
+    .question-entry-page .accordion-button {
+        padding: 8px 14px;
+        min-height: 42px;
+    }
+
+    .question-entry-page .accordion-body {
+        padding: 10px 14px;
+    }
+
+    .question-entry-page .row.g-3 {
+        --bs-gutter-x: 12px;
+        --bs-gutter-y: 8px;
+    }
+
+    .question-entry-page .form-label {
+        margin-bottom: 4px;
+    }
+
+    .question-entry-page .mb-3 {
+        margin-bottom: 8px !important;
+    }
+
+    /* Keep question text compact */
+    .question-entry-page #q_text_block textarea {
+        min-height: 80px !important;
+        height: 80px !important;
+        resize: vertical;
+    }
+
+    /* Keep solution compact */
+    .question-entry-page #solution textarea {
+        min-height: 90px !important;
+        height: 90px !important;
+        resize: vertical;
+    }
+
+    /* Reduce unnecessary heading space */
+    .question-entry-page .page-heading {
+        margin-bottom: 12px !important;
+    }
 </style>
 
 
+<!-- ========================= -->
+<!-- Page Heading -->
+<!-- ========================= -->
+
+<div class="row page-heading align-items-center">
+
+    <div class="col-md-8">
+
+        <h2 class="fw-bold text-primary mb-1">
+            <i class="fas fa-plus-circle me-2"></i>
+            Question Entry
+        </h2>
+
+        <p class="text-muted mb-0">
+            Create and maintain your Question Bank.
+        </p>
+
+        <small class="text-danger">
+            * Indicates mandatory fields.
+        </small>
+
+    </div>
+
+
+    <div class="col-md-4 text-end">
+
+        <a href="{% url 'question_dashboard' %}"
+           class="btn btn-secondary me-2">
+
+            <i class="fas fa-arrow-left"></i>
+            Back
+
+        </a>
+
+
+        <button class="btn btn-success"
+                type="submit"
+                form="questionForm">
+
+            <i class="fas fa-save"></i>
+            Save
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<form id="questionForm"
+      method="post"
+      enctype="multipart/form-data">
+
+    {% csrf_token %}
+
 
     <!-- ========================= -->
-    <!-- Page Heading -->
+    <!-- Accordion -->
     <!-- ========================= -->
 
-    <div class="row mb-4">
+    <div class="accordion" id="questionAccordion">
 
-        <div class="col-md-8">
 
-            <h2 class="fw-bold text-primary">
-                <i class="fas fa-plus-circle me-2"></i>
-                Question Entry
+        <!-- ======================================== -->
+        <!-- Question Details -->
+        <!-- ======================================== -->
+
+        <div class="accordion-item mb-3">
+
+            <h2 class="accordion-header">
+
+                <button class="accordion-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#questionDetails">
+
+                    <strong>Question Details</strong>
+
+                </button>
+
             </h2>
 
-            <p class="text-muted mb-0">
-                Create and maintain your Question Bank.
-            </p>
 
-            <small class="text-danger">
-                * Indicates mandatory fields.
-            </small>
+            <div id="questionDetails"
+                 class="accordion-collapse collapse show">
 
-        </div>
+                <div class="accordion-body">
 
-        <div class="col-md-4 text-end">
+                    <div class="row g-3">
 
-            <a href="{% url 'question_dashboard' %}"
-               class="btn btn-secondary me-2">
 
-                <i class="fas fa-arrow-left"></i>
-                Back
+                        <!-- CLASS -->
 
-            </a>
+                        <div class="col-md-4">
 
-            <button class="btn btn-success" type="submit" form="questionForm">
+                            <label class="form-label fw-semibold">
 
-                <i class="fas fa-save"></i>
-                Save
+                                Class
+                                <span class="text-danger">*</span>
 
-            </button>
+                            </label>
 
-        </div>
+                            {{ form.batch }}
 
-    </div>
+                        </div>
 
-    <form id="questionForm" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
 
-        <!-- ========================= -->
-        <!-- Accordion -->
-        <!-- ========================= -->
+                        <!-- SUBJECT -->
 
-        <div class="accordion" id="questionAccordion">
+                        <div class="col-md-4">
 
-            <!-- ======================================== -->
-            <!-- Question Details -->
-            <!-- ======================================== -->
+                            <label class="form-label fw-semibold">
 
-            <div class="accordion-item mb-3">
+                                Subject
+                                <span class="text-danger">*</span>
 
-                <h2 class="accordion-header">
+                            </label>
 
-                    <button class="accordion-button"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#questionDetails">
+                            <select class="form-select"
+                                    name="subject_id">
 
-                        <strong>Question Details</strong>
+                                <option value="">
+                                    Select Subject
+                                </option>
 
-                    </button>
+                                <option>
+                                    Science
+                                </option>
 
-                </h2>
+                                <option>
+                                    Mathematics
+                                </option>
 
-                <div id="questionDetails"
-                     class="accordion-collapse collapse show">
+                            </select>
 
-                    <div class="accordion-body">
+                        </div>
 
-                        <div class="row g-3">
 
-                            <div class="col-md-4">
-                             <label class="form-label fw-semibold">
-                             Class <span class="text-danger">*</span>
-                             </label>
+                        <!-- CHAPTER -->
 
-                             {{ form.batch }}
-                              </div>
+                        <div class="col-md-4">
 
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">
-                                    Subject <span class="text-danger">*</span>
+                            <label class="form-label fw-semibold">
+
+                                Chapter
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   name="chapter_id">
+
+                        </div>
+
+
+                        <!-- TOPIC -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label fw-semibold">
+
+                                Topic
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+                            {{ form.topic }}
+
+                        </div>
+
+
+                        <!-- QUESTION TYPE -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label fw-semibold">
+
+                                Question Type
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+                            <select class="form-select"
+                                    name="question_type_id">
+
+                                <option value="">
+                                    Select Type
+                                </option>
+
+                                <option>
+                                    Single Choice
+                                </option>
+
+                                <option>
+                                    Multiple Choice (MCQ)
+                                </option>
+
+                                <option>
+                                    True / False
+                                </option>
+
+                                <option>
+                                    Assertion &amp; Reason
+                                </option>
+
+                                <option>
+                                    Match the Following
+                                </option>
+
+                                <option>
+                                    Matrix Match
+                                </option>
+
+                                <option>
+                                    Fill in the Blank
+                                </option>
+
+                                <option>
+                                    Very Short Answer
+                                </option>
+
+                                <option>
+                                    Short Answer
+                                </option>
+
+                                <option>
+                                    Long Answer
+                                </option>
+
+                                <option>
+                                    Case Study
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- DIFFICULTY -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label fw-semibold">
+
+                                Difficulty
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+                            {{ form.difficulty }}
+
+                        </div>
+
+
+                        <!-- MARKS -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label fw-semibold">
+
+                                Marks
+
+                            </label>
+
+                            <input type="number"
+                                   class="form-control"
+                                   name="marks"
+                                   min="0">
+
+                        </div>
+
+
+                        <!-- NEGATIVE MARKS -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label fw-semibold">
+
+                                Negative Marks
+
+                            </label>
+
+                            <input type="number"
+                                   class="form-control"
+                                   name="negative_marks"
+                                   value="0"
+                                   step="0.25">
+
+                        </div>
+
+
+                        <!-- ESTIMATED TIME -->
+
+                        <div class="col-md-3">
+
+                            <label class="form-label fw-semibold">
+
+                                Estimated Time (sec)
+
+                            </label>
+
+                            {{ form.estimated_time }}
+
+                        </div>
+
+
+                        <!-- ACTIVE QUESTION -->
+
+                        <div class="col-md-3 d-flex align-items-end">
+
+                            <div class="form-check form-switch">
+
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="is_active"
+                                       checked>
+
+                                <label class="form-check-label">
+
+                                    Active Question
+
                                 </label>
 
-                                <select class="form-select"
-                                        name="subject_id"
-                                        
-
-                                    <option value="">Select Subject</option>
-                                    <option>Science</option>
-                                    <option>Mathematics</option>
-
-                                </select>
                             </div>
 
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">
-                                    Chapter <span class="text-danger">*</span>
-                                </label>
-
-                                <input type="text"
-                                       class="form-control"
-                                       name="chapter_id"
-                                       
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">
-                                    Topic <span class="text-danger">*</span>
-                                </label>
-
-                                {{ form.topic }}
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">
-                                    Question Type <span class="text-danger">*</span>
-                                </label>
-
-                                <select class="form-select"
-                                        name="question_type_id"
-                                        
-
-                                    <option value="">Select Type</option>
-                                    <option>Single Choice</option>
-                                    <option>Multiple Choice (MCQ)</option>
-                                    <option>True / False</option>
-                                    <option>Assertion & Reason</option>
-                                    <option>Match the Following</option>
-                                    <option>Matrix Match</option>
-                                    <option>Fill in the Blank</option>
-                                    <option>Very Short Answer</option>
-                                    <option>Short Answer</option>
-                                    <option>Long Answer</option>
-                                    <option>Case Study</option>
+                        </div>
 
-                                </select>
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">
-                                    Difficulty <span class="text-danger">*</span>
-                                </label>
 
-                                {{ form.difficulty }}
+                        <!-- KEYWORDS -->
 
-                                    
-                            </div>
+                        <div class="col-12">
 
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold">
-                                    Marks
-                                </label>
+                            <label class="form-label fw-semibold">
 
-                                <input type="number"
-                                       class="form-control"
-                                       name="marks"
-                                       min="0">
-                            </div>
+                                Keywords
 
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold">
-                                    Negative Marks
-                                </label>
+                            </label>
 
-                                <input type="number"
-                                       class="form-control"
-                                       name="negative_marks"
-                                       value="0"
-                                       step="0.25">
-                            </div>
+                            <input type="text"
+                                   class="form-control"
+                                   name="keywords"
+                                   placeholder="Example: Motion, Force, Electricity">
 
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold">
-                                    Estimated Time (sec)
-                                </label>
+                        </div>
 
-                                {{ form.estimated_time }}
 
-                            </div>
+                        <!-- OLYMPIAD -->
 
-                            <div class="col-md-3 d-flex align-items-end">
+                        <div class="col-md-4">
 
-                                <div class="form-check form-switch">
+                            <label class="form-label fw-semibold">
 
-                                    <input class="form-check-input"
-                                           type="checkbox"
-                                           name="is_active"
-                                           checked>
+                                Olympiad Question
 
-                                    <label class="form-check-label">
-                                        Active Question
-                                    </label>
+                            </label>
 
-                                </div>
+                            <select class="form-select"
+                                    name="is_olympiad">
 
-                            </div>
+                                <option value="false" selected>
+                                    No
+                                </option>
 
-                            <div class="col-12">
+                                <option value="true">
+                                    Yes
+                                </option>
 
-                                <label class="form-label fw-semibold">
-                                    Keywords
-                                </label>
+                            </select>
 
-                                <input type="text"
-                                       class="form-control"
-                                       name="keywords"
-                                       placeholder="Example: Motion, Force, Electricity">
-                            </div>
+                        </div>
 
-                            <div class="col-md-4">
-
-                                <label class="form-label fw-semibold">
-                                    Olympiad Question
-                                </label>
-
-                                <select class="form-select" name="is_olympiad">
-
-                                    <option value="false" selected>No</option>
-                                    <option value="true">Yes</option>
-
-                                </select>
-                            </div>
-                            </div>
-                            </div>
-
-            <!-- ======================================== -->
-            <!-- Question -->
-            <!-- ======================================== -->
-
-            <div class="accordion-item mb-3">
-
-                <h2 class="accordion-header">
-
-                    <button class="accordion-button collapsed"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#questionBlock">
-
-                        <strong>Question</strong>
-
-                    </button>
-
-                </h2>
-
-               <div id="questionBlock"
- class="accordion-collapse collapse show">
-
-        <div class="accordion-body">
-
-            <!-- Question Mode -->
-
-            <div class="mb-3">
-
-                <label class="form-label fw-semibold d-block">
-                    Question Mode
-                </label>
-
-                <div class="form-check form-check-inline">
-
-                    <input class="form-check-input"
-                           type="radio"
-                           name="question_mode"
-                           id="q_typed"
-                           value="TYPED"
-                           checked>
-
-                    <label class="form-check-label" for="q_typed">
-                        Typed
-                    </label>
-
-                </div>
-
-                <div class="form-check form-check-inline">
-
-                    <input class="form-check-input"
-                           type="radio"
-                           name="question_mode"
-                           id="q_image"
-                           value="IMAGE">
-
-                    <label class="form-check-label" for="q_image">
-                        Image
-                    </label>
-
-                </div>
-
-                <div class="form-check form-check-inline">
-
-                    <input class="form-check-input"
-                           type="radio"
-                           name="question_mode"
-                           id="q_hybrid"
-                           value="HYBRID">
-
-                    <label class="form-check-label" for="q_hybrid">
-                        Hybrid
-                    </label>
-
-                </div>
-
-            </div>
-
-           <!-- Typed Question -->
-
-<div id="q_text_block" class="mb-3">
-
-    <label class="form-label fw-semibold">
-        Question Text
-    </label>
-
-    {{ form.question_text }}
-
-</div>
-
-
-
-            <!-- Image Upload -->
-
-            <div id="q_image_block" class="mb-3 d-none">
-
-                <label class="form-label fw-semibold">
-                    Upload Question Image
-                </label>
-
-                <input type="file"
-                       class="form-control"
-                       id="q_image_input"
-                       name="question_image"
-                       accept="image/*">
-
-            </div>
-
-            <!-- Preview -->
-
-            <div id="q_preview_block" class="d-none">
-
-                <label class="form-label fw-semibold">
-                    Image Preview
-                </label>
-
-                <div class="border rounded p-3 bg-light text-center">
-
-                    <img id="q_preview"
-                         src=""
-                         class="img-fluid d-none"
-                         style="max-height:300px;">
-
-                    <div id="q_preview_placeholder"
-                         class="text-muted">
-
-                        No image selected.
 
                     </div>
 
@@ -395,9 +456,228 @@
 
         </div>
 
-    </div>
 
-</div>
+        <!-- ======================================== -->
+        <!-- Question -->
+        <!-- ======================================== -->
+
+        <div class="accordion-item mb-3">
+
+            <h2 class="accordion-header">
+
+                <button class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#questionBlock">
+
+                    <strong>Question</strong>
+
+                </button>
+
+            </h2>
+
+
+            <div id="questionBlock"
+                 class="accordion-collapse collapse show">
+
+                <div class="accordion-body">
+
+
+                    <!-- Question Mode -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold d-block">
+
+                            Question Mode
+
+                        </label>
+
+
+                        <div class="form-check form-check-inline">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="question_mode"
+                                   id="q_typed"
+                                   value="TYPED"
+                                   checked>
+
+                            <label class="form-check-label"
+                                   for="q_typed">
+
+                                Typed
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="form-check form-check-inline">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="question_mode"
+                                   id="q_image"
+                                   value="IMAGE">
+
+                            <label class="form-check-label"
+                                   for="q_image">
+
+                                Image
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="form-check form-check-inline">
+
+                            <input class="form-check-input"
+                                   type="radio"
+                                   name="question_mode"
+                                   id="q_hybrid"
+                                   value="HYBRID">
+
+                            <label class="form-check-label"
+                                   for="q_hybrid">
+
+                                Hybrid
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Typed Question -->
+
+                    <div id="q_text_block"
+                         class="mb-3">
+
+                        <label class="form-label fw-semibold">
+
+                            Question Text
+
+                        </label>
+
+                        {{ form.question_text }}
+
+                    </div>
+
+
+                    <!-- Image Upload -->
+
+                    <div id="q_image_block"
+                         class="mb-3 d-none">
+
+                        <label class="form-label fw-semibold">
+
+                            Upload Question Image
+
+                        </label>
+
+                        <input type="file"
+                               class="form-control"
+                               id="q_image_input"
+                               name="question_image"
+                               accept="image/*">
+
+                    </div>
+
+
+                    <!-- Preview -->
+
+                    <div id="q_preview_block"
+                         class="d-none">
+
+                        <label class="form-label fw-semibold">
+
+                            Image Preview
+
+                        </label>
+
+
+                        <div class="border rounded p-3 bg-light text-center">
+
+                            <img id="q_preview"
+                                 src=""
+                                 class="img-fluid d-none"
+                                 style="max-height:300px;">
+
+                            <div id="q_preview_placeholder"
+                                 class="text-muted">
+
+                                No image selected.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================== -->
+        <!-- Option A -->
+        <!-- ======================================== -->
+
+        <div class="accordion-item mb-3">
+
+            <h2 class="accordion-header">
+
+                <button class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#optionA">
+
+                    <strong>Option A</strong>
+
+                </button>
+
+            </h2>
+
+
+            <div id="optionA"
+                 class="accordion-collapse collapse show">
+
+                <div class="accordion-body">
+
+                    <div class="row g-2">
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+
+                                Option A Text
+
+                            </label>
+
+                            {{ form.option_a_text }}
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+
+                                Option A Image
+
+                            </label>
+
+                            {{ form.option_a_image }}
+
+                        </div>
+
 
                     </div>
 
@@ -405,389 +685,448 @@
 
             </div>
 
-            <!-- ======================================== -->
-            <!-- Option A -->
-            <!-- ======================================== -->
+        </div>
 
-            <!-- ======================================== -->
-<!-- Option A -->
-<!-- ======================================== -->
 
-<div class="accordion-item mb-3">
+        <!-- ======================================== -->
+        <!-- Option B -->
+        <!-- ======================================== -->
 
-    <h2 class="accordion-header">
+        <div class="accordion-item mb-3">
 
-        <button class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#optionA">
+            <h2 class="accordion-header">
 
-            <strong>Option A</strong>
+                <button class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#optionB">
 
-        </button>
+                    <strong>Option B</strong>
 
-    </h2>
+                </button>
 
-    <div id="optionA" class="accordion-collapse collapse show">
+            </h2>
 
-        <div class="accordion-body">
 
-            <div class="mb-3">
+            <div id="optionB"
+                 class="accordion-collapse collapse show">
 
-                <label class="form-label fw-semibold">
-                    Option A Text
-                </label>
+                <div class="accordion-body">
 
-            {{ form.option_a_text }}
+                    <div class="row g-2">
 
-            </div>
 
-            <div class="mb-3">
+                        <div class="col-md-6">
 
-                <label class="form-label fw-semibold">
-                    Option A Image
-                </label>
+                            <label class="form-label fw-semibold">
 
-                {{ form.option_a_image }}
+                                Option B Text
+
+                            </label>
+
+                            {{ form.option_b_text }}
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+
+                                Option B Image
+
+                            </label>
+
+                            {{ form.option_b_image }}
+
+                        </div>
+
+
+                    </div>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
 
-</div>
+        <!-- ======================================== -->
+        <!-- Option C -->
+        <!-- ======================================== -->
 
-            <!-- ======================================== -->
-            <!-- Option B -->
-            <!-- ======================================== -->
+        <div class="accordion-item mb-3">
 
-        
-            <!-- ======================================== -->
-<!-- Option B -->
-<!-- ======================================== -->
+            <h2 class="accordion-header">
 
-<div class="accordion-item mb-3">
+                <button class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#optionC">
 
-    <h2 class="accordion-header">
+                    <strong>Option C</strong>
 
-        <button class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#optionB">
+                </button>
 
-            <strong>Option B</strong>
-
-        </button>
-
-    </h2>
-
-    <div id="optionB"
-         class="accordion-collapse collapse show">
-
-        <div class="accordion-body">
-
-            <div class="mb-3">
-
-                <label class="form-label fw-semibold">
-                    Option B Text
-                </label>
-
-               {{ form.option_b_text }}
-
-            </div>
-
-            <div class="mb-3">
+            </h2>
 
 
-                <label class="form-label fw-semibold">
-                    Option B Image
-                </label>
+            <div id="optionC"
+                 class="accordion-collapse collapse show">
 
-                {{ form.option_b_image }}
+                <div class="accordion-body">
 
-            </div>
+                    <div class="row g-2">
 
-        </div>
 
-    </div>
+                        <div class="col-md-6">
 
-</div>
-            <!-- ======================================== -->
-            <!-- Option C -->
-            <!-- ======================================== -->
+                            <label class="form-label fw-semibold">
 
-            <!-- ======================================== -->
-<!-- Option C -->
-<!-- ======================================== -->
+                                Option C Text
 
-<div class="accordion-item mb-3">
+                            </label>
 
-    <h2 class="accordion-header">
+                            {{ form.option_c_text }}
 
-        <button class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#optionC">
+                        </div>
 
-            <strong>Option C</strong>
 
-        </button>
+                        <div class="col-md-6">
 
-    </h2>
+                            <label class="form-label fw-semibold">
 
-    <div id="optionC"
-         class="accordion-collapse collapse show">
+                                Option C Image
 
-        <div class="accordion-body">
+                            </label>
 
-            <div class="mb-3">
+                            {{ form.option_c_image }}
 
-                <label class="form-label fw-semibold">
-                    Option C Text
-                </label>
+                        </div>
 
-                {{ form.option_c_text }}
 
-            </div>
+                    </div>
 
-            <div class="mb-3">
-
-                <label class="form-label fw-semibold">
-                    Option C Image
-                </label>
-
-                {{ form.option_c_image }}
+                </div>
 
             </div>
 
         </div>
 
-    </div>
 
-</div>
+        <!-- ======================================== -->
+        <!-- Option D -->
+        <!-- ======================================== -->
 
-            <!-- ======================================== -->
-            <!-- Option D -->
-            <!-- ======================================== -->
+        <div class="accordion-item mb-3">
 
-           <!-- ======================================== -->
-<!-- Option D -->
-<!-- ======================================== -->
+            <h2 class="accordion-header">
 
-<div class="accordion-item mb-3">
+                <button class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#optionD">
 
-    <h2 class="accordion-header">
+                    <strong>Option D</strong>
 
-        <button class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#optionD">
+                </button>
 
-            <strong>Option D</strong>
+            </h2>
 
-        </button>
 
-    </h2>
+            <div id="optionD"
+                 class="accordion-collapse collapse show">
 
-    <div id="optionD"
-         class="accordion-collapse collapse show">
+                <div class="accordion-body">
 
-        <div class="accordion-body">
+                    <div class="row g-2">
 
-            <div class="mb-3">
 
-                <label class="form-label fw-semibold">
-                    Option D Text
-                </label>
+                        <div class="col-md-6">
 
-                {{ form.option_d_text }}
+                            <label class="form-label fw-semibold">
 
-            </div>
+                                Option D Text
 
-            <div class="mb-3">
+                            </label>
 
-                <label class="form-label fw-semibold">
-                    Option D Image
-                </label>
+                            {{ form.option_d_text }}
 
-                {{ form.option_d_image }}
+                        </div>
 
-            </div>
 
-        </div>
+                        <div class="col-md-6">
 
-    </div>
+                            <label class="form-label fw-semibold">
 
-</div>
-            <!-- ======================================== -->
-            <!-- Correct Answer -->
-            <!-- ======================================== -->
+                                Option D Image
 
-            <!-- ======================================== -->
-<!-- Correct Answer -->
-<!-- ======================================== -->
+                            </label>
 
-<div class="accordion-item mb-3">
+                            {{ form.option_d_image }}
 
-    <h2 class="accordion-header">
+                        </div>
 
-        <button class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#correctAnswer">
 
-            <strong>Correct Answer</strong>
+                    </div>
 
-        </button>
-
-    </h2>
-
-    <div id="correctAnswer"
-         class="accordion-collapse collapse show">
-
-        <div class="accordion-body">
-
-            <label class="form-label fw-semibold">
-                Select Correct Option
-            </label>
-
-            {{ form.correct_option }}
-
-        </div>
-
-    </div>
-
-</div>
-            <!-- ======================================== -->
-            <!-- Solution -->
-            <!-- ======================================== -->
-
-          <!-- ======================================== -->
-<!-- Solution -->
-<!-- ======================================== -->
-
-<div class="accordion-item">
-
-    <h2 class="accordion-header">
-
-        <button class="accordion-button collapsed"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#solution">
-
-            <strong>Solution</strong>
-
-        </button>
-
-    </h2>
-
-   <div id="solution"
-         class="accordion-collapse collapse show">
-
-        <div class="accordion-body">
-
-            <div class="mb-3">
-
-                <label class="form-label fw-semibold">
-                    Solution / Explanation
-                </label>
-
-                {{ form.feedback_text }}
-
-            </div>
-
-            <div class="mb-3">
-
-                <label class="form-label fw-semibold">
-                    Solution Image
-                </label>
-
-                {{ form.feedback_image }}
+                </div>
 
             </div>
 
         </div>
 
-    </div>
 
-</div>
+        <!-- ======================================== -->
+        <!-- Correct Answer -->
+        <!-- ======================================== -->
+
+        <div class="accordion-item mb-3">
+
+            <h2 class="accordion-header">
+
+                <button class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#correctAnswer">
+
+                    <strong>Correct Answer</strong>
+
+                </button>
+
+            </h2>
+
+
+            <div id="correctAnswer"
+                 class="accordion-collapse collapse show">
+
+                <div class="accordion-body">
+
+                    <label class="form-label fw-semibold">
+
+                        Select Correct Option
+
+                    </label>
+
+                    {{ form.correct_option }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ======================================== -->
+        <!-- Solution -->
+        <!-- ======================================== -->
+
+        <div class="accordion-item">
+
+            <h2 class="accordion-header">
+
+                <button class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#solution">
+
+                    <strong>Solution</strong>
+
+                </button>
+
+            </h2>
+
+
+            <div id="solution"
+                 class="accordion-collapse collapse show">
+
+                <div class="accordion-body">
+
+
+                    <div class="row g-2">
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+
+                                Solution / Explanation
+
+                            </label>
+
+                            {{ form.feedback_text }}
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+
+                                Solution Image
+
+                            </label>
+
+                            {{ form.feedback_image }}
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+    <!-- END ACCORDION -->
+
+
+</form>
 
 {% endblock %}
+
+</div>
+
+
 <script>
+
 document.addEventListener('DOMContentLoaded', function () {
 
     const typed  = document.getElementById('q_typed');
     const image  = document.getElementById('q_image');
     const hybrid = document.getElementById('q_hybrid');
 
-    const textBlock    = document.getElementById('q_text_block');
-    const imageBlock   = document.getElementById('q_image_block');
-    const previewBlock = document.getElementById('q_preview_block');
+    const textBlock =
+        document.getElementById('q_text_block');
+
+    const imageBlock =
+        document.getElementById('q_image_block');
+
+    const previewBlock =
+        document.getElementById('q_preview_block');
+
 
     function updateQuestionMode() {
 
         if (typed.checked) {
 
             textBlock.classList.remove('d-none');
+
             imageBlock.classList.add('d-none');
+
             previewBlock.classList.add('d-none');
 
-        } else if (image.checked) {
+        }
+
+        else if (image.checked) {
 
             textBlock.classList.add('d-none');
-            imageBlock.classList.remove('d-none');
-            previewBlock.classList.remove('d-none');
 
-        } else {
-
-            textBlock.classList.remove('d-none');
             imageBlock.classList.remove('d-none');
+
             previewBlock.classList.remove('d-none');
 
         }
+
+        else {
+
+            textBlock.classList.remove('d-none');
+
+            imageBlock.classList.remove('d-none');
+
+            previewBlock.classList.remove('d-none');
+
+        }
+
     }
 
-    typed.addEventListener('change', updateQuestionMode);
-    image.addEventListener('change', updateQuestionMode);
-    hybrid.addEventListener('change', updateQuestionMode);
+
+    typed.addEventListener(
+        'change',
+        updateQuestionMode
+    );
+
+    image.addEventListener(
+        'change',
+        updateQuestionMode
+    );
+
+    hybrid.addEventListener(
+        'change',
+        updateQuestionMode
+    );
+
 
     updateQuestionMode();
 
-    const imageInput  = document.getElementById('q_image_input');
-    const preview     = document.getElementById('q_preview');
-    const placeholder = document.getElementById('q_preview_placeholder');
 
-    imageInput.addEventListener('change', function () {
+    const imageInput =
+        document.getElementById('q_image_input');
 
-        const file = this.files[0];
+    const preview =
+        document.getElementById('q_preview');
 
-        if (file) {
+    const placeholder =
+        document.getElementById('q_preview_placeholder');
 
-            const reader = new FileReader();
 
-            reader.onload = function (e) {
+    imageInput.addEventListener(
+        'change',
+        function () {
 
-                preview.src = e.target.result;
-                preview.classList.remove('d-none');
-                placeholder.classList.add('d-none');
+            const file = this.files[0];
 
-            };
 
-            reader.readAsDataURL(file);
+            if (file) {
 
-        } else {
+                const reader =
+                    new FileReader();
 
-            preview.classList.add('d-none');
-            placeholder.classList.remove('d-none');
+
+                reader.onload =
+                    function (e) {
+
+                        preview.src =
+                            e.target.result;
+
+                        preview.classList.remove(
+                            'd-none'
+                        );
+
+                        placeholder.classList.add(
+                            'd-none'
+                        );
+
+                    };
+
+
+                reader.readAsDataURL(file);
+
+            }
+
+            else {
+
+                preview.classList.add(
+                    'd-none'
+                );
+
+                placeholder.classList.remove(
+                    'd-none'
+                );
+
+            }
 
         }
-    });
+    );
+
 });
+
 </script>
-</div>
+
 
 </body>
 </html>
-
-
