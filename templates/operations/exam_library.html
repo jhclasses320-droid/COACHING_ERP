@@ -302,26 +302,48 @@
 
                                         {% if exam.is_online %}
 
-                                            <!-- ONLINE ASSIGN -->
+    <!-- ONLINE ASSIGN -->
 
-                                            <a
-                                                href="{% url 'assign_test' exam.id %}"
-                                                class="btn btn-sm btn-outline-success"
-                                            >
-                                                Assign
-                                            </a>
+    <a
+        href="{% url 'assign_test' exam.id %}"
+        class="btn btn-sm btn-outline-success"
+    >
+        Assign
+    </a>
 
 
-                                            <!-- ONLINE STUDENTS / RESULTS -->
+    <!-- TEST PAPER PDF -->
 
-                                            <a
-                                                href="{% url 'exam_student_status' exam.id %}"
-                                                class="btn btn-sm btn-outline-primary"
-                                            >
-                                                Students / Results
-                                            </a>
+    <a
+        href="{% url 'exam_test_pdf' exam.id %}"
+        class="btn btn-sm btn-outline-dark"
+        target="_blank"
+    >
+        Test PDF
+    </a>
 
-                                        {% else %}
+
+    <!-- ANSWER + SOLUTIONS PDF -->
+
+    <a
+        href="{% url 'exam_answer_solution_pdf' exam.id %}"
+        class="btn btn-sm btn-outline-warning"
+        target="_blank"
+    >
+        Answer + Solutions
+    </a>
+
+
+    <!-- ONLINE STUDENTS / RESULTS -->
+
+    <a
+        href="{% url 'exam_student_status' exam.id %}"
+        class="btn btn-sm btn-outline-primary"
+    >
+        Students / Results
+    </a>
+
+{% else %}
 
                                             <!-- OFFLINE LOCKED -->
 

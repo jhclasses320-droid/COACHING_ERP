@@ -409,6 +409,12 @@ class Exam(models.Model):
 
     name = models.CharField(max_length=100)
 
+    instructions = models.TextField(
+        blank=True,
+        default="",
+        help_text="Instructions for this test. These will appear on the test paper PDF."
+    )
+
     assessment = models.OneToOneField(
         'performance.Assessment',
         on_delete=models.CASCADE,

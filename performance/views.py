@@ -1,8 +1,28 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q
 from datetime import datetime
+import io
+import os
+
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import mm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle,
+    Image,
+    PageBreak,
+)
 
 from students.models import Student, Batch, Subject, Topic, Chapter, Exam, ExamQuestion, Question
 
@@ -100,16 +120,22 @@ def create_test(request):
 
         if test_mode == "online":
 
-            exam = Exam.objects.create(
-                name=assessment.assessment_name,
-                assessment=assessment,
-                topic_id=request.POST.get("topic"),
-                batch=assessment.batch,
-                duration=assessment_subject.duration_minutes,
-                total_marks=assessment_subject.maximum_marks,
-                start_time=start_time,
-                end_time=end_time,
-            )
+            if test_mode == "online":
+
+                exam = Exam.objects.create(
+        name=assessment.assessment_name,
+        assessment=assessment,
+        topic_id=request.POST.get("topic"),
+        batch=assessment.batch,
+        duration=assessment_subject.duration_minutes,
+        total_marks=assessment_subject.maximum_marks,
+        start_time=start_time,
+        end_time=end_time,
+        instructions=request.POST.get(
+            "instructions",
+            ""
+        ).strip(),
+    )
 
         messages.success(
             request,
@@ -1262,3 +1288,801 @@ def worksheet_create(request):
             "chapters": chapters,
         },
     )
+# ==========================================================
+# EXAM PDF - FONT SETUP
+# ==========================================================
+
+def _register_exam_pdf_font():
+
+    font_candidates = [
+        r"C:\Windows\Fonts\times.ttf",
+        r"C:\Windows\Fonts\timesnr.ttf",
+        r"C:\Windows\Fonts\Times New Roman.ttf",
+    ]
+
+    for font_path in font_candidates:
+
+        if os.path.exists(font_path):
+
+            try:
+
+                pdfmetrics.registerFont(
+                    TTFont(
+                        "ExamTimesNewRoman",
+                        font_path,
+                    )
+                )
+
+                return "ExamTimesNewRoman"
+
+            except Exception:
+                pass
+
+    return "Helvetica"
+
+
+# ==========================================================
+# EXAM PDF - IMAGE HELPER
+# ==========================================================
+
+def _exam_pdf_image(image_field, max_width=160 * mm):
+
+    if not image_field:
+        return None
+
+    try:
+
+        image_path = image_field.path
+
+        if not os.path.exists(image_path):
+            return None
+
+        image = Image(image_path)
+
+        original_width = image.imageWidth
+        original_height = image.imageHeight
+
+        if not original_width or not original_height:
+            return None
+
+        scale = min(
+            max_width / original_width,
+            1,
+        )
+
+        image.drawWidth = original_width * scale
+        image.drawHeight = original_height * scale
+
+        return image
+
+    except Exception:
+        return None
+
+
+# ==========================================================
+# EXAM PDF - COMMON DATA
+# ==========================================================
+
+def _get_exam_pdf_data(exam_id):
+
+    exam = get_object_or_404(
+        Exam.objects.select_related(
+            "batch",
+            "topic",
+            "topic__subject",
+        ),
+        id=exam_id,
+    )
+
+    exam_questions = (
+        ExamQuestion.objects
+        .filter(exam=exam)
+        .select_related(
+            "question",
+        )
+        .order_by("id")
+    )
+
+    return exam, exam_questions
+
+
+# ==========================================================
+# EXAM PDF - COMMON STYLES
+# ==========================================================
+
+def _exam_pdf_styles():
+
+    font_name = _register_exam_pdf_font()
+
+    styles = getSampleStyleSheet()
+
+    return {
+        "font": font_name,
+
+        "school": ParagraphStyle(
+            "ExamSchool",
+            parent=styles["Normal"],
+            fontName=font_name,
+            fontSize=18,
+            leading=22,
+            alignment=TA_CENTER,
+            spaceAfter=5 * mm,
+        ),
+
+        "title": ParagraphStyle(
+            "ExamTitle",
+            parent=styles["Normal"],
+            fontName=font_name,
+            fontSize=16,
+            leading=20,
+            alignment=TA_CENTER,
+            spaceAfter=3 * mm,
+        ),
+
+        "details": ParagraphStyle(
+            "ExamDetails",
+            parent=styles["Normal"],
+            fontName=font_name,
+            fontSize=14,
+            leading=18,
+            alignment=TA_CENTER,
+            spaceAfter=2 * mm,
+        ),
+
+        "heading": ParagraphStyle(
+            "ExamHeading",
+            parent=styles["Normal"],
+            fontName=font_name,
+            fontSize=15,
+            leading=19,
+            spaceBefore=4 * mm,
+            spaceAfter=3 * mm,
+        ),
+
+        "body": ParagraphStyle(
+            "ExamBody",
+            parent=styles["Normal"],
+            fontName=font_name,
+            fontSize=14,
+            leading=19,
+            spaceAfter=3 * mm,
+        ),
+
+        "option": ParagraphStyle(
+            "ExamOption",
+            parent=styles["Normal"],
+            fontName=font_name,
+            fontSize=14,
+            leading=19,
+            leftIndent=7 * mm,
+            spaceAfter=2 * mm,
+        ),
+
+        "solution": ParagraphStyle(
+            "ExamSolution",
+            parent=styles["Normal"],
+            fontName=font_name,
+            fontSize=14,
+            leading=19,
+            leftIndent=5 * mm,
+            spaceAfter=3 * mm,
+        ),
+    }
+
+
+# ==========================================================
+# EXAM PDF - TEST PAPER
+# NO ANSWERS / NO SOLUTIONS
+# ==========================================================
+
+def exam_test_pdf(request, exam_id):
+
+    exam, exam_questions = _get_exam_pdf_data(
+        exam_id
+    )
+
+    styles = _exam_pdf_styles()
+
+    buffer = io.BytesIO()
+
+    document = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=18 * mm,
+        leftMargin=18 * mm,
+        topMargin=18 * mm,
+        bottomMargin=18 * mm,
+        title=f"{exam.name} - Test Paper",
+        author="JH Classes",
+    )
+
+    story = []
+
+    # ------------------------------------------------------
+    # HEADER
+    # ------------------------------------------------------
+
+    story.append(
+        Paragraph(
+            "JH CLASSES",
+            styles["school"],
+        )
+    )
+
+    story.append(
+        Paragraph(
+            exam.name,
+            styles["title"],
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Class: {exam.batch.student_class or exam.batch.batch_name}",
+            styles["details"],
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Subject: {exam.topic.subject.name}",
+            styles["details"],
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Time: {exam.duration} Minutes"
+            f" &nbsp;&nbsp;&nbsp; "
+            f"Maximum Marks: {exam.total_marks}",
+            styles["details"],
+        )
+    )
+
+    story.append(Spacer(1, 4 * mm))
+
+    # ------------------------------------------------------
+    # STUDENT DETAILS
+    # ------------------------------------------------------
+
+    student_table = Table(
+        [
+            [
+                Paragraph(
+                    "Name: ______________________________",
+                    styles["body"],
+                ),
+                Paragraph(
+                    "Roll No.: __________________",
+                    styles["body"],
+                ),
+            ],
+            [
+                Paragraph(
+                    "Date: _______________________________",
+                    styles["body"],
+                ),
+                "",
+            ],
+        ],
+        colWidths=[
+            105 * mm,
+            65 * mm,
+        ],
+    )
+
+    student_table.setStyle(
+        TableStyle(
+            [
+                (
+                    "VALIGN",
+                    (0, 0),
+                    (-1, -1),
+                    "TOP",
+                ),
+                (
+                    "LEFTPADDING",
+                    (0, 0),
+                    (-1, -1),
+                    0,
+                ),
+                (
+                    "RIGHTPADDING",
+                    (0, 0),
+                    (-1, -1),
+                    0,
+                ),
+            ]
+        )
+    )
+
+    story.append(student_table)
+
+    story.append(Spacer(1, 3 * mm))
+
+    # ------------------------------------------------------
+    # INSTRUCTIONS
+    # ------------------------------------------------------
+
+    if exam.instructions.strip():
+
+        story.append(
+            Paragraph(
+                "INSTRUCTIONS",
+                styles["heading"],
+            )
+        )
+
+        instruction_lines = (
+            exam.instructions
+            .replace("\r\n", "\n")
+            .replace("\r", "\n")
+            .split("\n")
+        )
+
+        for line in instruction_lines:
+
+            if line.strip():
+
+                story.append(
+                    Paragraph(
+                        line.strip(),
+                        styles["body"],
+                    )
+                )
+
+        story.append(
+            Spacer(
+                1,
+                3 * mm,
+            )
+        )
+
+    # ------------------------------------------------------
+    # QUESTIONS
+    # ------------------------------------------------------
+
+    for number, exam_question in enumerate(
+        exam_questions,
+        start=1,
+    ):
+
+        question = exam_question.question
+
+        question_text = (
+            question.question_text
+            or " "
+        )
+
+        story.append(
+            Paragraph(
+                f"<b>Q{number}.</b> {question_text}",
+                styles["body"],
+            )
+        )
+
+        question_image = _exam_pdf_image(
+            question.question_image
+        )
+
+        if question_image:
+
+            story.append(
+                question_image
+            )
+
+            story.append(
+                Spacer(
+                    1,
+                    3 * mm,
+                )
+            )
+
+        options = [
+            (
+                "A",
+                question.option_a_text,
+                question.option_a_image,
+            ),
+            (
+                "B",
+                question.option_b_text,
+                question.option_b_image,
+            ),
+            (
+                "C",
+                question.option_c_text,
+                question.option_c_image,
+            ),
+            (
+                "D",
+                question.option_d_text,
+                question.option_d_image,
+            ),
+        ]
+
+        for label, text, image_field in options:
+
+            if not text and not image_field:
+                continue
+
+            option_text = (
+                text
+                or ""
+            )
+
+            story.append(
+                Paragraph(
+                    f"<b>{label}.</b> {option_text}",
+                    styles["option"],
+                )
+            )
+
+            option_image = _exam_pdf_image(
+                image_field,
+                max_width=145 * mm,
+            )
+
+            if option_image:
+
+                story.append(
+                    option_image
+                )
+
+                story.append(
+                    Spacer(
+                        1,
+                        2 * mm,
+                    )
+                )
+
+        story.append(
+            Spacer(
+                1,
+                4 * mm,
+            )
+        )
+
+    # ------------------------------------------------------
+    # BUILD PDF
+    # ------------------------------------------------------
+
+    document.build(story)
+
+    buffer.seek(0)
+
+    response = HttpResponse(
+        buffer.getvalue(),
+        content_type="application/pdf",
+    )
+
+    response[
+        "Content-Disposition"
+    ] = (
+        f'inline; filename="{exam.name} - Test Paper.pdf"'
+    )
+
+    return response
+
+
+# ==========================================================
+# EXAM PDF - ANSWER KEY + SOLUTIONS
+# ==========================================================
+
+def exam_answer_solution_pdf(request, exam_id):
+
+    exam, exam_questions = _get_exam_pdf_data(
+        exam_id
+    )
+
+    styles = _exam_pdf_styles()
+
+    buffer = io.BytesIO()
+
+    document = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=18 * mm,
+        leftMargin=18 * mm,
+        topMargin=18 * mm,
+        bottomMargin=18 * mm,
+        title=f"{exam.name} - Answer Key and Solutions",
+        author="JH Classes",
+    )
+
+    story = []
+
+    # ------------------------------------------------------
+    # HEADER
+    # ------------------------------------------------------
+
+    story.append(
+        Paragraph(
+            "JH CLASSES",
+            styles["school"],
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"{exam.name} - ANSWER KEY & SOLUTIONS",
+            styles["title"],
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Class: {exam.batch.student_class or exam.batch.batch_name}",
+            styles["details"],
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Subject: {exam.topic.subject.name}",
+            styles["details"],
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Time: {exam.duration} Minutes"
+            f" &nbsp;&nbsp;&nbsp; "
+            f"Maximum Marks: {exam.total_marks}",
+            styles["details"],
+        )
+    )
+
+    story.append(
+        Spacer(
+            1,
+            5 * mm,
+        )
+    )
+
+    # ------------------------------------------------------
+    # INSTRUCTIONS
+    # ------------------------------------------------------
+
+    if exam.instructions.strip():
+
+        story.append(
+            Paragraph(
+                "INSTRUCTIONS",
+                styles["heading"],
+            )
+        )
+
+        instruction_lines = (
+            exam.instructions
+            .replace("\r\n", "\n")
+            .replace("\r", "\n")
+            .split("\n")
+        )
+
+        for line in instruction_lines:
+
+            if line.strip():
+
+                story.append(
+                    Paragraph(
+                        line.strip(),
+                        styles["body"],
+                    )
+                )
+
+        story.append(
+            Spacer(
+                1,
+                3 * mm,
+            )
+        )
+
+    # ------------------------------------------------------
+    # QUESTIONS + ANSWERS + SOLUTIONS
+    # ------------------------------------------------------
+
+    for number, exam_question in enumerate(
+        exam_questions,
+        start=1,
+    ):
+
+        question = exam_question.question
+
+        question_text = (
+            question.question_text
+            or " "
+        )
+
+        story.append(
+            Paragraph(
+                f"<b>Q{number}.</b> {question_text}",
+                styles["body"],
+            )
+        )
+
+        question_image = _exam_pdf_image(
+            question.question_image
+        )
+
+        if question_image:
+
+            story.append(
+                question_image
+            )
+
+            story.append(
+                Spacer(
+                    1,
+                    3 * mm,
+                )
+            )
+
+        options = [
+            (
+                "A",
+                question.option_a_text,
+                question.option_a_image,
+            ),
+            (
+                "B",
+                question.option_b_text,
+                question.option_b_image,
+            ),
+            (
+                "C",
+                question.option_c_text,
+                question.option_c_image,
+            ),
+            (
+                "D",
+                question.option_d_text,
+                question.option_d_image,
+            ),
+        ]
+
+        for label, text, image_field in options:
+
+            if not text and not image_field:
+                continue
+
+            option_text = (
+                text
+                or ""
+            )
+
+            story.append(
+                Paragraph(
+                    f"<b>{label}.</b> {option_text}",
+                    styles["option"],
+                )
+            )
+
+            option_image = _exam_pdf_image(
+                image_field,
+                max_width=145 * mm,
+            )
+
+            if option_image:
+
+                story.append(
+                    option_image
+                )
+
+                story.append(
+                    Spacer(
+                        1,
+                        2 * mm,
+                    )
+                )
+
+        # --------------------------------------------------
+        # CORRECT ANSWER
+        # --------------------------------------------------
+
+        correct_option = (
+            question.correct_option
+            or "-"
+        )
+
+        story.append(
+            Paragraph(
+                f"<b>Correct Answer: {correct_option}</b>",
+                styles["solution"],
+            )
+        )
+
+        # --------------------------------------------------
+        # SOLUTION
+        # --------------------------------------------------
+
+        solution_text = (
+            question.feedback_text
+            or ""
+        ).strip()
+
+        story.append(
+            Paragraph(
+                "<b>Solution:</b>",
+                styles["solution"],
+            )
+        )
+
+        if solution_text:
+
+            solution_lines = (
+                solution_text
+                .replace("\r\n", "\n")
+                .replace("\r", "\n")
+                .split("\n")
+            )
+
+            for line in solution_lines:
+
+                if line.strip():
+
+                    story.append(
+                        Paragraph(
+                            line.strip(),
+                            styles["solution"],
+                        )
+                    )
+
+        else:
+
+            story.append(
+                Paragraph(
+                    "No solution has been entered for this question.",
+                    styles["solution"],
+                )
+            )
+
+        # --------------------------------------------------
+        # SOLUTION IMAGE
+        # --------------------------------------------------
+
+        solution_image = _exam_pdf_image(
+            question.feedback_image,
+            max_width=160 * mm,
+        )
+
+        if solution_image:
+
+            story.append(
+                solution_image
+            )
+
+            story.append(
+                Spacer(
+                    1,
+                    3 * mm,
+                )
+            )
+
+        story.append(
+            Spacer(
+                1,
+                5 * mm,
+            )
+        )
+
+    # ------------------------------------------------------
+    # BUILD PDF
+    # ------------------------------------------------------
+
+    document.build(story)
+
+    buffer.seek(0)
+
+    response = HttpResponse(
+        buffer.getvalue(),
+        content_type="application/pdf",
+    )
+
+    response[
+        "Content-Disposition"
+    ] = (
+        f'inline; filename="{exam.name} - Answer Key and Solutions.pdf"'
+    )
+
+    return response

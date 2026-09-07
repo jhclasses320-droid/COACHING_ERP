@@ -88,7 +88,7 @@ urlpatterns = [
         name="subject_analysis_report",
     ),
 
-       path(
+    path(
         "reports/parent/",
         views.parent_report,
         name="parent_report",
@@ -98,6 +98,22 @@ urlpatterns = [
         "exams/<int:exam_id>/students/",
         views.exam_student_status,
         name="exam_student_status",
+    ),
+
+    # ==========================================================
+    # EXAM PDFS
+    # ==========================================================
+
+    path(
+        "exams/<int:exam_id>/test-pdf/",
+        views.exam_test_pdf,
+        name="exam_test_pdf",
+    ),
+
+    path(
+        "exams/<int:exam_id>/answer-solution-pdf/",
+        views.exam_answer_solution_pdf,
+        name="exam_answer_solution_pdf",
     ),
 
     # ==========================================================
@@ -116,6 +132,4 @@ urlpatterns = [
         name="worksheet_create",
     ),
 
-
 ]
-

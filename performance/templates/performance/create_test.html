@@ -537,7 +537,7 @@
                 </div>
 
 
-                <!-- CHAPTER COVERED -->
+                                <!-- CHAPTER COVERED -->
 
                 <div class="form-group full">
 
@@ -558,33 +558,31 @@
                 </div>
 
 
-            </div>
+                <!-- TEST INSTRUCTIONS -->
 
+                <div class="form-group full">
 
-            <div class="actions">
+                    <label>
+                        Instructions for this Test
+                    </label>
 
-               <a
-    href="{% url 'staff_dashboard' %}"
-    class="btn btn-secondary"
->
-                    Cancel
-                </a>
+                    <textarea
+                        name="instructions"
+                        rows="6"
+                        placeholder="Enter instructions for this test. You may enter any instructions required for this particular test."
+                        style="
+                            width: 100%;
+                            border: 1px solid #cbd5e1;
+                            border-radius: 7px;
+                            padding: 10px 12px;
+                            font-size: 15px;
+                            font-family: Arial, sans-serif;
+                            resize: vertical;
+                        "
+                    ></textarea>
 
-                <button
-                    type="submit"
-                    class="btn btn-primary"
-                >
-                    Create Test
-                </button>
+                    <div class="help-text">
+                        These instructions are saved separately for this test and will appear on the Test Paper PDF and Answer Key + Solutions PDF.
+                    </div>
 
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
-
-</body>
-
-</html>
+                </div>
