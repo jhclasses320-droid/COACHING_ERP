@@ -518,7 +518,7 @@
 
                 <tbody>
 
-                    {% for question in recent_questions %}
+                    {% for question in questions %}
 
                     <tr>
 
@@ -556,13 +556,28 @@
 
                         <td>
 
-                            <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+    <a
+        href="{% url 'questionbank:view_question' question.id %}"
+        class="btn btn-sm btn-outline-primary"
+    >
+        View
+    </a>
 
-                            <a href="#" class="btn btn-sm btn-outline-success">Edit</a>
+    <a
+        href="{% url 'questionbank:edit_question' question.id %}"
+        class="btn btn-sm btn-outline-success"
+    >
+        Edit
+    </a>
 
-                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+    <a
+        href="#"
+        class="btn btn-sm btn-outline-danger"
+    >
+        Delete
+    </a>
 
-                        </td>
+</td>
 
                     </tr>
 

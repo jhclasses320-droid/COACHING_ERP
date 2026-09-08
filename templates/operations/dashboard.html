@@ -30,335 +30,428 @@ Operations Dashboard
 
 <div class="container-fluid">
 
-```
-<!-- ===================================================== -->
-<!-- PAGE HEADER -->
-<!-- ===================================================== -->
+    <!-- ===================================================== -->
+    <!-- PAGE HEADER -->
+    <!-- ===================================================== -->
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-    <div>
+        <div>
 
-        <h2 class="page-title mb-1">
-            Operations Dashboard
-        </h2>
+            <h2 class="page-title mb-1">
+                Operations Dashboard
+            </h2>
 
-        <p class="text-muted mb-0">
-            Welcome back,
-            <strong>{{ request.user.username }}</strong>
-        </p>
+            <p class="text-muted mb-0">
+                Welcome back,
+                <strong>{{ request.user.username }}</strong>
+            </p>
 
-    </div>
-
-    <div>
-
-        <a href="/questions/" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i>
-            New Question
-        </a>
-
-    </div>
-
-</div>
-
-<!-- ===================================================== -->
-<!-- WORKSPACE SUMMARY -->
-<!-- ===================================================== -->
-
-<div class="row g-4 mb-4">
-
-    <!-- Question Bank -->
-    <div class="col-lg col-md-6">
-        <a href="/questions/" class="text-decoration-none text-dark">
-            <div class="card shadow-sm border-0 h-100 dashboard-top-card blue">
-                <div class="card-body text-center py-4">
-                    <i class="bi bi-journal-text fs-1 text-primary"></i>
-                    <h2 class="fw-bold mt-3">
-                        {{ question_count }}
-                    </h2>
-                    <p class="text-muted mb-0">
-                        Question Bank
-                    </p>
-                </div>
-            </div>
-        </a>
-    </div>
-
-    <!-- Examinations -->
-    <div class="col-lg col-md-6">
-        <a href="/operations/exams/library/" class="text-decoration-none text-dark">
-            <div class="card shadow-sm border-0 h-100 dashboard-top-card green">
-                <div class="card-body text-center py-4">
-                    <i class="bi bi-file-earmark-text fs-1 text-success"></i>
-                    <h2 class="fw-bold mt-3">
-                        {{ test_count }}
-                    </h2>
-                    <p class="text-muted mb-0">
-                        Examinations
-                    </p>
-                </div>
-            </div>
-        </a>
-    </div>
-
-    <!-- Create Test -->
-<div class="col-lg col-md-6">
-  <a href="/performance/create-test/" class="text-decoration-none text-dark">
-        <div class="card shadow-sm border-0 h-100 dashboard-top-card cyan">
-            <div class="card-body text-center py-4">
-                <i class="bi bi-file-earmark-plus fs-1 text-info"></i>
-                <h2 class="fw-bold mt-3">
-                    +
-                </h2>
-                <p class="text-muted mb-0">
-                    Create Test
-                </p>
-            </div>
         </div>
-    </a>
-</div>
 
+        <div>
 
-    <!-- Marks Entry -->
-    <div class="col-lg col-md-6">
-        <a href="/performance/marks-entry/" class="text-decoration-none text-dark"> 
-            <div class="card shadow-sm border-0 h-100 dashboard-top-card yellow">
-                <div class="card-body text-center py-4">
-                    <i class="bi bi-graph-up-arrow fs-1 text-warning"></i>
-                    <h2 class="fw-bold mt-3">
-                        {{ student_count }}
-                    </h2>
-                    <p class="text-muted mb-0">
-                        Marks Entry
-                    </p>
-                </div>
-            </div>
-        </a>
-    </div>
-
-   
-
-<!-- ===================================================== -->
-<!-- QUICK ACTIONS -->
-<!-- ===================================================== -->
-
-<!-- ===================================================== -->
-<!-- QUICK ACTIONS -->
-<!-- ===================================================== -->
-
-<div class="card shadow-sm border-0 mb-4 dashboard-quick-card">
-
-    <div class="card-header bg-white">
-
-        <h5 class="mb-1">
-            Quick Actions
-        </h5>
-
-        <small class="text-muted">
-            Frequently used operations
-        </small>
-
-    </div>
-
-    <div class="card-body">
-
-        <div class="row g-3 dashboard-quick-actions">
-
-            <!-- NEW QUESTION -->
-
-            <div class="col-xl col-lg-4 col-md-6">
-
-                <a href="/questions/"
-                   class="dashboard-action action-blue">
-
-                    <i class="bi bi-plus-circle"></i>
-
-                    <span>
-                        New Question
-                    </span>
-
-                    <small>
-                        Add to question bank
-                    </small>
-
-                </a>
-
-            </div>
-
-
-            <!-- SEARCH QUESTIONS -->
-
-            <div class="col-xl col-lg-4 col-md-6">
-
-                <a href="/questionbank/search/"
-                   class="dashboard-action action-purple">
-
-                    <i class="bi bi-search"></i>
-
-                    <span>
-                        Search Questions
-                    </span>
-
-                    <small>
-                        Find questions
-                    </small>
-
-                </a>
-
-            </div>
-
-
-            <!-- CREATE EXAM -->
-
-            <div class="col-xl col-lg-4 col-md-6">
-
-                
-                <a href="/performance/create-test/"
-                 class="dashboard-action action-green">
-
-                    <i class="bi bi-file-earmark-plus"></i>
-
-                    <span>
-                        Create Exam
-                    </span>
-
-                    <small>
-                        Build a new test
-                    </small>
-
-                </a>
-
-            </div>
-
-
-            <!-- ENTER MARKS -->
-
-            <div class="col-xl col-lg-4 col-md-6">
-
-                <a href="/performance/marks-entry/"
-                   class="dashboard-action action-orange">
-
-                    <i class="bi bi-pencil-square"></i>
-
-                    <span>
-                        Enter Marks
-                    </span>
-
-                    <small>
-                        Record student marks
-                    </small>
-
-                </a>
-
-            </div>
-
-
-            <!-- PERFORMANCE REPORTS -->
-
-            <div class="col-xl col-lg-4 col-md-6">
-
-                <a href="/performance/reports/"
-                   class="dashboard-action action-red">
-
-                    <i class="bi bi-bar-chart-line"></i>
-
-                    <span>
-                        Performance Reports
-                    </span>
-
-                    <small>
-                        View results
-                    </small>
-
-                </a>
-
-            </div>
+            <a href="/questions/" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i>
+                New Question
+            </a>
 
         </div>
 
     </div>
 
-</div>
 
-<!-- ===================================================== -->
-<!-- RECENT QUESTIONS -->
-<!-- ===================================================== -->
+    <!-- ===================================================== -->
+    <!-- WORKSPACE SUMMARY -->
+    <!-- ===================================================== -->
 
-<div class="card shadow-sm border-0">
+    <div class="row g-4 mb-4">
 
-    <div class="card-header bg-white">
+        <!-- Question Bank -->
 
-        <h5 class="mb-0">
-            Recent Questions
-        </h5>
+        <div class="col-lg col-md-6">
+
+            <a href="/questions/" class="text-decoration-none text-dark">
+
+                <div class="card shadow-sm border-0 h-100 dashboard-top-card blue">
+
+                    <div class="card-body text-center py-4">
+
+                        <i class="bi bi-journal-text fs-1 text-primary"></i>
+
+                        <h2 class="fw-bold mt-3">
+                            {{ question_count }}
+                        </h2>
+
+                        <p class="text-muted mb-0">
+                            Question Bank
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- Examinations -->
+
+        <div class="col-lg col-md-6">
+
+            <a href="/operations/exams/library/"
+               class="text-decoration-none text-dark">
+
+                <div class="card shadow-sm border-0 h-100 dashboard-top-card green">
+
+                    <div class="card-body text-center py-4">
+
+                        <i class="bi bi-file-earmark-text fs-1 text-success"></i>
+
+                        <h2 class="fw-bold mt-3">
+                            {{ test_count }}
+                        </h2>
+
+                        <p class="text-muted mb-0">
+                            Examinations
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- Create Test -->
+
+        <div class="col-lg col-md-6">
+
+            <a href="/performance/create-test/"
+               class="text-decoration-none text-dark">
+
+                <div class="card shadow-sm border-0 h-100 dashboard-top-card cyan">
+
+                    <div class="card-body text-center py-4">
+
+                        <i class="bi bi-file-earmark-plus fs-1 text-info"></i>
+
+                        <h2 class="fw-bold mt-3">
+                            +
+                        </h2>
+
+                        <p class="text-muted mb-0">
+                            Create Test
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+        <!-- Marks Entry -->
+
+        <div class="col-lg col-md-6">
+
+            <a href="/performance/marks-entry/"
+               class="text-decoration-none text-dark">
+
+                <div class="card shadow-sm border-0 h-100 dashboard-top-card yellow">
+
+                    <div class="card-body text-center py-4">
+
+                        <i class="bi bi-graph-up-arrow fs-1 text-warning"></i>
+
+                        <h2 class="fw-bold mt-3">
+                            {{ student_count }}
+                        </h2>
+
+                        <p class="text-muted mb-0">
+                            Marks Entry
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
 
     </div>
 
-    <div class="table-responsive">
 
-        <table class="table table-hover align-middle mb-0">
+    <!-- ===================================================== -->
+    <!-- QUICK ACTIONS -->
+    <!-- ===================================================== -->
 
-            <thead class="table-primary">
+    <div class="card shadow-sm border-0 mb-4 dashboard-quick-card">
 
-                <tr>
-                    <th width="80">ID</th>
-                    <th>Question</th>
-                    <th width="180">Topic</th>
-                    <th width="220">Actions</th>
-                </tr>
+        <div class="card-header bg-white">
 
-            </thead>
+            <h5 class="mb-1">
+                Quick Actions
+            </h5>
 
-            <tbody>
+            <small class="text-muted">
+                Frequently used operations
+            </small>
 
-                {% for q in questions %}
+        </div>
 
-                <tr>
 
-                    <td>{{ q.id }}</td>
+        <div class="card-body">
 
-                    <td>{{ q.question_text|truncatechars:80 }}</td>
+            <div class="row g-3 dashboard-quick-actions">
 
-                    <td>{{ q.topic }}</td>
 
-                    <td>
+                <!-- NEW QUESTION -->
 
-                        <a href="/admin/students/question/{{ q.id }}/change/" class="btn btn-sm btn-info">
-                            View
-                        </a>
+                <div class="col-xl col-lg-4 col-md-6">
 
-                        <a href="/admin/students/question/{{ q.id }}/change/" class="btn btn-sm btn-warning">
-                            Edit
-                        </a>
+                    <a href="/questions/"
+                       class="dashboard-action action-blue">
 
-                        <a href="/admin/students/question/{{ q.id }}/delete/" class="btn btn-sm btn-danger">
-                            Delete
-                        </a>
+                        <i class="bi bi-plus-circle"></i>
 
-                    </td>
+                        <span>
+                            New Question
+                        </span>
 
-                </tr>
+                        <small>
+                            Add to question bank
+                        </small>
 
-                {% empty %}
+                    </a>
 
-                <tr>
+                </div>
 
-                    <td colspan="4" class="text-center py-5 text-muted">
-                        No questions available.
-                    </td>
 
-                </tr>
+                <!-- SEARCH QUESTIONS -->
 
-                {% endfor %}
+                <div class="col-xl col-lg-4 col-md-6">
 
-            </tbody>
+                    <a href="/questionbank/search/"
+                       class="dashboard-action action-purple">
 
-        </table>
+                        <i class="bi bi-search"></i>
+
+                        <span>
+                            Search Questions
+                        </span>
+
+                        <small>
+                            Find questions
+                        </small>
+
+                    </a>
+
+                </div>
+
+
+                <!-- CREATE EXAM -->
+
+                <div class="col-xl col-lg-4 col-md-6">
+
+                    <a href="/performance/create-test/"
+                       class="dashboard-action action-green">
+
+                        <i class="bi bi-file-earmark-plus"></i>
+
+                        <span>
+                            Create Exam
+                        </span>
+
+                        <small>
+                            Build a new test
+                        </small>
+
+                    </a>
+
+                </div>
+
+
+                <!-- ENTER MARKS -->
+
+                <div class="col-xl col-lg-4 col-md-6">
+
+                    <a href="/performance/marks-entry/"
+                       class="dashboard-action action-orange">
+
+                        <i class="bi bi-pencil-square"></i>
+
+                        <span>
+                            Enter Marks
+                        </span>
+
+                        <small>
+                            Record student marks
+                        </small>
+
+                    </a>
+
+                </div>
+
+
+                <!-- PERFORMANCE REPORTS -->
+
+                <div class="col-xl col-lg-4 col-md-6">
+
+                    <a href="/performance/reports/"
+                       class="dashboard-action action-red">
+
+                        <i class="bi bi-bar-chart-line"></i>
+
+                        <span>
+                            Performance Reports
+                        </span>
+
+                        <small>
+                            View results
+                        </small>
+
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </div>
 
     </div>
 
-</div>
-```
+
+    <!-- ===================================================== -->
+    <!-- RECENT QUESTIONS -->
+    <!-- ===================================================== -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white">
+
+            <h5 class="mb-0">
+                Recent Questions
+            </h5>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-primary">
+
+                    <tr>
+
+                        <th width="80">
+                            ID
+                        </th>
+
+                        <th>
+                            Question
+                        </th>
+
+                        <th width="180">
+                            Topic
+                        </th>
+
+                        <th width="220">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for q in questions %}
+
+                    <tr>
+
+                        <td>
+                            {{ q.id }}
+                        </td>
+
+
+                        <td>
+                            {{ q.question_text|truncatechars:80 }}
+                        </td>
+
+
+                        <td>
+                            {{ q.topic }}
+                        </td>
+
+
+                        <td>
+
+                            <!-- VIEW -->
+
+                            <a href="{% url 'questionbank:view_question' q.id %}"
+                               class="btn btn-sm btn-info">
+
+                                View
+
+                            </a>
+
+
+                            <!-- EDIT -->
+
+                            <a href="{% url 'questionbank:edit_question' q.id %}"
+                               class="btn btn-sm btn-warning">
+
+                                Edit
+
+                            </a>
+
+
+                            <!-- DELETE -->
+
+                            <a href="/admin/students/question/{{ q.id }}/delete/"
+                               class="btn btn-sm btn-danger">
+
+                                Delete
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="4"
+                            class="text-center py-5 text-muted">
+
+                            No questions available.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </div>
 

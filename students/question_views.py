@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 
@@ -162,4 +162,71 @@ def question_statistics(request):
     return render(
         request,
         'question_bank/statistics.html'
+    )
+
+def view_question(request, question_id):
+
+    question = get_object_or_404(
+        Question,
+        id=question_id
+    )
+
+    return render(
+        request,
+        'question_bank/view_question.html',
+        {
+            'question': question
+        }
+    )
+
+
+def edit_question(request, question_id):
+
+    question = get_object_or_404(
+        Question,
+        id=question_id
+    )
+
+    if request.method == 'POST':
+
+        form = QuestionForm(
+            request.POST,
+            request.FILES,
+            instance=question
+        )
+
+        if form.is_valid():
+
+            form.save()
+
+            messages.success(
+                request,
+                'Question updated successfully.'
+            )
+
+            return redirect(
+                'questionbank:view_question',
+                question_id=question.id
+            )
+
+        else:
+
+            messages.error(
+                request,
+                'Please correct the errors below.'
+            )
+
+    else:
+
+        form = QuestionForm(
+            instance=question
+        )
+
+    return render(
+        request,
+        'question_bank/edit_question.html',
+        {
+            'form': form,
+            'question': question
+        }
     )

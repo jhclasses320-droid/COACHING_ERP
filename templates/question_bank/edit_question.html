@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Edit Question</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+</head>
+
+<body class="bg-light">
+
+<div class="container-fluid py-3">
+
+    {% load static %}
+
+    <!-- ========================= -->
+    <!-- PAGE HEADING -->
+    <!-- ========================= -->
+
+    <div class="row align-items-center mb-3">
+
+        <div class="col-md-8">
+
+            <h2 class="fw-bold text-primary mb-1">
+
+                <i class="fas fa-edit me-2"></i>
+
+                Edit Question #{{ question.id }}
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Edit and update the question details.
+
+            </p>
+
+        </div>
+
+
+        <div class="col-md-4 text-end">
+
+            <a
+                href="{% url 'questionbank:view_question' question.id %}"
+                class="btn btn-info me-2"
+            >
+
+                <i class="fas fa-eye"></i>
+
+                View
+
+            </a>
+
+
+            <a
+                href="{% url 'questionbank:dashboard' %}"
+                class="btn btn-secondary"
+            >
+
+                <i class="fas fa-arrow-left"></i>
+
+                Back
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- MESSAGES -->
+    <!-- ========================= -->
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags }}">
+
+                {{ message }}
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- ========================= -->
+    <!-- FORM -->
+    <!-- ========================= -->
+
+    <form
+        method="post"
+        enctype="multipart/form-data"
+    >
+
+        {% csrf_token %}
+
+
+        <!-- ========================= -->
+        <!-- FORM ERRORS -->
+        <!-- ========================= -->
+
+        {% if form.non_field_errors %}
+
+            <div class="alert alert-danger">
+
+                {{ form.non_field_errors }}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- ========================= -->
+        <!-- BASIC DETAILS -->
+        <!-- ========================= -->
+
+        <div class="card mb-3">
+
+            <div class="card-header">
+
+                <strong>
+                    <i class="fas fa-info-circle me-2"></i>
+                    Question Details
+                </strong>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+
+                    <!-- BATCH -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+
+                            Batch
+
+                        </label>
+
+                        {{ form.batch }}
+
+                        {% if form.batch.errors %}
+                            <div class="text-danger small">
+                                {{ form.batch.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- TOPIC -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+
+                            Topic
+
+                        </label>
+
+                        {{ form.topic }}
+
+                        {% if form.topic.errors %}
+                            <div class="text-danger small">
+                                {{ form.topic.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- QUESTION MODE -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+
+                            Question Mode
+
+                        </label>
+
+                        {{ form.question_mode }}
+
+                        {% if form.question_mode.errors %}
+                            <div class="text-danger small">
+                                {{ form.question_mode.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- DIFFICULTY -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+
+                            Difficulty
+
+                        </label>
+
+                        {{ form.difficulty }}
+
+                        {% if form.difficulty.errors %}
+                            <div class="text-danger small">
+                                {{ form.difficulty.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- MARKS -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+
+                            Marks
+
+                        </label>
+
+                        {{ form.marks }}
+
+                        {% if form.marks.errors %}
+                            <div class="text-danger small">
+                                {{ form.marks.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- NEGATIVE MARKS -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+
+                            Negative Marks
+
+                        </label>
+
+                        {{ form.negative_marks }}
+
+                        {% if form.negative_marks.errors %}
+                            <div class="text-danger small">
+                                {{ form.negative_marks.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- ESTIMATED TIME -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+
+                            Estimated Time (seconds)
+
+                        </label>
+
+                        {{ form.estimated_time }}
+
+                        {% if form.estimated_time.errors %}
+                            <div class="text-danger small">
+                                {{ form.estimated_time.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- ACTIVE -->
+
+                    <div class="col-md-4 d-flex align-items-end">
+
+                        <div class="form-check form-switch">
+
+                            {{ form.is_active }}
+
+                            <label class="form-check-label">
+
+                                Active Question
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- QUESTION -->
+        <!-- ========================= -->
+
+        <div class="card mb-3">
+
+            <div class="card-header">
+
+                <strong>
+                    <i class="fas fa-question-circle me-2"></i>
+                    Question
+                </strong>
+
+            </div>
+
+
+            <div class="card-body">
+
+
+                <!-- QUESTION TEXT -->
+
+                <div class="mb-3">
+
+                    <label class="form-label fw-semibold">
+
+                        Question Text
+
+                    </label>
+
+                    {{ form.question_text }}
+
+                    {% if form.question_text.errors %}
+                        <div class="text-danger small">
+                            {{ form.question_text.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- CURRENT QUESTION IMAGE -->
+
+                {% if question.question_image %}
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+
+                            Current Question Image
+
+                        </label>
+
+                        <div class="border rounded p-3 bg-white">
+
+                            <img
+                                src="{{ question.question_image.url }}"
+                                class="img-fluid"
+                                style="max-height:300px;"
+                            >
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- NEW QUESTION IMAGE -->
+
+                <div class="mb-3">
+
+                    <label class="form-label fw-semibold">
+
+                        Replace Question Image
+
+                    </label>
+
+                    {{ form.question_image }}
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- OPTION A -->
+        <!-- ========================= -->
+
+        <div class="card mb-3">
+
+            <div class="card-header">
+
+                <strong>Option A</strong>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+
+                            Option A Text
+
+                        </label>
+
+                        {{ form.option_a_text }}
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+
+                            Option A Image
+
+                        </label>
+
+                        {% if question.option_a_image %}
+
+                            <div class="mb-2">
+
+                                <img
+                                    src="{{ question.option_a_image.url }}"
+                                    class="img-fluid"
+                                    style="max-height:150px;"
+                                >
+
+                            </div>
+
+                        {% endif %}
+
+                        {{ form.option_a_image }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- OPTION B -->
+        <!-- ========================= -->
+
+        <div class="card mb-3">
+
+            <div class="card-header">
+
+                <strong>Option B</strong>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+
+                            Option B Text
+
+                        </label>
+
+                        {{ form.option_b_text }}
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+
+                            Option B Image
+
+                        </label>
+
+                        {% if question.option_b_image %}
+
+                            <div class="mb-2">
+
+                                <img
+                                    src="{{ question.option_b_image.url }}"
+                                    class="img-fluid"
+                                    style="max-height:150px;"
+                                >
+
+                            </div>
+
+                        {% endif %}
+
+                        {{ form.option_b_image }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- OPTION C -->
+        <!-- ========================= -->
+
+        <div class="card mb-3">
+
+            <div class="card-header">
+
+                <strong>Option C</strong>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+
+                            Option C Text
+
+                        </label>
+
+                        {{ form.option_c_text }}
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+
+                            Option C Image
+
+                        </label>
+
+                        {% if question.option_c_image %}
+
+                            <div class="mb-2">
+
+                                <img
+                                    src="{{ question.option_c_image.url }}"
+                                    class="img-fluid"
+                                    style="max-height:150px;"
+                                >
+
+                            </div>
+
+                        {% endif %}
+
+                        {{ form.option_c_image }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- OPTION D -->
+        <!-- ========================= -->
+
+        <div class="card mb-3">
+
+            <div class="card-header">
+
+                <strong>Option D</strong>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+
+                            Option D Text
+
+                        </label>
+
+                        {{ form.option_d_text }}
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+
+                            Option D Image
+
+                        </label>
+
+                        {% if question.option_d_image %}
+
+                            <div class="mb-2">
+
+                                <img
+                                    src="{{ question.option_d_image.url }}"
+                                    class="img-fluid"
+                                    style="max-height:150px;"
+                                >
+
+                            </div>
+
+                        {% endif %}
+
+                        {{ form.option_d_image }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- CORRECT ANSWER -->
+        <!-- ========================= -->
+
+        <div class="card mb-3">
+
+            <div class="card-header">
+
+                <strong>
+                    <i class="fas fa-check-circle me-2"></i>
+                    Correct Answer
+                </strong>
+
+            </div>
+
+            <div class="card-body">
+
+                <label class="form-label fw-semibold">
+
+                    Correct Option
+
+                </label>
+
+                {{ form.correct_option }}
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- SOLUTION -->
+        <!-- ========================= -->
+
+        <div class="card mb-3">
+
+            <div class="card-header">
+
+                <strong>
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Solution
+                </strong>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+
+                            Solution / Explanation
+
+                        </label>
+
+                        {{ form.feedback_text }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+
+                            Solution Image
+
+                        </label>
+
+                        {% if question.feedback_image %}
+
+                            <div class="mb-2">
+
+                                <img
+                                    src="{{ question.feedback_image.url }}"
+                                    class="img-fluid"
+                                    style="max-height:200px;"
+                                >
+
+                            </div>
+
+                        {% endif %}
+
+                        {{ form.feedback_image }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- SAVE / CANCEL -->
+        <!-- ========================= -->
+
+        <div class="text-end mb-4">
+
+            <a
+                href="{% url 'questionbank:view_question' question.id %}"
+                class="btn btn-secondary me-2"
+            >
+
+                <i class="fas fa-times"></i>
+
+                Cancel
+
+            </a>
+
+
+            <button
+                type="submit"
+                class="btn btn-success"
+            >
+
+                <i class="fas fa-save"></i>
+
+                Save Changes
+
+            </button>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+</body>
+</html>

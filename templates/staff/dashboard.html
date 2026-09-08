@@ -1,136 +1,180 @@
-
 <!DOCTYPE html>
 <html>
-<head>
-<title>Question Entry Dashboard</title>
+	<head>
+		<title>Question Entry Dashboard</title>
 
-<style>
+		<style>
 
-body{
-    font-family: Arial;
-    margin:0;
-    background:#f4f6f9;
-}
+			body{
+			font-family: Arial;
+			margin:0;
+			background:#f4f6f9;
+			}
 
-.header{
-    background:#343a40;
-    color:white;
-    padding:15px 25px;
-    display:flex;
-    justify-content:space-between;
-}
+			.header{
+			background:#343a40;
+			color:white;
+			padding:15px 25px;
+			display:flex;
+			justify-content:space-between;
+			}
 
-.container{
-    padding:30px;
-}
+			.container{
+			padding:30px;
+			}
 
-.add-btn{
-    background:#28a745;
-    color:white;
-    padding:10px 16px;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
-    font-size:14px;
-}
+			.add-btn{
+			background:#28a745;
+			color:white;
+			padding:10px 16px;
+			border:none;
+			border-radius:5px;
+			cursor:pointer;
+			font-size:14px;
+			}
 
-table{
-    width:100%;
-    margin-top:20px;
-    border-collapse:collapse;
-    background:white;
-}
+			table{
+			width:100%;
+			margin-top:20px;
+			border-collapse:collapse;
+			background:white;
+			}
 
-th{
-    background:#007bff;
-    color:white;
-    padding:10px;
-    text-align:left;
-}
+			th{
+			background:#007bff;
+			color:white;
+			padding:10px;
+			text-align:left;
+			}
 
-td{
-    padding:10px;
-    border-bottom:1px solid #ddd;
-}
+			td{
+			padding:10px;
+			border-bottom:1px solid #ddd;
+			}
 
-tr:hover{
-    background:#f1f1f1;
-}
+			tr:hover{
+			background:#f1f1f1;
+			}
 
-.actions a{
-    text-decoration:none;
-    padding:6px 10px;
-    border-radius:4px;
-    font-size:13px;
-    margin-right:5px;
-}
+			.actions a{
+			text-decoration:none;
+			padding:6px 10px;
+			border-radius:4px;
+			font-size:13px;
+			margin-right:5px;
+			}
 
-.edit-btn{
-    background:#ffc107;
-    color:black;
-}
+			.edit-btn{
+			background:#ffc107;
+			color:black;
+			}
 
-.delete-btn{
-    background:#dc3545;
-    color:white;
-}
+			.delete-btn{
+			background:#dc3545;
+			color:white;
+			}
 
-.view-btn{
-    background:#17a2b8;
-    color:white;
-}
+			.view-btn{
+			background:#17a2b8;
+			color:white;
+			}
 
-</style>
-</head>
+		</style>
+	</head>
 
-<body>
+	<body>
 
-<div class="header">
-<h2>Question Entry Dashboard</h2>
-<div>Welcome {{ request.user.username }}</div>
-</div>
+		<div class="header">
 
-<div class="container">
+			<h2>Question Entry Dashboard</h2>
 
-<a href="/admin/students/question/add/">
-<button class="add-btn">+ Add Question</button>
-</a>
+			<div>
+				Welcome {{ request.user.username }}
+			</div>
 
-<table>
+		</div>
 
-<tr>
-<th>ID</th>
-<th>Question</th>
-<th>Topic</th>
-<th>Actions</th>
-</tr>
 
-{% for q in questions %}
+		<div class="container">
 
-<tr>
-<td>{{ q.id }}</td>
+			<a href="/admin/students/question/add/">
+				<button class="add-btn">
+					+ Add Question
+				</button>
+			</a>
 
-<td>{{ q.question_text|truncatechars:80 }}</td>
 
-<td>{{ q.topic }}</td>
+			<table>
 
-<td class="actions">
+				<tr>
 
-<a class="view-btn" href="/admin/students/question/{{ q.id }}/change/">View</a>
+					<th>ID</th>
+					<th>Question</th>
+					<th>Topic</th>
+					<th>Actions</th>
 
-<a class="edit-btn" href="/admin/students/question/{{ q.id }}/change/">Edit</a>
+				</tr>
 
-<a class="delete-btn" href="/admin/students/question/{{ q.id }}/delete/">Delete</a>
 
-</td>
+				{% for q in questions %}
 
-</tr>
+				<tr>
 
-{% endfor %}
+					<td>
+						{{ q.id }}
+					</td>
 
-</table>
 
-</div>
+					<td>
+						{{ q.question_text|truncatechars:80 }}
+					</td>
 
-</body>
+
+					<td>
+						{{ q.topic }}
+					</td>
+
+
+					<td class="actions">
+
+						<!-- VIEW -->
+
+						<a
+							class="view-btn"
+							href="{% url 'questionbank:view_question' q.id %}"
+                >
+							View
+						</a>
+
+
+						<!-- EDIT -->
+
+						<a
+							class="edit-btn"
+							href="{% url 'questionbank:edit_question' q.id %}"
+                >
+							Edit
+						</a>
+
+
+						<!-- DELETE -->
+
+						<a
+							class="delete-btn"
+							href="/admin/students/question/{{ q.id }}/delete/"
+                >
+							Delete
+						</a>
+
+					</td>
+
+				</tr>
+
+				{% endfor %}
+
+			</table>
+
+		</div>
+
+	</body>
 </html>
