@@ -1,0 +1,453 @@
+{% extends 'website/home.html' %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- ======================================================
+         PREVIEW HEADER
+    ======================================================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                {{ exam.name }}
+            </h2>
+
+            <p class="text-muted mb-0">
+                Exam Preview
+            </p>
+
+        </div>
+
+        <div>
+
+            <a
+                href="{% url 'exam_library' %}"
+                class="btn btn-outline-secondary"
+            >
+                Back to Exam Library
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         EXAM INFORMATION
+    ======================================================= -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <!-- CLASS -->
+
+                <div class="col-md-3">
+
+                    <div class="text-muted small">
+                        Class / Batch
+                    </div>
+
+                    <div class="fw-semibold">
+                        {{ exam.batch }}
+                    </div>
+
+                </div>
+
+
+                <!-- SUBJECT -->
+
+                <div class="col-md-3">
+
+                    <div class="text-muted small">
+                        Subject
+                    </div>
+
+                    <div class="fw-semibold">
+
+                        {% if exam.topic.subject %}
+                            {{ exam.topic.subject }}
+                        {% else %}
+                            -
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- TOPIC -->
+
+                <div class="col-md-3">
+
+                    <div class="text-muted small">
+                        Topic
+                    </div>
+
+                    <div class="fw-semibold">
+                        {{ exam.topic }}
+                    </div>
+
+                </div>
+
+
+                <!-- QUESTIONS -->
+
+                <div class="col-md-3">
+
+                    <div class="text-muted small">
+                        Questions
+                    </div>
+
+                    <div class="fw-semibold">
+                        {{ exam.number_of_questions }}
+                    </div>
+
+                </div>
+
+
+                <!-- MARKS -->
+
+                <div class="col-md-3">
+
+                    <div class="text-muted small">
+                        Maximum Marks
+                    </div>
+
+                    <div class="fw-semibold">
+                        {{ exam.total_marks }}
+                    </div>
+
+                </div>
+
+
+                <!-- DURATION -->
+
+                <div class="col-md-3">
+
+                    <div class="text-muted small">
+                        Duration
+                    </div>
+
+                    <div class="fw-semibold">
+                        {{ exam.duration }} minutes
+                    </div>
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="col-md-3">
+
+                    <div class="text-muted small">
+                        Status
+                    </div>
+
+                    <span class="badge bg-success">
+                        {{ exam.status }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         INSTRUCTIONS
+    ======================================================= -->
+
+    {% if exam.instructions %}
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-header bg-light fw-semibold">
+            Instructions
+        </div>
+
+        <div class="card-body">
+
+            <div style="white-space: pre-line;">
+                {{ exam.instructions }}
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- ======================================================
+         QUESTIONS
+    ======================================================= -->
+
+    {% for exam_question in questions %}
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <!-- ==================================================
+                 QUESTION NUMBER
+            =================================================== -->
+
+            <div class="d-flex justify-content-between align-items-start mb-3">
+
+                <div class="fw-bold fs-5">
+                    Question {{ forloop.counter }}
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 QUESTION TEXT
+            =================================================== -->
+
+            {% if exam_question.question.question_text %}
+
+            <div
+                class="mb-3"
+                style="white-space: pre-line;"
+            >
+                {{ exam_question.question.question_text }}
+            </div>
+
+            {% endif %}
+
+
+            <!-- ==================================================
+                 QUESTION IMAGE
+            =================================================== -->
+
+            {% if exam_question.question.question_image %}
+
+            <div class="mb-4">
+
+                <img
+                    src="{{ exam_question.question.question_image.url }}"
+                    alt="Question image"
+                    class="img-fluid rounded border"
+                    style="max-width: 100%; height: auto;"
+                >
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- ==================================================
+                 OPTIONS
+            =================================================== -->
+
+            <div class="mt-3">
+
+
+                <!-- OPTION A -->
+
+                {% if exam_question.question.option_a_text or exam_question.question.option_a_image %}
+
+                <div class="border rounded p-3 mb-2">
+
+                    <div class="fw-semibold mb-2">
+                        A.
+                    </div>
+
+                    {% if exam_question.question.option_a_text %}
+
+                    <div
+                        class="mb-2"
+                        style="white-space: pre-line;"
+                    >
+                        {{ exam_question.question.option_a_text }}
+                    </div>
+
+                    {% endif %}
+
+                    {% if exam_question.question.option_a_image %}
+
+                    <img
+                        src="{{ exam_question.question.option_a_image.url }}"
+                        alt="Option A"
+                        class="img-fluid rounded border"
+                        style="max-width: 100%; height: auto;"
+                    >
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- OPTION B -->
+
+                {% if exam_question.question.option_b_text or exam_question.question.option_b_image %}
+
+                <div class="border rounded p-3 mb-2">
+
+                    <div class="fw-semibold mb-2">
+                        B.
+                    </div>
+
+                    {% if exam_question.question.option_b_text %}
+
+                    <div
+                        class="mb-2"
+                        style="white-space: pre-line;"
+                    >
+                        {{ exam_question.question.option_b_text }}
+                    </div>
+
+                    {% endif %}
+
+                    {% if exam_question.question.option_b_image %}
+
+                    <img
+                        src="{{ exam_question.question.option_b_image.url }}"
+                        alt="Option B"
+                        class="img-fluid rounded border"
+                        style="max-width: 100%; height: auto;"
+                    >
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- OPTION C -->
+
+                {% if exam_question.question.option_c_text or exam_question.question.option_c_image %}
+
+                <div class="border rounded p-3 mb-2">
+
+                    <div class="fw-semibold mb-2">
+                        C.
+                    </div>
+
+                    {% if exam_question.question.option_c_text %}
+
+                    <div
+                        class="mb-2"
+                        style="white-space: pre-line;"
+                    >
+                        {{ exam_question.question.option_c_text }}
+                    </div>
+
+                    {% endif %}
+
+                    {% if exam_question.question.option_c_image %}
+
+                    <img
+                        src="{{ exam_question.question.option_c_image.url }}"
+                        alt="Option C"
+                        class="img-fluid rounded border"
+                        style="max-width: 100%; height: auto;"
+                    >
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- OPTION D -->
+
+                {% if exam_question.question.option_d_text or exam_question.question.option_d_image %}
+
+                <div class="border rounded p-3 mb-2">
+
+                    <div class="fw-semibold mb-2">
+                        D.
+                    </div>
+
+                    {% if exam_question.question.option_d_text %}
+
+                    <div
+                        class="mb-2"
+                        style="white-space: pre-line;"
+                    >
+                        {{ exam_question.question.option_d_text }}
+                    </div>
+
+                    {% endif %}
+
+                    {% if exam_question.question.option_d_image %}
+
+                    <img
+                        src="{{ exam_question.question.option_d_image.url }}"
+                        alt="Option D"
+                        class="img-fluid rounded border"
+                        style="max-width: 100%; height: auto;"
+                    >
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% empty %}
+
+    <!-- ======================================================
+         NO QUESTIONS
+    ======================================================= -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body text-center py-5">
+
+            <h5 class="fw-semibold">
+                No questions have been added to this exam.
+            </h5>
+
+            <p class="text-muted mb-0">
+                Add questions to the exam and return to Preview.
+            </p>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+
+    <!-- ======================================================
+         PREVIEW FOOTER
+    ======================================================= -->
+
+    <div class="text-center mt-4 mb-4">
+
+        <a
+            href="{% url 'exam_library' %}"
+            class="btn btn-outline-secondary"
+        >
+            Back to Exam Library
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
