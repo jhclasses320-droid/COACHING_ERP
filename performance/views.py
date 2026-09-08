@@ -929,6 +929,39 @@ def question_selection(request, exam_id):
         context,
     )
 
+# ==========================================================
+# ONLINE EXAM - PREVIEW TEST
+# ==========================================================
+
+def preview_test(request, exam_id):
+
+    exam = get_object_or_404(
+        Exam.objects.select_related(
+            "batch",
+            "topic",
+            "topic__subject",
+        ),
+        id=exam_id,
+    )
+
+    exam_questions = (
+        ExamQuestion.objects
+        .filter(exam=exam)
+        .select_related("question")
+        .order_by("id")
+    )
+
+    return render(
+        request,
+        "performance/exam_preview.html",
+        {
+            "exam": exam,
+            "questions": exam_questions,
+        },
+    )
+
+
+
     # ==========================================================
 # ONLINE EXAM - PUBLISH TEST
 # ==========================================================

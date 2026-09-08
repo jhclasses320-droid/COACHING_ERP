@@ -26,6 +26,18 @@ urlpatterns = [
         name="performance_question_selection",
     ),
 
+
+        # ==========================================================
+    # ONLINE EXAM - PREVIEW
+    # ==========================================================
+
+    path(
+        "exams/<int:exam_id>/preview/",
+        views.preview_test,
+        name="preview_test",
+    ),
+
+
     # ==========================================================
     # ONLINE EXAM - PUBLISH
     # ==========================================================
