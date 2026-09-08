@@ -6,7 +6,14 @@ from django.http import HttpResponse
 from datetime import date, datetime
 from django.utils import timezone   
 
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Table,
+    TableStyle,
+    Paragraph,
+    Spacer,
+)
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, landscape
 
@@ -1707,3 +1714,343 @@ def student_results(request):
             "offline_marks": offline_marks,
         }
     )
+
+# ================= STUDENT ATTEMPT PDF ================= #
+
+def student_attempt_pdf(request, attempt_id):
+
+    student_id = request.session.get("student_id")
+
+    if not student_id:
+        return redirect("student_login")
+
+    student = get_object_or_404(
+        Student,
+        id=student_id,
+        is_active=True,
+    )
+
+    # --------------------------------------------------
+    # GET ONLY THIS STUDENT'S COMPLETED ATTEMPT
+    # --------------------------------------------------
+
+    attempt = get_object_or_404(
+        StudentExamAttempt.objects.select_related(
+            "exam",
+            "student",
+        ),
+        id=attempt_id,
+        student=student,
+        completed=True,
+    )
+
+    exam = attempt.exam
+
+    # --------------------------------------------------
+    # PDF RESPONSE
+    # --------------------------------------------------
+
+    response = HttpResponse(
+        content_type="application/pdf"
+    )
+
+    response[
+        "Content-Disposition"
+    ] = (
+        f'inline; filename="{exam.name}_result.pdf"'
+    )
+
+    doc = SimpleDocTemplate(
+        response,
+        pagesize=A4,
+        rightMargin=40,
+        leftMargin=40,
+        topMargin=40,
+        bottomMargin=40,
+    )
+
+    elements = []
+
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle(
+        "ResultTitle",
+        parent=styles["Title"],
+        fontSize=18,
+        leading=22,
+        spaceAfter=10,
+    )
+
+    normal_style = ParagraphStyle(
+        "ResultNormal",
+        parent=styles["Normal"],
+        fontSize=10,
+        leading=14,
+    )
+
+    question_style = ParagraphStyle(
+        "Question",
+        parent=styles["Normal"],
+        fontSize=10,
+        leading=14,
+        spaceAfter=5,
+    )
+
+    correct_style = ParagraphStyle(
+        "Correct",
+        parent=styles["Normal"],
+        fontSize=10,
+        leading=14,
+    )
+
+    wrong_style = ParagraphStyle(
+        "Wrong",
+        parent=styles["Normal"],
+        fontSize=10,
+        leading=14,
+    )
+
+    # --------------------------------------------------
+    # HEADER
+    # --------------------------------------------------
+
+    elements.append(
+        Paragraph(
+            "Attempted Test Result",
+            title_style,
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"<b>Student:</b> {student.student_name}",
+            normal_style,
+        )
+    )
+
+    elements.append(
+        Paragraph(
+            f"<b>Exam:</b> {exam.name}",
+            normal_style,
+        )
+    )
+
+    if attempt.end_time:
+
+        elements.append(
+            Paragraph(
+                f"<b>Date:</b> "
+                f"{attempt.end_time.strftime('%d %b %Y')}",
+                normal_style,
+            )
+        )
+
+    elements.append(
+        Paragraph(
+            f"<b>Marks Scored:</b> "
+            f"{attempt.score} / {exam.total_marks}",
+            normal_style,
+        )
+    )
+
+    elements.append(
+        Spacer(1, 15)
+    )
+
+    # --------------------------------------------------
+    # GET EXAM QUESTIONS
+    # --------------------------------------------------
+
+    exam_questions = (
+        ExamQuestion.objects
+        .filter(
+            exam=exam
+        )
+        .select_related(
+            "question"
+        )
+    )
+
+    # --------------------------------------------------
+    # GET STUDENT ANSWERS
+    # --------------------------------------------------
+
+    answers = {
+        answer.question_id: answer
+        for answer in StudentAnswer.objects.filter(
+            attempt=attempt
+        )
+    }
+
+    option_fields = {
+        "A": "option_a_text",
+        "B": "option_b_text",
+        "C": "option_c_text",
+        "D": "option_d_text",
+    }
+
+    # --------------------------------------------------
+    # EACH QUESTION
+    # --------------------------------------------------
+
+    for number, exam_question in enumerate(
+        exam_questions,
+        start=1,
+    ):
+
+        question = exam_question.question
+
+        answer = answers.get(
+            question.id
+        )
+
+        selected_option = (
+            answer.selected_option
+            if answer
+            else None
+        )
+
+        correct_option = question.correct_option
+
+        # --------------------------------------------------
+        # QUESTION
+        # --------------------------------------------------
+
+        question_text = (
+            question.question_text
+            or "Question"
+        )
+
+        elements.append(
+            Paragraph(
+                f"<b>Q{number}. "
+                f"{question_text}</b>",
+                question_style,
+            )
+        )
+
+        # --------------------------------------------------
+        # OPTIONS
+        # --------------------------------------------------
+
+        for option in ["A", "B", "C", "D"]:
+
+            field_name = option_fields[option]
+
+            option_text = getattr(
+                question,
+                field_name,
+                ""
+            ) or ""
+
+            prefix = f"{option}. "
+
+            if option == selected_option:
+                prefix += "<b>"
+
+            if option == correct_option:
+                option_text = (
+                    f"{option_text} "
+                    f"(Correct Answer)"
+                )
+
+            if option == selected_option:
+                option_text += "</b>"
+
+            elements.append(
+                Paragraph(
+                    prefix + option_text,
+                    normal_style,
+                )
+            )
+
+        # --------------------------------------------------
+        # STUDENT ANSWER
+        # --------------------------------------------------
+
+        if selected_option:
+
+            selected_text = getattr(
+                question,
+                option_fields[selected_option],
+                ""
+            ) or ""
+
+            elements.append(
+                Paragraph(
+                    f"<b>Your Answer:</b> "
+                    f"{selected_option}. "
+                    f"{selected_text}",
+                    normal_style,
+                )
+            )
+
+        else:
+
+            elements.append(
+                Paragraph(
+                    "<b>Your Answer:</b> "
+                    "Not Attempted",
+                    normal_style,
+                )
+            )
+
+        # --------------------------------------------------
+        # CORRECT ANSWER
+        # --------------------------------------------------
+
+        correct_text = getattr(
+            question,
+            option_fields[correct_option],
+            ""
+        ) or ""
+
+        elements.append(
+            Paragraph(
+                f"<b>Correct Answer:</b> "
+                f"{correct_option}. "
+                f"{correct_text}",
+                normal_style,
+            )
+        )
+
+        # --------------------------------------------------
+        # RESULT
+        # --------------------------------------------------
+
+        if not selected_option:
+
+            result_text = (
+                "NOT ATTEMPTED"
+            )
+
+        elif selected_option == correct_option:
+
+            result_text = (
+                "✓ CORRECT"
+            )
+
+        else:
+
+            result_text = (
+                "✗ WRONG"
+            )
+
+        elements.append(
+            Paragraph(
+                f"<b>Result:</b> {result_text}",
+                normal_style,
+            )
+        )
+
+        elements.append(
+            Spacer(1, 12)
+        )
+
+    # --------------------------------------------------
+    # BUILD PDF
+    # --------------------------------------------------
+
+    doc.build(elements)
+
+    return response

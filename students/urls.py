@@ -67,6 +67,12 @@ urlpatterns = [
         name='student_results'
     ),
 
+        path(
+        'student/results/<int:attempt_id>/pdf/',
+        views.student_attempt_pdf,
+        name='student_attempt_pdf'
+    ),
+
     # ==========================================================
     # ADMIN REPORTS
     # ==========================================================

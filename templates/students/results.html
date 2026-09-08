@@ -106,6 +106,8 @@
 
                     <th>Status</th>
 
+                    <th>Result</th>
+
                 </tr>
 
             </thead>
@@ -155,6 +157,26 @@
                         >
                             Completed
                         </span>
+
+                    </td>
+
+                    <td>
+
+                        <a
+                            href="{% url 'student_attempt_pdf' attempt.id %}"
+                            target="_blank"
+                            style="
+                                display:inline-block;
+                                padding:7px 14px;
+                                background:#0878e8;
+                                color:white;
+                                text-decoration:none;
+                                border-radius:7px;
+                                font-weight:600;
+                            "
+                        >
+                            📄 View Test
+                        </a>
 
                     </td>
 
@@ -257,6 +279,10 @@
 
                         {% endif %}
 
+                    </td>
+
+                    <td>
+                        —
                     </td>
 
                 </tr>
