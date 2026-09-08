@@ -312,14 +312,24 @@
 
                                         {% if exam.is_online %}
 
-    <!-- ONLINE ASSIGN -->
+    <!-- ONLINE PREVIEW -->
 
-    <a
-        href="{% url 'assign_test' exam.id %}"
-        class="btn btn-sm btn-outline-success"
-    >
-        Assign
-    </a>
+<a
+    href="{% url 'preview_test' exam.id %}"
+    class="btn btn-sm btn-outline-info"
+>
+    Preview
+</a>
+
+
+<!-- ONLINE ASSIGN -->
+
+<a
+    href="{% url 'assign_test' exam.id %}"
+    class="btn btn-sm btn-outline-success"
+>
+    Assign
+</a>
 
 
     <!-- TEST PAPER PDF -->
