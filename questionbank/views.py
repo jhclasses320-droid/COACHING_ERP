@@ -2,9 +2,16 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from .models import Question
 
-
 def dashboard(request):
-    return render(request, 'question_bank/dashboard.html')
+    questions = Question.objects.all().order_by("-id")
+
+    return render(
+        request,
+        "question_bank/dashboard.html",
+        {
+            "questions": questions,
+        },
+    )
 
 
 def create_question(request):

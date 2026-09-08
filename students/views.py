@@ -911,7 +911,7 @@ def staff_dashboard(request):
     if not request.user.is_staff:
         return redirect("/")
 
-    questions = Question.objects.order_by("-id")[:20]
+    questions = Question.objects.order_by("-id")
 
     context = {
 
