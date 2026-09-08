@@ -366,6 +366,7 @@
         </div>
 
     </div>
+
     <!-- ===================================================== -->
     <!-- QUICK ACTIONS & RECENTLY USED -->
     <!-- ===================================================== -->
@@ -391,8 +392,6 @@
                 <div class="card-body">
 
                     <div class="row g-3">
-
-                       
 
                         <div class="col-md-4">
                             <a href="#" class="btn btn-success w-100 p-3">
@@ -457,10 +456,21 @@
 
                     <ul class="list-group list-group-flush">
 
-                        <li class="list-group-item">Class X → Science → Electricity</li>
-                        <li class="list-group-item">Class IX → Maths → Polynomials</li>
-                        <li class="list-group-item">Image Questions</li>
-                        <li class="list-group-item">Hard Questions</li>
+                        <li class="list-group-item">
+                            Class X → Science → Electricity
+                        </li>
+
+                        <li class="list-group-item">
+                            Class IX → Maths → Polynomials
+                        </li>
+
+                        <li class="list-group-item">
+                            Image Questions
+                        </li>
+
+                        <li class="list-group-item">
+                            Hard Questions
+                        </li>
 
                     </ul>
 
@@ -489,9 +499,7 @@
             </h5>
 
             <a href="#" class="btn btn-sm btn-outline-primary">
-
                 View All
-
             </a>
 
         </div>
@@ -506,9 +514,7 @@
 
                         <th>ID</th>
                         <th>Topic</th>
-                        <th>Difficulty</th>
-                        <th>Mode</th>
-                        <th>Marks</th>
+                        <th style="width: 50%;">Question Preview</th>
                         <th>Status</th>
                         <th>Actions</th>
 
@@ -522,19 +528,39 @@
 
                     <tr>
 
-                        <td>#{{ question.id }}</td>
-
-                        <td>{{ question.topic.name }}</td>
-
                         <td>
-                            <span class="badge bg-secondary">
-                                {{ question.get_difficulty_display }}
-                            </span>
+                            #{{ question.id }}
                         </td>
 
-                        <td>{{ question.get_question_mode_display }}</td>
+                        <td>
+                            {{ question.topic.name }}
+                        </td>
 
-                        <td>{{ question.marks }}</td>
+                        <td style="max-width: 600px;">
+
+                            {% if question.question_text %}
+
+                                {{ question.question_text|truncatechars:110 }}
+
+                            {% elif question.question_image %}
+
+                                <span class="text-muted">
+
+                                    <i class="fas fa-image me-1"></i>
+
+                                    Image-based question
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    No question text available
+                                </span>
+
+                            {% endif %}
+
+                        </td>
 
                         <td>
 
@@ -554,30 +580,30 @@
 
                         </td>
 
-                        <td>
+                        <td style="white-space: nowrap;">
 
-    <a
-        href="{% url 'questionbank:view_question' question.id %}"
-        class="btn btn-sm btn-outline-primary"
-    >
-        View
-    </a>
+                            <a
+                                href="{% url 'questionbank:view_question' question.id %}"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+                                View
+                            </a>
 
-    <a
-        href="{% url 'questionbank:edit_question' question.id %}"
-        class="btn btn-sm btn-outline-success"
-    >
-        Edit
-    </a>
+                            <a
+                                href="{% url 'questionbank:edit_question' question.id %}"
+                                class="btn btn-sm btn-outline-success"
+                            >
+                                Edit
+                            </a>
 
-    <a
-        href="#"
-        class="btn btn-sm btn-outline-danger"
-    >
-        Delete
-    </a>
+                            <a
+                                href="#"
+                                class="btn btn-sm btn-outline-danger"
+                            >
+                                Delete
+                            </a>
 
-</td>
+                        </td>
 
                     </tr>
 
@@ -585,7 +611,10 @@
 
                     <tr>
 
-                        <td colspan="7" class="text-center p-5 text-muted">
+                        <td
+                            colspan="5"
+                            class="text-center p-5 text-muted"
+                        >
 
                             <i class="fas fa-folder-open fa-3x mb-3"></i>
 
