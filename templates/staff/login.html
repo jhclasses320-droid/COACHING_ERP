@@ -1,75 +1,122 @@
-
 <!DOCTYPE html>
 <html>
-<head>
-<title>Staff Login</title>
+	<head>
+		<title>Staff Login</title>
 
-<style>
+		<style>
 
-body{
-    font-family: Arial, sans-serif;
-    background:#f4f6f9;
-}
+			body{
+			font-family: Arial, sans-serif;
+			background:#f4f6f9;
+			}
 
-.login-box{
-    width:350px;
-    margin:120px auto;
-    background:white;
-    padding:30px;
-    border-radius:8px;
-    box-shadow:0 0 10px rgba(0,0,0,0.15);
-}
+			.login-box{
+			width:350px;
+			margin:120px auto;
+			background:white;
+			padding:30px;
+			border-radius:8px;
+			box-shadow:0 0 10px rgba(0,0,0,0.15);
+			}
 
-h2{
-    text-align:center;
-    margin-bottom:25px;
-}
+			h2{
+			text-align:center;
+			margin-bottom:25px;
+			}
 
-input{
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border:1px solid #ccc;
-    border-radius:5px;
-}
+			input{
+			width:100%;
+			padding:10px;
+			margin:10px 0;
+			border:1px solid #ccc;
+			border-radius:5px;
+			}
 
-button{
-    width:100%;
-    padding:12px;
-    background:#007bff;
-    color:white;
-    border:none;
-    border-radius:5px;
-    font-size:16px;
-    cursor:pointer;
-}
+			button{
+			width:100%;
+			padding:12px;
+			background:#007bff;
+			color:white;
+			border:none;
+			border-radius:5px;
+			font-size:16px;
+			cursor:pointer;
+			}
 
-button:hover{
-    background:#0056b3;
-}
+			button:hover{
+			background:#0056b3;
+			}
 
-</style>
 
-</head>
+			/* ================= LOGIN MESSAGES ================= */
 
-<body>
+			.messages{
+			margin-bottom:15px;
+			}
 
-<div class="login-box">
+			.message{
+			padding:10px;
+			border-radius:5px;
+			background:#f8d7da;
+			color:#842029;
+			border:1px solid #f5c2c7;
+			font-size:14px;
+			text-align:center;
+			}
 
-<h2>Staff Login</h2>
+		</style>
 
-<form method="post">
-{% csrf_token %}
+	</head>
 
-<input type="text" name="username" placeholder="Username">
+	<body>
 
-<input type="password" name="password" placeholder="Password">
+		<div class="login-box">
 
-<button type="submit">Login</button>
+			<h2>Staff Login</h2>
 
-</form>
 
-</div>
+			<!-- ================= LOGIN MESSAGES ================= -->
 
-</body>
+			{% if messages %}
+
+			<div class="messages">
+
+				{% for message in messages %}
+
+				<div class="message">
+					{{ message }}
+				</div>
+
+				{% endfor %}
+
+			</div>
+
+			{% endif %}
+
+
+			<form method="post">
+
+				{% csrf_token %}
+
+				<input
+					type="text"
+					name="username"
+					placeholder="Username"
+>
+
+					<input
+						type="password"
+						name="password"
+						placeholder="Password"
+>
+
+						<button type="submit">
+							Login
+						</button>
+
+					</form>
+
+		</div>
+
+	</body>
 </html>
