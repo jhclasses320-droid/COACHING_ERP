@@ -73,12 +73,7 @@ def create_test(request):
                 )
                 return redirect("performance_create_test")
 
-            if not request.POST.get("topic"):
-                messages.error(
-                    request,
-                    "Topic is required for an Online Test."
-                )
-                return redirect("performance_create_test")
+            
 
             start_time = timezone.make_aware(
                 datetime.fromisoformat(start_time)
@@ -120,22 +115,19 @@ def create_test(request):
 
         if test_mode == "online":
 
-            if test_mode == "online":
-
-                exam = Exam.objects.create(
-        name=assessment.assessment_name,
-        assessment=assessment,
-        topic_id=request.POST.get("topic"),
-        batch=assessment.batch,
-        duration=assessment_subject.duration_minutes,
-        total_marks=assessment_subject.maximum_marks,
-        start_time=start_time,
-        end_time=end_time,
-        instructions=request.POST.get(
-            "instructions",
-            ""
-        ).strip(),
-    )
+            exam = Exam.objects.create(
+                name=assessment.assessment_name,
+                assessment=assessment,
+                batch=assessment.batch,
+                duration=assessment_subject.duration_minutes,
+                total_marks=assessment_subject.maximum_marks,
+                start_time=start_time,
+                end_time=end_time,
+                instructions=request.POST.get(
+                    "instructions",
+                    ""
+                ).strip(),
+            )
 
         messages.success(
             request,
@@ -720,20 +712,41 @@ def parent_report(request):
 # ONLINE EXAM - QUESTION SELECTION
 # ==========================================================
 
+# ==========================================================
+# ONLINE EXAM - QUESTION SELECTION
+# ==========================================================
+
 def question_selection(request, exam_id):
 
     exam = get_object_or_404(
         Exam.objects.select_related(
             "batch",
-            "topic",
-            "topic__subject",
+            "assessment",
         ),
         id=exam_id,
     )
 
     # ------------------------------------------------------
+    # GET SUBJECT FROM THE ASSESSMENT
+    # ------------------------------------------------------
+
+    assessment_subject = get_object_or_404(
+        AssessmentSubject.objects.select_related(
+            "subject",
+        ),
+        assessment=exam.assessment,
+    )
+
+    subject = assessment_subject.subject
+
+    # ------------------------------------------------------
     # FILTER VALUES
     # ------------------------------------------------------
+
+    topic = request.GET.get(
+        "topic",
+        ""
+    ).strip()
 
     difficulty = request.GET.get(
         "difficulty",
@@ -766,18 +779,36 @@ def question_selection(request, exam_id):
     ).strip()
 
     # ------------------------------------------------------
-    # BASE QUESTIONS
-    # Exam Batch + Topic remain the fixed boundary
+    # BASE QUESTION BANK
+    #
+    # Exam is NOT linked to Topic.
+    #
+    # Questions are found using:
+    # Batch + Subject
+    #
+    # Teacher can then apply Topic and other filters.
     # ------------------------------------------------------
 
     questions = Question.objects.filter(
         batch=exam.batch,
-        topic=exam.topic,
+        topic__subject=subject,
         is_active=True,
+    ).select_related(
+        "topic",
     ).order_by("id")
 
     # ------------------------------------------------------
-    # APPLY FILTERS
+    # TOPIC FILTER
+    # ------------------------------------------------------
+
+    if topic:
+
+        questions = questions.filter(
+            topic_id=topic
+        )
+
+    # ------------------------------------------------------
+    # DIFFICULTY
     # ------------------------------------------------------
 
     if difficulty:
@@ -786,11 +817,19 @@ def question_selection(request, exam_id):
             difficulty=difficulty
         )
 
+    # ------------------------------------------------------
+    # QUESTION TYPE
+    # ------------------------------------------------------
+
     if question_type:
 
         questions = questions.filter(
             question_type=question_type
         )
+
+    # ------------------------------------------------------
+    # QUESTION MODE
+    # ------------------------------------------------------
 
     if question_mode:
 
@@ -798,17 +837,29 @@ def question_selection(request, exam_id):
             question_mode=question_mode
         )
 
+    # ------------------------------------------------------
+    # MARKS
+    # ------------------------------------------------------
+
     if marks:
 
         questions = questions.filter(
             marks=marks
         )
 
+    # ------------------------------------------------------
+    # SOURCE
+    # ------------------------------------------------------
+
     if source:
 
         questions = questions.filter(
             source=source
         )
+
+    # ------------------------------------------------------
+    # SEARCH
+    # ------------------------------------------------------
 
     if search:
 
@@ -835,22 +886,26 @@ def question_selection(request, exam_id):
     # SAVE SELECTED QUESTIONS
     # ------------------------------------------------------
 
+        # ------------------------------------------------------
+    # SAVE SELECTED QUESTIONS
+    # ------------------------------------------------------
+
     if request.method == "POST":
 
         selected_ids = request.POST.getlist(
             "questions"
         )
 
-        ExamQuestion.objects.filter(
-            exam=exam
-        ).delete()
-
         selected_questions = Question.objects.filter(
             id__in=selected_ids,
             batch=exam.batch,
-            topic=exam.topic,
+            topic__subject=subject,
             is_active=True,
         )
+
+        ExamQuestion.objects.filter(
+            exam=exam
+        ).delete()
 
         for question in selected_questions:
 
@@ -880,14 +935,32 @@ def question_selection(request, exam_id):
         )
 
     # ------------------------------------------------------
+    # TOPICS AVAILABLE FOR THIS SUBJECT
+    # ------------------------------------------------------
+
+    topics = Topic.objects.filter(
+        subject=subject
+    ).order_by(
+        "name"
+    )
+
+    # ------------------------------------------------------
     # PAGE CONTEXT
     # ------------------------------------------------------
 
     context = {
 
-        "exam": exam,
+        "exam":
+            exam,
 
-        "questions": questions,
+        "subject":
+            subject,
+
+        "topics":
+            topics,
+
+        "questions":
+            questions,
 
         "selected_question_ids":
             selected_question_ids,
@@ -903,6 +976,9 @@ def question_selection(request, exam_id):
 
         "source_choices":
             Question.SOURCE_CHOICES,
+
+        "selected_topic":
+            topic,
 
         "selected_difficulty":
             difficulty,

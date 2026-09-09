@@ -581,8 +581,43 @@
                         "
                     ></textarea>
 
-                    <div class="help-text">
+                                        <div class="help-text">
                         These instructions are saved separately for this test and will appear on the Test Paper PDF and Answer Key + Solutions PDF.
                     </div>
 
                 </div>
+
+
+                <!-- ACTIONS -->
+
+                <div class="actions">
+
+                    <a
+                        href="{% url 'staff_dashboard' %}"
+                        class="btn btn-secondary"
+                    >
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Create Test
+                    </button>
+
+                </div>
+
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

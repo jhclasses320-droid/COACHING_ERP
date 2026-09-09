@@ -154,9 +154,12 @@ class Chapter(models.Model):
 
     topic = models.ForeignKey(
         Topic,
-        on_delete=models.CASCADE,
-        related_name='chapters'
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
     )
+
+
 
     name = models.CharField(max_length=150)
 
@@ -232,9 +235,11 @@ class Question(models.Model):
     )
 
     topic = models.ForeignKey(
-    Topic,
-    on_delete=models.CASCADE,
-)
+        Topic,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
 
 
 
@@ -425,7 +430,9 @@ class Exam(models.Model):
 
     topic = models.ForeignKey(
         Topic,
-        on_delete=models.CASCADE
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
     )
 
     batch = models.ForeignKey(
