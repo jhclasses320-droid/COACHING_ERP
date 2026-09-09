@@ -1477,10 +1477,16 @@ def _get_exam_pdf_data(exam_id):
     exam = get_object_or_404(
         Exam.objects.select_related(
             "batch",
-            "topic",
-            "topic__subject",
+            "assessment",
         ),
         id=exam_id,
+    )
+
+    assessment_subject = get_object_or_404(
+        AssessmentSubject.objects.select_related(
+            "subject",
+        ),
+        assessment=exam.assessment,
     )
 
     exam_questions = (
@@ -1492,7 +1498,7 @@ def _get_exam_pdf_data(exam_id):
         .order_by("id")
     )
 
-    return exam, exam_questions
+    return exam, assessment_subject.subject, exam_questions
 
 
 # ==========================================================
@@ -1586,9 +1592,9 @@ def _exam_pdf_styles():
 
 def exam_test_pdf(request, exam_id):
 
-    exam, exam_questions = _get_exam_pdf_data(
-        exam_id
-    )
+    exam, subject, exam_questions = _get_exam_pdf_data(
+    exam_id
+)
 
     styles = _exam_pdf_styles()
 
@@ -1634,7 +1640,7 @@ def exam_test_pdf(request, exam_id):
 
     story.append(
         Paragraph(
-            f"Subject: {exam.topic.subject.name}",
+           f"Subject: {subject.name}", 
             styles["details"],
         )
     )
@@ -1880,9 +1886,9 @@ def exam_test_pdf(request, exam_id):
 
 def exam_answer_solution_pdf(request, exam_id):
 
-    exam, exam_questions = _get_exam_pdf_data(
-        exam_id
-    )
+    exam, subject, exam_questions = _get_exam_pdf_data(
+    exam_id
+)
 
     styles = _exam_pdf_styles()
 
@@ -1928,7 +1934,7 @@ def exam_answer_solution_pdf(request, exam_id):
 
     story.append(
         Paragraph(
-            f"Subject: {exam.topic.subject.name}",
+            f"Subject: {subject.name}",
             styles["details"],
         )
     )
