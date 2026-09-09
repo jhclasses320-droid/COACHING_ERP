@@ -7,7 +7,7 @@ class School(models.Model):
     name = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.name
+     return self.name
 
 
 class Batch(models.Model):
@@ -131,7 +131,7 @@ class Subject(models.Model):
     code = models.CharField(max_length=10, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.name} ({self.code})"
+     return self.name
 
 
 # ================= TOPIC ================= #
