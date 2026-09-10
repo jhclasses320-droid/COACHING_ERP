@@ -72,8 +72,67 @@
     .question-entry-page .page-heading {
         margin-bottom: 12px !important;
     }
-</style>
 
+
+/* =========================================================
+   MATH-AWARE TEXT FIELDS
+   ========================================================= */
+
+.math-aware-editor {
+    width: 100%;
+    min-height: 38px;
+    padding: 0.375rem 0.75rem;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    line-height: 1.5;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    cursor: text;
+}
+
+.math-aware-editor:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.math-aware-editor:empty::before {
+    content: attr(data-placeholder);
+    color: #6c757d;
+    pointer-events: none;
+}
+
+.question-math-editor {
+    height: 80px;
+}
+
+.option-math-editor {
+    min-height: 38px;
+}
+
+.solution-math-editor {
+    height: 90px;
+}
+
+.math-aware-editor math-field {
+    display: inline-block;
+    vertical-align: middle;
+    min-width: 1.2em;
+    margin: 0 1px;
+    padding: 0 2px;
+    border: 0;
+    background: transparent;
+    font-size: 1.05em;
+}
+
+.math-aware-editor math-field::part(virtual-keyboard-toggle),
+.math-aware-editor math-field::part(menu-toggle) {
+    display: none;
+}
+
+</style>
 
 <!-- ========================= -->
 <!-- Page Heading -->
@@ -562,7 +621,14 @@
 
                         </label>
 
-                        {{ form.question_text }}
+                        <div class="math-aware-editor question-math-editor"
+                         id="q_text_math_editor"
+                             contenteditable="true"
+                             data-placeholder="Type the question here..."></div>
+
+                                <textarea name="question_text"
+                                 id="q_text_math_storage"
+                                hidden></textarea>
 
                     </div>
 
@@ -626,255 +692,283 @@
 
 
         <!-- ======================================== -->
-        <!-- Option A -->
-        <!-- ======================================== -->
+<!-- Option A -->
+<!-- ======================================== -->
 
-        <div class="accordion-item mb-3">
+<div class="accordion-item mb-3">
 
-            <h2 class="accordion-header">
+    <h2 class="accordion-header">
 
-                <button class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#optionA">
+        <button class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#optionA">
 
-                    <strong>Option A</strong>
+            <strong>Option A</strong>
 
-                </button>
+        </button>
 
-            </h2>
-
-
-            <div id="optionA"
-                 class="accordion-collapse collapse show">
-
-                <div class="accordion-body">
-
-                    <div class="row g-2">
+    </h2>
 
 
-                        <div class="col-md-6">
+    <div id="optionA"
+         class="accordion-collapse collapse show">
 
-                            <label class="form-label fw-semibold">
+        <div class="accordion-body">
 
-                                Option A Text
-
-                            </label>
-
-                            {{ form.option_a_text }}
-
-                        </div>
+            <div class="row g-2">
 
 
-                        <div class="col-md-6">
+                <div class="col-md-6">
 
-                            <label class="form-label fw-semibold">
+                    <label class="form-label fw-semibold">
 
-                                Option A Image
+                        Option A Text
 
-                            </label>
+                    </label>
 
-                            {{ form.option_a_image }}
+                    <div class="math-aware-editor option-math-editor"
+                         id="option_a_math_editor"
+                         contenteditable="true"
+                         data-placeholder="Option A text"></div>
 
-                        </div>
-
-
-                    </div>
+                    <input type="hidden"
+                           name="option_a"
+                           id="option_a_math_storage">
 
                 </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+
+                        Option A Image
+
+                    </label>
+
+                    {{ form.option_a_image }}
+
+                </div>
+
 
             </div>
 
         </div>
 
+    </div>
 
-        <!-- ======================================== -->
-        <!-- Option B -->
-        <!-- ======================================== -->
-
-        <div class="accordion-item mb-3">
-
-            <h2 class="accordion-header">
-
-                <button class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#optionB">
-
-                    <strong>Option B</strong>
-
-                </button>
-
-            </h2>
+</div>
 
 
-            <div id="optionB"
-                 class="accordion-collapse collapse show">
+<!-- ======================================== -->
+<!-- Option B -->
+<!-- ======================================== -->
 
-                <div class="accordion-body">
+<div class="accordion-item mb-3">
 
-                    <div class="row g-2">
+    <h2 class="accordion-header">
 
+        <button class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#optionB">
 
-                        <div class="col-md-6">
+            <strong>Option B</strong>
 
-                            <label class="form-label fw-semibold">
+        </button>
 
-                                Option B Text
-
-                            </label>
-
-                            {{ form.option_b_text }}
-
-                        </div>
-
-
-                        <div class="col-md-6">
-
-                            <label class="form-label fw-semibold">
-
-                                Option B Image
-
-                            </label>
-
-                            {{ form.option_b_image }}
-
-                        </div>
+    </h2>
 
 
-                    </div>
+    <div id="optionB"
+         class="accordion-collapse collapse show">
+
+        <div class="accordion-body">
+
+            <div class="row g-2">
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+
+                        Option B Text
+
+                    </label>
+
+                    <div class="math-aware-editor option-math-editor"
+                         id="option_b_math_editor"
+                         contenteditable="true"
+                         data-placeholder="Option B text"></div>
+
+                    <input type="hidden"
+                           name="option_b"
+                           id="option_b_math_storage">
 
                 </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+
+                        Option B Image
+
+                    </label>
+
+                    {{ form.option_b_image }}
+
+                </div>
+
 
             </div>
 
         </div>
 
+    </div>
 
-        <!-- ======================================== -->
-        <!-- Option C -->
-        <!-- ======================================== -->
-
-        <div class="accordion-item mb-3">
-
-            <h2 class="accordion-header">
-
-                <button class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#optionC">
-
-                    <strong>Option C</strong>
-
-                </button>
-
-            </h2>
+</div>
 
 
-            <div id="optionC"
-                 class="accordion-collapse collapse show">
+<!-- ======================================== -->
+<!-- Option C -->
+<!-- ======================================== -->
 
-                <div class="accordion-body">
+<div class="accordion-item mb-3">
 
-                    <div class="row g-2">
+    <h2 class="accordion-header">
 
+        <button class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#optionC">
 
-                        <div class="col-md-6">
+            <strong>Option C</strong>
 
-                            <label class="form-label fw-semibold">
+        </button>
 
-                                Option C Text
-
-                            </label>
-
-                            {{ form.option_c_text }}
-
-                        </div>
-
-
-                        <div class="col-md-6">
-
-                            <label class="form-label fw-semibold">
-
-                                Option C Image
-
-                            </label>
-
-                            {{ form.option_c_image }}
-
-                        </div>
+    </h2>
 
 
-                    </div>
+    <div id="optionC"
+         class="accordion-collapse collapse show">
+
+        <div class="accordion-body">
+
+            <div class="row g-2">
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+
+                        Option C Text
+
+                    </label>
+
+                    <div class="math-aware-editor option-math-editor"
+                         id="option_c_math_editor"
+                         contenteditable="true"
+                         data-placeholder="Option C text"></div>
+
+                    <input type="hidden"
+                           name="option_c"
+                           id="option_c_math_storage">
 
                 </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+
+                        Option C Image
+
+                    </label>
+
+                    {{ form.option_c_image }}
+
+                </div>
+
 
             </div>
 
         </div>
 
+    </div>
 
-        <!-- ======================================== -->
-        <!-- Option D -->
-        <!-- ======================================== -->
-
-        <div class="accordion-item mb-3">
-
-            <h2 class="accordion-header">
-
-                <button class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#optionD">
-
-                    <strong>Option D</strong>
-
-                </button>
-
-            </h2>
+</div>
 
 
-            <div id="optionD"
-                 class="accordion-collapse collapse show">
+<!-- ======================================== -->
+<!-- Option D -->
+<!-- ======================================== -->
 
-                <div class="accordion-body">
+<div class="accordion-item mb-3">
 
-                    <div class="row g-2">
+    <h2 class="accordion-header">
 
+        <button class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#optionD">
 
-                        <div class="col-md-6">
+            <strong>Option D</strong>
 
-                            <label class="form-label fw-semibold">
+        </button>
 
-                                Option D Text
-
-                            </label>
-
-                            {{ form.option_d_text }}
-
-                        </div>
-
-
-                        <div class="col-md-6">
-
-                            <label class="form-label fw-semibold">
-
-                                Option D Image
-
-                            </label>
-
-                            {{ form.option_d_image }}
-
-                        </div>
+    </h2>
 
 
-                    </div>
+    <div id="optionD"
+         class="accordion-collapse collapse show">
+
+        <div class="accordion-body">
+
+            <div class="row g-2">
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+
+                        Option D Text
+
+                    </label>
+
+                    <div class="math-aware-editor option-math-editor"
+                         id="option_d_math_editor"
+                         contenteditable="true"
+                         data-placeholder="Option D text"></div>
+
+                    <input type="hidden"
+                           name="option_d"
+                           id="option_d_math_storage">
 
                 </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+
+                        Option D Image
+
+                    </label>
+
+                    {{ form.option_d_image }}
+
+                </div>
+
 
             </div>
 
         </div>
+
+    </div>
+
+</div>
 
 
         <!-- ======================================== -->
@@ -954,7 +1048,14 @@
 
                             </label>
 
-                            {{ form.feedback_text }}
+                            <div class="math-aware-editor solution-math-editor"
+     id="solution_math_editor"
+     contenteditable="true"
+     data-placeholder="Solution / explanation"></div>
+
+<textarea name="solution"
+          id="solution_math_storage"
+          hidden></textarea>
 
                         </div>
 
@@ -1127,6 +1228,290 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    const editors = [
+        ['q_text_math_editor', 'q_text_math_storage'],
+        ['option_a_math_editor', 'option_a_math_storage'],
+        ['option_b_math_editor', 'option_b_math_storage'],
+        ['option_c_math_editor', 'option_c_math_storage'],
+        ['option_d_math_editor', 'option_d_math_storage'],
+        ['solution_math_editor', 'solution_math_storage']
+    ];
+
+    function createMathField(latex) {
+        const mf = document.createElement('math-field');
+
+        mf.setAttribute('virtual-keyboard-mode', 'manual');
+        mf.value = latex || '';
+
+        return mf;
+    }
+
+    function insertAtCursor(editor, node) {
+
+        const selection = window.getSelection();
+
+        if (!selection || !selection.rangeCount) {
+            editor.appendChild(node);
+            return;
+        }
+
+        const range = selection.getRangeAt(0);
+
+        if (!editor.contains(range.commonAncestorContainer)) {
+            editor.appendChild(node);
+            return;
+        }
+
+        range.deleteContents();
+        range.insertNode(node);
+
+        range.setStartAfter(node);
+        range.collapse(true);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+
+    function insertText(editor, text) {
+
+        const textNode = document.createTextNode(text);
+
+        insertAtCursor(editor, textNode);
+    }
+
+    function insertMath(editor, latex) {
+
+        const mathField = createMathField(latex);
+
+        insertAtCursor(editor, mathField);
+
+        mathField.addEventListener('input', syncEditor);
+        mathField.addEventListener('change', syncEditor);
+
+        syncEditor();
+    }
+
+    function serializeNode(node) {
+
+        if (node.nodeType === Node.TEXT_NODE) {
+            return node.nodeValue;
+        }
+
+        if (node.nodeType !== Node.ELEMENT_NODE) {
+            return '';
+        }
+
+        if (node.tagName.toLowerCase() === 'math-field') {
+            return '$$' + node.getValue('latex') + '$$';
+        }
+
+        if (node.tagName.toLowerCase() === 'br') {
+            return '\n';
+        }
+
+        let result = '';
+
+        node.childNodes.forEach(function (child) {
+            result += serializeNode(child);
+        });
+
+        return result;
+    }
+
+    function syncEditor() {
+
+        editors.forEach(function (pair) {
+
+            const editor =
+                document.getElementById(pair[0]);
+
+            const storage =
+                document.getElementById(pair[1]);
+
+            if (editor && storage) {
+                storage.value = serializeNode(editor);
+            }
+
+        });
+    }
+
+    function parseMathText(editor, text) {
+
+        const pattern =
+            /\$\$([\s\S]*?)\$\$|\\\(([\s\S]*?)\\\)|\\\[([\s\S]*?)\\\]/g;
+
+        let lastIndex = 0;
+        let match;
+
+        while ((match = pattern.exec(text)) !== null) {
+
+            if (match.index > lastIndex) {
+                insertText(
+                    editor,
+                    text.substring(lastIndex, match.index)
+                );
+            }
+
+            const latex =
+                match[1] || match[2] || match[3];
+
+            insertMath(editor, latex);
+
+            lastIndex = pattern.lastIndex;
+        }
+
+        if (lastIndex < text.length) {
+            insertText(
+                editor,
+                text.substring(lastIndex)
+            );
+        }
+
+        syncEditor();
+    }
+
+    editors.forEach(function (pair) {
+
+        const editor =
+            document.getElementById(pair[0]);
+
+        if (!editor) return;
+
+                editor.addEventListener('paste', function (event) {
+
+            const mathPayload =
+                event.clipboardData.getData(
+                    'application/x-math-editor'
+                );
+
+            /*
+             * Maths Editor clipboard format
+             */
+            if (mathPayload) {
+
+                try {
+
+                    const payload =
+                        JSON.parse(mathPayload);
+
+                    if (
+                        payload &&
+                        payload.type === 'math-editor-equation' &&
+                        payload.latex
+                    ) {
+
+                        event.preventDefault();
+
+                        insertMath(
+                            editor,
+                            payload.latex
+                        );
+
+                        syncEditor();
+
+                        return;
+                    }
+
+                } catch (error) {
+
+                    console.warn(
+                        'Math equation clipboard data could not be read.',
+                        error
+                    );
+                }
+            }
+
+
+            /*
+             * Normal clipboard text
+             */
+            const text =
+                event.clipboardData.getData(
+                    'text/plain'
+                );
+
+
+            if (!text) {
+                return;
+            }
+
+
+            /*
+             * Existing $$...$$ / \(...\) / \[...\]
+             * mathematical text.
+             */
+            if (
+                text.includes('$$') ||
+                text.includes('\\(') ||
+                text.includes('\\[')
+            ) {
+
+                event.preventDefault();
+
+                parseMathText(
+                    editor,
+                    text
+                );
+
+                syncEditor();
+
+                return;
+            }
+
+
+            /*
+             * Plain LaTeX coming from Maths Editor,
+             * for example:
+             *
+             * x^2+3x-1
+             * x^2+y^2=z^2
+             * \frac{1}{2}
+             */
+            const trimmedText =
+                text.trim();
+
+            const looksLikeMath =
+                /\\[a-zA-Z]+/.test(trimmedText) ||
+                /[\^_]/.test(trimmedText) ||
+                (
+                    /[0-9]/.test(trimmedText) &&
+                    /[+\-*/=<>]/.test(trimmedText) &&
+                    /^[0-9A-Za-z\s().,+\-*/=<>^_]+$/.test(trimmedText)
+                );
+
+
+            if (
+                looksLikeMath &&
+                trimmedText
+            ) {
+
+                event.preventDefault();
+
+                insertMath(
+                    editor,
+                    trimmedText
+                );
+
+                syncEditor();
+
+                return;
+            }
+
+
+            /*
+             * Normal text:
+             * allow the browser to paste normally.
+             */
+        });
+
+    });
+});
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathlive/dist/mathlive.min.js"></script>
 </body>
 </html>
