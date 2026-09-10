@@ -733,7 +733,7 @@
                          data-placeholder="Option A text"></div>
 
                     <input type="hidden"
-                           name="option_a"
+                           name="option_a_text"
                            id="option_a_math_storage">
 
                 </div>
@@ -803,7 +803,7 @@
                          data-placeholder="Option B text"></div>
 
                     <input type="hidden"
-                           name="option_b"
+                           name="option_b_text"
                            id="option_b_math_storage">
 
                 </div>
@@ -873,7 +873,7 @@
                          data-placeholder="Option C text"></div>
 
                     <input type="hidden"
-                           name="option_c"
+                           name="option_c_text"
                            id="option_c_math_storage">
 
                 </div>
@@ -943,7 +943,7 @@
                          data-placeholder="Option D text"></div>
 
                     <input type="hidden"
-                           name="option_d"
+                           name="option_d_text"
                            id="option_d_math_storage">
 
                 </div>
@@ -1053,7 +1053,7 @@
      contenteditable="true"
      data-placeholder="Solution / explanation"></div>
 
-<textarea name="solution"
+<textarea name="feedback_text"
           id="solution_math_storage"
           hidden></textarea>
 
@@ -1380,7 +1380,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!editor) return;
 
-                editor.addEventListener('paste', function (event) {
+/*
+ * Keep the hidden textarea synchronized
+ * whenever normal text is typed.
+ */
+editor.addEventListener('input', syncEditor);
+
+editor.addEventListener('paste', function (event) {
 
             const mathPayload =
                 event.clipboardData.getData(
