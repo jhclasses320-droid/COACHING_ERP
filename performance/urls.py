@@ -1,5 +1,3 @@
-print(">>> PERFORMANCE URLS LOADED <<<")
-
 from django.urls import path
 from . import views
 
@@ -26,8 +24,7 @@ urlpatterns = [
         name="performance_question_selection",
     ),
 
-
-        # ==========================================================
+    # ==========================================================
     # ONLINE EXAM - PREVIEW
     # ==========================================================
 
@@ -36,7 +33,6 @@ urlpatterns = [
         views.preview_test,
         name="preview_test",
     ),
-
 
     # ==========================================================
     # ONLINE EXAM - PUBLISH

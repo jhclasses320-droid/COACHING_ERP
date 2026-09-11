@@ -5,24 +5,9 @@ from students import question_views
 app_name = "questionbank"
 
 urlpatterns = [
-
-    path(
-        "",
-        views.dashboard,
-        name="dashboard",
-    ),
-
-    path(
-        "add/",
-        views.create_question,
-        name="create_question",
-    ),
-
-    path(
-        "search/",
-        views.search_questions,
-        name="search_questions",
-    ),
+    path("", views.dashboard, name="dashboard"),
+    path("add/", views.create_question, name="create_question"),
+    path("search/", views.search_questions, name="search_questions"),
 
     path(
         "<int:question_id>/view/",
@@ -36,4 +21,9 @@ urlpatterns = [
         name="edit_question",
     ),
 
+    path(
+        "<int:question_id>/delete/",
+        views.delete_question,
+        name="delete_question",
+    ),
 ]

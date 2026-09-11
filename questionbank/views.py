@@ -62,3 +62,12 @@ def search_questions(request):
             "query": query,
         },
     )
+
+
+def delete_question(request, question_id):
+
+    if request.method == "POST":
+        question = Question.objects.get(id=question_id)
+        question.delete()
+
+    return redirect("question_dashboard")
