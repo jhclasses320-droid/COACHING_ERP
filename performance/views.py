@@ -779,23 +779,43 @@ def question_selection(request, exam_id):
     ).strip()
 
     # ------------------------------------------------------
+    # ------------------------------------------------------
     # BASE QUESTION BANK
     #
-    # Exam is NOT linked to Topic.
+    # Restrict the question pool to the topic(s) belonging
+    # to the chapter(s) selected for this assessment.
     #
-    # Questions are found using:
-    # Batch + Subject
-    #
-    # Teacher can then apply Topic and other filters.
+    # The requested number of questions must NEVER expand
+    # the question pool beyond the selected chapter(s).
     # ------------------------------------------------------
 
-    questions = Question.objects.filter(
-        batch=exam.batch,
-        topic__subject=subject,
-        is_active=True,
-    ).select_related(
-        "topic",
-    ).order_by("id")
+    selected_chapters = assessment_subject.chapters.all()
+
+    if selected_chapters.exists():
+
+        selected_topic_ids = selected_chapters.values_list(
+            "topic_id",
+            flat=True,
+        )
+
+        questions = Question.objects.filter(
+            batch=exam.batch,
+            topic__subject=subject,
+            topic_id__in=selected_topic_ids,
+            is_active=True,
+        ).select_related(
+            "topic",
+        ).order_by("id")
+
+    else:
+
+        questions = Question.objects.filter(
+            batch=exam.batch,
+            topic__subject=subject,
+            is_active=True,
+        ).select_related(
+            "topic",
+        ).order_by("id")
 
     # ------------------------------------------------------
     # TOPIC FILTER
@@ -886,10 +906,6 @@ def question_selection(request, exam_id):
     # SAVE SELECTED QUESTIONS
     # ------------------------------------------------------
 
-        # ------------------------------------------------------
-    # SAVE SELECTED QUESTIONS
-    # ------------------------------------------------------
-
     if request.method == "POST":
 
         selected_ids = request.POST.getlist(
@@ -934,8 +950,7 @@ def question_selection(request, exam_id):
             exam_id=exam.id,
         )
 
-    # ------------------------------------------------------
-    # TOPICS AVAILABLE FOR THIS SUBJECT
+        # TOPICS AVAILABLE FOR THIS SUBJECT
     # ------------------------------------------------------
 
     topics = Topic.objects.filter(
