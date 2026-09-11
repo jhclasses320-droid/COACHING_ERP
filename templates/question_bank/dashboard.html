@@ -540,25 +540,25 @@
 
                             {% if question.question_text %}
 
-                                {{ question.question_text|truncatechars:110 }}
+    {{ question.question_text|truncatechars:110 }}
 
-                            {% elif question.question_image %}
+{% elif question.question_image.name %}
 
-                                <span class="text-muted">
+    <span class="text-muted">
 
-                                    <i class="fas fa-image me-1"></i>
+        <i class="fas fa-image me-1"></i>
 
-                                    Image-based question
+        Image-based question
 
-                                </span>
+    </span>
 
-                            {% else %}
+{% else %}
 
-                                <span class="text-muted">
-                                    No question text available
-                                </span>
+    <span class="text-muted">
+        No question text available
+    </span>
 
-                            {% endif %}
+{% endif %}
 
                         </td>
 
