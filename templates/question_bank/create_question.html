@@ -1305,7 +1305,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (node.tagName.toLowerCase() === 'math-field') {
-            return '$$' + node.getValue('latex') + '$$';
+            const latex = node.getValue('latex');
+            return latex ? '$$' + latex + '$$' : '';
         }
 
         if (node.tagName.toLowerCase() === 'br') {
