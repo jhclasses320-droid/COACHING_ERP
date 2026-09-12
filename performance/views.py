@@ -1146,9 +1146,8 @@ def publish_test(request, exam_id):
         f"'{exam.name}' has been published successfully."
     )
 
-    return redirect(
-        "performance_exam_library"
-    )
+    return redirect("exam_library")
+    
 
 # ==========================================================
 # ONLINE EXAM - ASSIGNED STUDENTS STATUS
