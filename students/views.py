@@ -12,6 +12,7 @@ from reportlab.platypus import (
     TableStyle,
     Paragraph,
     Spacer,
+    Image,
 )
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
@@ -1995,7 +1996,7 @@ def student_attempt_pdf(request, attempt_id):
                 )
             )
 
-        # --------------------------------------------------
+                # --------------------------------------------------
         # CORRECT ANSWER
         # --------------------------------------------------
 
@@ -2013,6 +2014,46 @@ def student_attempt_pdf(request, attempt_id):
                 normal_style,
             )
         )
+
+        # --------------------------------------------------
+        # SOLUTION
+        # --------------------------------------------------
+
+        if question.feedback_text:
+
+            elements.append(
+                Paragraph(
+                    f"<b>Solution:</b> "
+                    f"{question.feedback_text}",
+                    normal_style,
+                )
+            )
+
+        # --------------------------------------------------
+        # SOLUTION IMAGE
+        # --------------------------------------------------
+
+        if question.feedback_image:
+
+            try:
+
+                elements.append(
+                    Spacer(1, 5)
+                )
+
+                elements.append(
+                    Image(
+                        question.feedback_image.path,
+                        width=450,
+                        height=300,
+                        preserveAspectRatio=True,
+                    )
+                )
+
+            except Exception:
+                pass
+
+      
 
         # --------------------------------------------------
         # RESULT
