@@ -234,11 +234,13 @@ class Question(models.Model):
     blank=True,
     )
 
-    topic = models.ForeignKey(
+    chapter = models.ForeignKey(
         Topic,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True
+        blank=True,
+        related_name="questions_as_chapter",
+        verbose_name="Chapter",
     )
 
 

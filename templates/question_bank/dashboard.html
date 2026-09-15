@@ -6,6 +6,25 @@
 {% block content %}
 
 
+<!-- ========================= -->
+<!-- MESSAGES -->
+<!-- ========================= -->
+
+{% if messages %}
+
+    {% for message in messages %}
+
+        <div class="alert alert-{{ message.tags }}">
+
+            {{ message }}
+
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+
+
 <div class="container-fluid mt-4">
 
     <!-- ===================================================== -->
@@ -253,12 +272,12 @@
                     <div class="col-lg-3">
 
                         <label class="form-label fw-semibold">
-                            Topic
+                            Chapter
                         </label>
 
                         <select name="topic" class="form-select">
 
-                            <option value="">All Topics</option>
+                            <option value="">All Chapters</option>
 
                             {% for topic in topics %}
 
@@ -513,7 +532,7 @@
                     <tr>
 
                         <th>ID</th>
-                        <th>Topic</th>
+                        <th>Chapter</th>
                         <th style="width: 50%;">Question Preview</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -533,7 +552,7 @@
                         </td>
 
                         <td>
-                            {{ question.topic.name }}
+                            {{ question.chapter.name }}
                         </td>
 
                         <td style="max-width: 600px;">

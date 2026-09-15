@@ -183,6 +183,25 @@
 </div>
 
 
+<!-- ========================= -->
+<!-- MESSAGES -->
+<!-- ========================= -->
+
+{% if messages %}
+
+    {% for message in messages %}
+
+        <div class="alert alert-{{ message.tags }}">
+
+            {{ message }}
+
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+
+
 <form id="questionForm"
       method="post"
       enctype="multipart/form-data">
@@ -283,25 +302,7 @@
 
                             </label>
 
-                            <input type="text"
-                                   class="form-control"
-                                   name="chapter_id">
-
-                        </div>
-
-
-                        <!-- TOPIC -->
-
-                        <div class="col-md-4">
-
-                            <label class="form-label fw-semibold">
-
-                                Topic
-                                <span class="text-danger">*</span>
-
-                            </label>
-
-                            {{ form.topic }}
+                            {{ form.chapter }}
 
                         </div>
 
@@ -1288,10 +1289,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         insertAtCursor(editor, mathField);
 
-        mathField.addEventListener('input', syncEditor);
-        mathField.addEventListener('change', syncEditor);
+        mathField.addEventListener('input', function () {
+            syncEditor(editor);
+        });
 
-        syncEditor();
+        mathField.addEventListener('change', function () {
+            syncEditor(editor);
+        });
+
+        syncEditor(editor);
     }
 
     function serializeNode(node) {
@@ -1322,7 +1328,27 @@ document.addEventListener('DOMContentLoaded', function () {
         return result;
     }
 
-    function syncEditor() {
+    function syncEditor(changedEditor) {
+
+        if (changedEditor) {
+
+            const pair = editors.find(function (item) {
+                return item[0] === changedEditor.id;
+            });
+
+            if (!pair) {
+                return;
+            }
+
+            const storage =
+                document.getElementById(pair[1]);
+
+            if (storage) {
+                storage.value = serializeNode(changedEditor);
+            }
+
+            return;
+        }
 
         editors.forEach(function (pair) {
 
@@ -1371,7 +1397,7 @@ document.addEventListener('DOMContentLoaded', function () {
             );
         }
 
-        syncEditor();
+        syncEditor(editor);
     }
 
     editors.forEach(function (pair) {
@@ -1385,7 +1411,9 @@ document.addEventListener('DOMContentLoaded', function () {
  * Keep the hidden textarea synchronized
  * whenever normal text is typed.
  */
-editor.addEventListener('input', syncEditor);
+editor.addEventListener('input', function () {
+            syncEditor(editor);
+        });
 
 editor.addEventListener('paste', function (event) {
 
@@ -1417,7 +1445,7 @@ editor.addEventListener('paste', function (event) {
                             payload.latex
                         );
 
-                        syncEditor();
+                        syncEditor(editor);
 
                         return;
                     }
@@ -1463,7 +1491,7 @@ editor.addEventListener('paste', function (event) {
                     text
                 );
 
-                syncEditor();
+                syncEditor(editor);
 
                 return;
             }
@@ -1502,7 +1530,7 @@ editor.addEventListener('paste', function (event) {
                     trimmedText
                 );
 
-                syncEditor();
+                syncEditor(editor);
 
                 return;
             }

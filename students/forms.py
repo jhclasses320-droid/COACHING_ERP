@@ -9,7 +9,7 @@ class QuestionForm(forms.ModelForm):
 
         fields = [
             'batch',
-            'topic',
+            'chapter',
             'question_mode',
             'difficulty',
             'marks',
@@ -60,7 +60,7 @@ class QuestionForm(forms.ModelForm):
             }),
 
             'batch': forms.Select(attrs={'class': 'form-select'}),
-            'topic': forms.Select(attrs={'class': 'form-select'}),
+            'chapter': forms.Select(attrs={'class': 'form-select'}),
             'question_mode': forms.Select(attrs={'class': 'form-select'}),
             'difficulty': forms.Select(attrs={'class': 'form-select'}),
             'correct_option': forms.Select(attrs={'class': 'form-select'}),
@@ -89,7 +89,7 @@ class QuestionForm(forms.ModelForm):
                 'placeholder': 'Option D text'
             }),
         }
-     
+
 
 
 class ExamForm(forms.ModelForm):

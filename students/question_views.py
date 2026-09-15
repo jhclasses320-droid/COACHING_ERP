@@ -24,10 +24,10 @@ def question_dashboard(request):
         questions = questions.filter(batch_id=batch_id)
 
     if subject_id:
-        questions = questions.filter(topic__subject_id=subject_id)
+        questions = questions.filter(chapter__subject_id=subject_id)
 
     if topic_id:
-        questions = questions.filter(topic_id=topic_id)
+        questions = questions.filter(chapter_id=topic_id)
 
     if difficulty:
         questions = questions.filter(difficulty=difficulty)
@@ -66,7 +66,7 @@ def question_dashboard(request):
     # ================= RECENT QUESTIONS ================= #
 
     recent_questions = Question.objects.select_related(
-        "topic"
+        "chapter"
     ).order_by("-created_at")[:20]
 
     # ================= FILTER OPTIONS ================= #

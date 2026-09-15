@@ -312,7 +312,7 @@ class QuestionAdmin(admin.ModelAdmin):
         ("📘 Question Details", {
     'fields': (
         'batch',
-        'topic',
+        'chapter',
         'question_mode',
         'difficulty',
         'source',
@@ -391,7 +391,7 @@ class QuestionAdmin(admin.ModelAdmin):
         'question_mode',
         'difficulty',
         'source',
-        'topic',
+        'chapter',
         'get_subject',
         'correct_option',
         'marks',
@@ -404,8 +404,8 @@ class QuestionAdmin(admin.ModelAdmin):
         'difficulty',
         'source',
         'is_active',
-        'topic__subject',
-        'topic',
+        'chapter__subject',
+        'chapter',
     )
 
     search_fields = (
@@ -426,7 +426,7 @@ class QuestionAdmin(admin.ModelAdmin):
     short_question.short_description = "Question"
 
     def get_subject(self, obj):
-        return obj.topic.subject.name
+        return obj.chapter.subject.name
 
     get_subject.short_description = "Subject"
 
@@ -519,7 +519,7 @@ class ExamAdmin(admin.ModelAdmin):
         questions = list(
             Question.objects.filter(
             batch=obj.batch,
-            topic=obj.topic,
+            chapter=obj.topic,
             is_active=True,
 
             )

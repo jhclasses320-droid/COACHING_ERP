@@ -800,21 +800,21 @@ def question_selection(request, exam_id):
 
         questions = Question.objects.filter(
             batch=exam.batch,
-            topic__subject=subject,
-            topic_id__in=selected_topic_ids,
+            chapter__subject=subject,
+            chapter_id__in=selected_topic_ids,
             is_active=True,
         ).select_related(
-            "topic",
+            "chapter",
         ).order_by("id")
 
     else:
 
         questions = Question.objects.filter(
             batch=exam.batch,
-            topic__subject=subject,
+            chapter__subject=subject,
             is_active=True,
         ).select_related(
-            "topic",
+            "chapter",
         ).order_by("id")
 
     # ------------------------------------------------------
@@ -824,7 +824,7 @@ def question_selection(request, exam_id):
     if topic:
 
         questions = questions.filter(
-            topic_id=topic
+            chapter_id=topic
         )
 
     # ------------------------------------------------------
@@ -915,7 +915,7 @@ def question_selection(request, exam_id):
         selected_questions = Question.objects.filter(
             id__in=selected_ids,
             batch=exam.batch,
-            topic__subject=subject,
+            chapter__subject=subject,
             is_active=True,
         )
 
