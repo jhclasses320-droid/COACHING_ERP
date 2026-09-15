@@ -51,7 +51,7 @@ Operations Dashboard
 
         <div>
 
-            <a href="/questions/" class="btn btn-primary">
+            <a href="{% url 'create_question' %}" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i>
                 New Question
             </a>
@@ -216,7 +216,7 @@ Operations Dashboard
 
                 <div class="col-xl col-lg-4 col-md-6">
 
-                    <a href="/questions/"
+                    <a href="{% url 'create_question' %}"
                        class="dashboard-action action-blue">
 
                         <i class="bi bi-plus-circle"></i>
