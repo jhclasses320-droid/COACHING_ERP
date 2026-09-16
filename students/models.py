@@ -172,7 +172,7 @@ class Chapter(models.Model):
         verbose_name_plural = "Chapters"
 
     def __str__(self):
-        return f"{self.name} ({self.topic.name})"   
+         return self.name 
 
     # ================= QUESTION ================= #
 
