@@ -1548,5 +1548,595 @@ editor.addEventListener('paste', function (event) {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/mathlive/dist/mathlive.min.js"></script>
+
+<!-- =========================================================
+     JH CLASSES - PDF / OCR IMPORT
+     NEW ADDITION ONLY.
+     Existing Question Entry code above is intentionally unchanged.
+     ========================================================= -->
+
+<style>
+#jh_pdf_ocr_launcher{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    z-index:1050;
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+}
+#jh_pdf_ocr_box{
+    display:none;
+    position:fixed;
+    right:20px;
+    bottom:75px;
+    width:min(620px,calc(100vw - 40px));
+    max-height:80vh;
+    overflow-y:auto;
+    z-index:1051;
+    background:#fff;
+    border:1px solid #0d6efd;
+    border-radius:8px;
+    box-shadow:0 8px 30px rgba(0,0,0,.2);
+}
+</style>
+
+<button type="button" id="jh_pdf_ocr_launcher" class="btn btn-primary">
+    <i class="fas fa-file-import me-1"></i>
+    PDF / OCR
+</button>
+
+<div id="jh_pdf_ocr_box">
+
+    <div class="p-3 border-bottom bg-primary text-white d-flex justify-content-between align-items-center">
+        <strong><i class="fas fa-file-import me-2"></i>Import from PDF / OCR</strong>
+        <button type="button" id="jh_pdf_ocr_close" class="btn btn-sm btn-light">Close</button>
+    </div>
+
+    <div class="p-3">
+
+        <div class="alert alert-info small">
+            <strong>Text PDF:</strong> copy text and click
+            <strong>Read Clipboard Text</strong>.<br>
+            <strong>Scanned PDF:</strong> select the PDF and click
+            <strong>Import PDF + OCR</strong>.<br>
+            <strong>Image:</strong> copy an image/screenshot and click
+            <strong>OCR Clipboard Image</strong>.
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Import into</label>
+            <select id="jh_pdf_ocr_target" class="form-select">
+                <option value="q_text_math_editor">Question Text</option>
+                <option value="option_a_math_editor">Option A</option>
+                <option value="option_b_math_editor">Option B</option>
+                <option value="option_c_math_editor">Option C</option>
+                <option value="option_d_math_editor">Option D</option>
+                <option value="solution_math_editor">Solution / Explanation</option>
+            </select>
+        </div>
+
+        <div class="row g-2">
+            <div class="col-md-7">
+                <label class="form-label fw-semibold">PDF File</label>
+                <input type="file" id="jh_pdf_ocr_file" class="form-control"
+                       accept=".pdf,application/pdf">
+            </div>
+            <div class="col-md-5">
+                <label class="form-label fw-semibold">Pages</label>
+                <input type="text" id="jh_pdf_ocr_pages" class="form-control"
+                       placeholder="All / 1-3 / 1,4,6">
+            </div>
+        </div>
+
+        <div class="mt-3 d-flex flex-wrap gap-2">
+
+            <button type="button" id="jh_pdf_clipboard_text"
+                    class="btn btn-primary">
+                <i class="fas fa-clipboard me-1"></i>
+                Read Clipboard Text
+            </button>
+
+            <button type="button" id="jh_pdf_clipboard_image"
+                    class="btn btn-outline-primary">
+                <i class="fas fa-image me-1"></i>
+                OCR Clipboard Image
+            </button>
+
+            <button type="button" id="jh_pdf_import"
+                    class="btn btn-success">
+                <i class="fas fa-file-pdf me-1"></i>
+                Import PDF + OCR
+            </button>
+
+        </div>
+
+        <div id="jh_pdf_ocr_status" class="small text-muted mt-3">Ready.</div>
+
+    </div>
+</div>
+
+<script>
+(function(){
+
+    var jhPdfJsPromise=null;
+    var jhTesseractPromise=null;
+
+    function jhPdfLoadScript(src,test){
+        return new Promise(function(resolve,reject){
+
+            if(test()){ resolve(); return; }
+
+            var existing=document.querySelector('script[src="'+src+'"]');
+
+            if(existing){
+                existing.addEventListener('load',function(){resolve();},{once:true});
+                existing.addEventListener('error',function(){
+                    reject(new Error('Required library could not be loaded.'));
+                },{once:true});
+                return;
+            }
+
+            var script=document.createElement('script');
+            script.src=src;
+            script.async=true;
+            script.onload=function(){resolve();};
+            script.onerror=function(){
+                reject(new Error('Required library could not be loaded.'));
+            };
+            document.head.appendChild(script);
+        });
+    }
+
+    function jhPdfLoadPdfJs(){
+        if(!jhPdfJsPromise){
+            jhPdfJsPromise=jhPdfLoadScript(
+                'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+                function(){return !!window.pdfjsLib;}
+            ).then(function(){
+                if(window.pdfjsLib){
+                    window.pdfjsLib.GlobalWorkerOptions.workerSrc=
+                        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                }
+            });
+        }
+        return jhPdfJsPromise;
+    }
+
+    function jhPdfLoadTesseract(){
+        if(!jhTesseractPromise){
+            jhTesseractPromise=jhPdfLoadScript(
+                'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js',
+                function(){return !!window.Tesseract;}
+            );
+        }
+        return jhTesseractPromise;
+    }
+
+    function jhPdfStatus(message,error){
+        var el=document.getElementById('jh_pdf_ocr_status');
+        if(!el)return;
+        el.textContent=message;
+        el.classList.toggle('text-danger',!!error);
+        el.classList.toggle('text-muted',!error);
+    }
+
+    function jhPdfTarget(){
+        return document.getElementById(
+            document.getElementById('jh_pdf_ocr_target').value
+        );
+    }
+
+    function jhPdfNormalize(text){
+        return String(text||'')
+            .replace(/\u00a0/g,' ')
+            .replace(/\r\n/g,'\n')
+            .replace(/\r/g,'\n')
+            .replace(/[ \t]+\n/g,'\n')
+            .replace(/\n[ \t]+/g,'\n')
+            .replace(/[ \t]{2,}/g,' ')
+            .replace(/\n{3,}/g,'\n\n')
+            .trim();
+    }
+
+    function jhPdfInsertText(text){
+        var editor=jhPdfTarget();
+
+        if(!editor){
+            jhPdfStatus('Target editor was not found.',true);
+            return;
+        }
+
+        text=jhPdfNormalize(text);
+
+        if(!text){
+            jhPdfStatus('No readable text was found.',true);
+            return;
+        }
+
+        editor.focus();
+
+        var selection=window.getSelection();
+
+        if(selection && selection.rangeCount &&
+           editor.contains(selection.getRangeAt(0).commonAncestorContainer)){
+
+            var range=selection.getRangeAt(0);
+            range.deleteContents();
+
+            var node=document.createTextNode(text);
+            range.insertNode(node);
+            range.setStartAfter(node);
+            range.collapse(true);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+        }else{
+            editor.appendChild(document.createTextNode(text));
+        }
+
+        /*
+         * Trigger the existing synchronization listener.
+         * The original listener itself is not changed.
+         */
+        editor.dispatchEvent(new Event('input',{bubbles:true}));
+
+        jhPdfStatus('Text imported successfully.');
+    }
+
+    function jhPdfPages(value,total){
+
+        value=String(value||'').trim();
+
+        if(!value){
+            var all=[];
+            for(var i=1;i<=total;i++)all.push(i);
+            return all;
+        }
+
+        var result=[];
+
+        value.split(',').forEach(function(part){
+
+            part=part.trim();
+            if(!part)return;
+
+            if(part.indexOf('-')!==-1){
+
+                var bits=part.split('-');
+                var start=parseInt(bits[0],10);
+                var end=parseInt(bits[1],10);
+
+                if(Number.isFinite(start)&&Number.isFinite(end)){
+
+                    var from=Math.max(1,Math.min(start,end));
+                    var to=Math.min(total,Math.max(start,end));
+
+                    for(var p=from;p<=to;p++)result.push(p);
+                }
+
+            }else{
+
+                var page=parseInt(part,10);
+
+                if(Number.isFinite(page)&&page>=1&&page<=total)
+                    result.push(page);
+            }
+        });
+
+        return Array.from(new Set(result)).sort(function(a,b){return a-b;});
+    }
+
+    async function jhPdfExtractText(page){
+
+        var content=await page.getTextContent();
+        var items=content.items||[];
+
+        if(!items.length)return '';
+
+        var lines=[];
+
+        items.forEach(function(item){
+
+            var transform=item.transform||[];
+            var x=Number(transform[4])||0;
+            var y=Number(transform[5])||0;
+            var value=String(item.str||'');
+
+            if(!value)return;
+
+            var line=null;
+
+            for(var i=0;i<lines.length;i++){
+                if(Math.abs(lines[i].y-y)<=3){
+                    line=lines[i];
+                    break;
+                }
+            }
+
+            if(!line){
+                line={y:y,items:[]};
+                lines.push(line);
+            }
+
+            line.items.push({x:x,text:value});
+        });
+
+        lines.sort(function(a,b){return b.y-a.y;});
+
+        return lines.map(function(line){
+
+            line.items.sort(function(a,b){return a.x-b.x;});
+
+            return line.items.map(function(item){
+                return item.text;
+            }).join(' ').replace(/[ \t]{2,}/g,' ').trim();
+
+        }).filter(Boolean).join('\n');
+    }
+
+    async function jhPdfRender(page){
+
+        var viewport=page.getViewport({scale:2});
+
+        var canvas=document.createElement('canvas');
+        canvas.width=Math.ceil(viewport.width);
+        canvas.height=Math.ceil(viewport.height);
+
+        await page.render({
+            canvasContext:canvas.getContext('2d'),
+            viewport:viewport
+        }).promise;
+
+        return canvas;
+    }
+
+    async function jhPdfOcr(canvas,page,total){
+
+        await jhPdfLoadTesseract();
+
+        jhPdfStatus('OCR page '+page+' of '+total+'...');
+
+        var result=await window.Tesseract.recognize(
+            canvas,
+            'eng',
+            {
+                logger:function(message){
+
+                    if(message &&
+                       message.status==='recognizing text'){
+
+                        var percent=Math.round(
+                            (message.progress||0)*100
+                        );
+
+                        jhPdfStatus(
+                            'OCR page '+page+' of '+total+
+                            ' — '+percent+'%'
+                        );
+                    }
+                }
+            }
+        );
+
+        return result && result.data ? result.data.text : '';
+    }
+
+    async function jhPdfImport(){
+
+        var input=document.getElementById('jh_pdf_ocr_file');
+        var file=input.files && input.files[0];
+
+        if(!file){
+            jhPdfStatus('Please select a PDF file first.',true);
+            return;
+        }
+
+        try{
+
+            jhPdfStatus('Loading PDF reader...');
+            await jhPdfLoadPdfJs();
+
+            var buffer=await file.arrayBuffer();
+
+            var pdf=await window.pdfjsLib.getDocument({
+                data:buffer
+            }).promise;
+
+            var pages=jhPdfPages(
+                document.getElementById('jh_pdf_ocr_pages').value,
+                pdf.numPages
+            );
+
+            if(!pages.length){
+                jhPdfStatus('No valid pages were selected.',true);
+                return;
+            }
+
+            var combined='';
+
+            for(var i=0;i<pages.length;i++){
+
+                var pageNumber=pages[i];
+                var page=await pdf.getPage(pageNumber);
+
+                jhPdfStatus(
+                    'Reading page '+pageNumber+
+                    ' of '+pdf.numPages+'...'
+                );
+
+                var pageText=await jhPdfExtractText(page);
+
+                /*
+                 * If the page has little/no text layer, treat it as
+                 * a scanned page and OCR the rendered page.
+                 */
+                if(jhPdfNormalize(pageText).length<20){
+
+                    var canvas=await jhPdfRender(page);
+
+                    pageText=await jhPdfOcr(
+                        canvas,
+                        pageNumber,
+                        pdf.numPages
+                    );
+                }
+
+                pageText=jhPdfNormalize(pageText);
+
+                if(pageText){
+                    if(combined)combined+='\n\n';
+                    combined+=pageText;
+                }
+            }
+
+            if(!combined){
+                jhPdfStatus(
+                    'No readable text was found in the selected pages.',
+                    true
+                );
+                return;
+            }
+
+            jhPdfInsertText(combined);
+
+        }catch(error){
+
+            console.error('JH PDF/OCR error:',error);
+
+            jhPdfStatus(
+                'PDF/OCR failed: '+(
+                    error.message||'Unknown error'
+                ),
+                true
+            );
+        }
+    }
+
+    async function jhPdfReadClipboardText(){
+
+        try{
+
+            if(!navigator.clipboard || !navigator.clipboard.readText){
+
+                jhPdfStatus(
+                    'Clipboard text access is not available in this browser.',
+                    true
+                );
+
+                return;
+            }
+
+            jhPdfStatus('Reading clipboard...');
+
+            var text=await navigator.clipboard.readText();
+
+            if(!text){
+                jhPdfStatus('No text was found in the clipboard.',true);
+                return;
+            }
+
+            jhPdfInsertText(text);
+
+        }catch(error){
+
+            console.error('Clipboard text error:',error);
+
+            jhPdfStatus(
+                'Clipboard access was blocked. Please allow it and try again.',
+                true
+            );
+        }
+    }
+
+    async function jhPdfOcrClipboardImage(){
+
+        try{
+
+            if(!navigator.clipboard || !navigator.clipboard.read){
+
+                jhPdfStatus(
+                    'Clipboard image access is not available in this browser.',
+                    true
+                );
+
+                return;
+            }
+
+            jhPdfStatus('Reading clipboard image...');
+
+            var items=await navigator.clipboard.read();
+            var imageBlob=null;
+
+            for(var i=0;i<items.length;i++){
+
+                var imageType=items[i].types.find(
+                    function(type){
+                        return type.indexOf('image/')===0;
+                    }
+                );
+
+                if(imageType){
+                    imageBlob=await items[i].getType(imageType);
+                    break;
+                }
+            }
+
+            if(!imageBlob){
+                jhPdfStatus('No image was found in the clipboard.',true);
+                return;
+            }
+
+            var image=await createImageBitmap(imageBlob);
+
+            var canvas=document.createElement('canvas');
+            canvas.width=image.width;
+            canvas.height=image.height;
+
+            canvas.getContext('2d').drawImage(image,0,0);
+
+            var text=await jhPdfOcr(canvas,1,1);
+
+            jhPdfInsertText(text);
+
+        }catch(error){
+
+            console.error('Clipboard OCR error:',error);
+
+            jhPdfStatus(
+                'Clipboard image OCR failed: '+
+                (error.message||'Unknown error'),
+                true
+            );
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded',function(){
+
+        var launcher=document.getElementById('jh_pdf_ocr_launcher');
+        var box=document.getElementById('jh_pdf_ocr_box');
+        var close=document.getElementById('jh_pdf_ocr_close');
+
+        launcher.addEventListener('click',function(){
+            box.style.display='block';
+        });
+
+        close.addEventListener('click',function(){
+            box.style.display='none';
+        });
+
+        document.getElementById('jh_pdf_clipboard_text')
+            .addEventListener('click',jhPdfReadClipboardText);
+
+        document.getElementById('jh_pdf_clipboard_image')
+            .addEventListener('click',jhPdfOcrClipboardImage);
+
+        document.getElementById('jh_pdf_import')
+            .addEventListener('click',jhPdfImport);
+    });
+
+})();
+</script>
+
+
 </body>
 </html>
