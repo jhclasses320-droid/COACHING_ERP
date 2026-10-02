@@ -421,6 +421,97 @@ def download_students_pdf(request):
 
     return response
 
+# ================= FEE PAYMENT REPORT ================= #
+
+def fee_payment_report(request):
+
+    from datetime import datetime
+
+    students = Student.objects.filter(
+        is_active=True
+    ).order_by(
+        "student_name"
+    )
+
+    payments = FeePayment.objects.select_related(
+        "student"
+    ).order_by(
+        "-payment_date",
+        "-id"
+    )
+
+    from_date = request.GET.get("from_date", "")
+    to_date = request.GET.get("to_date", "")
+    student_id = request.GET.get("student", "")
+
+    # --------------------------------------------------
+    # DATE FILTER
+    # --------------------------------------------------
+
+    if from_date:
+        try:
+            payments = payments.filter(
+                payment_date__gte=datetime.strptime(
+                    from_date,
+                    "%Y-%m-%d"
+                ).date()
+            )
+        except ValueError:
+            from_date = ""
+
+    if to_date:
+        try:
+            payments = payments.filter(
+                payment_date__lte=datetime.strptime(
+                    to_date,
+                    "%Y-%m-%d"
+                ).date()
+            )
+        except ValueError:
+            to_date = ""
+
+    # --------------------------------------------------
+    # TOTAL FEE COLLECTED FOR THE SELECTED PERIOD
+    # --------------------------------------------------
+
+    total_period_paid = payments.aggregate(
+        total=models.Sum("amount")
+    )["total"] or 0
+
+    # --------------------------------------------------
+    # STUDENT FILTER
+    # --------------------------------------------------
+
+    report_payments = payments
+
+    if student_id:
+        report_payments = report_payments.filter(
+            student_id=student_id
+        )
+
+    # --------------------------------------------------
+    # FEE COLLECTED BY SELECTED STUDENT
+    # --------------------------------------------------
+
+    student_paid = report_payments.aggregate(
+        total=models.Sum("amount")
+    )["total"] or 0
+
+    return render(
+        request,
+        "admin/fee_payment_report.html",
+        {
+            "students": students,
+            "payments": report_payments,
+            "from_date": from_date,
+            "to_date": to_date,
+            "selected_student": student_id,
+            "total_paid": student_paid,
+            "total_period_paid": total_period_paid,
+            "student_paid": student_paid,
+        }
+    )
+
 
 # ================= FEE REPORT ================= #
 
@@ -584,7 +675,7 @@ def attendance_batches(request):
     return render(request, "attendance/batches.html", {"batches": batches})
 
 
-# ================= STUDENT EXAMS ================= #
+
 
 # ================= STUDENT EXAMS ================= #
 

@@ -100,6 +100,11 @@ urlpatterns = [
     ),
 
     path(
+    'fee-payment-report/',
+    views.fee_payment_report,
+    name='fee_payment_report'
+    ),
+    path(
         'download-defaulter-report/',
         views.download_defaulter_report,
         name='defaulter_report'
